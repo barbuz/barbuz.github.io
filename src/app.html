@@ -1,11 +1,35 @@
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
-	</body>
+<html lang="en" data-persona="barbuz" class="no-anim">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0A0E17" />
+    <title>barbuz</title>
+    <meta
+      name="description"
+      content="barbuz — small, sharp tools. Apps by barbuz, and the engineer behind them."
+    />
+    <script>
+      // Resolve the persona before first paint so the correct face shows with
+      // no flash. ?leo lands on Leo; anything else lands on barbuz.
+      (function () {
+        var q = new URLSearchParams(location.search);
+        var persona = q.has('leo') && !q.has('barbuz') ? 'leo' : 'barbuz';
+        document.documentElement.dataset.persona = persona;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', persona === 'leo' ? '#FAF8F3' : '#0A0E17');
+        document.title = persona === 'leo' ? 'Leo Ghignone' : 'barbuz';
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
 </html>
