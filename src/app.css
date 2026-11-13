@@ -7,6 +7,8 @@
    Two personas, one accent hue. Every value here is a measured
    choice: night is cool, day is warm, blue is the one colour
    that crosses both. Keep it that way when adding to this file.
+   Rationale + contrast tables: docs/DESIGN-NOTES.md
+   Growth plan: docs/BRAND-PLAN.md
    ============================================================ */
 
 :root {
