@@ -98,6 +98,40 @@ boundary, so it is intentionally subtle rather than at the 3:1 UI threshold.
 If a border ever *does* carry meaning (an error state, a focused control), it
 must switch to the accent colour, which passes.
 
+## Semantic colours
+
+Added in Phase 1, when the tokens became a shared file. The page does not use
+these yet; the apps will. Each is designed per face, not shared across them —
+the same reasoning as the accent, and the same trap if ignored (a colour that
+reads well on white is invisible on near-black).
+
+| Role | barbuz (night) | vs bg | Leo (day) | vs bg |
+|---|---|---|---|---|
+| success | `#22c55e` | 8.47 | `#15803d` | 4.73 |
+| warning | `#f0b429` | 10.35 | `#8a5a00` | 5.58 |
+| danger | `#f87171` | 6.98 | `#b91c1c` | 6.10 |
+
+All six clear AA as text on their own background. If used as a *fill*, put
+`--accent-ink` on top: measured 8.75 / 10.69 (night success / warning) and
+5.02 / 6.47 (day success / danger).
+
+## accent-soft
+
+A translucent accent wash for selected rows and active states. Because it is
+translucent it composites against whatever sits under it, so it was tuned
+against `surface-2`, which is the worst case for visibility.
+
+| Face | Value | vs surface-2 | text on it |
+|---|---|---|---|
+| barbuz | `rgba(61, 123, 255, 0.28)` | 1.55 | 9.61 |
+| Leo | `rgba(29, 78, 216, 0.28)` | 1.55 | 10.02 |
+
+**Why 0.28.** The first attempt used 0.16 / 0.12, which measured **1.03:1**
+against `surface-2` — indistinguishable, i.e. the state would not have been
+visible at all. 0.28 is the point where the tint reads as deliberate (≈1.55:1)
+while the text on it stays far above AA. It is a wash, not a border, so it is
+held below the 3:1 non-text threshold on purpose.
+
 ## Type
 
 | Face | Display | Body | Mono |
@@ -108,10 +142,20 @@ must switch to the accent colour, which passes.
 Mono is shared deliberately — it is the thread that makes the two faces read as
 one site.
 
-## Still to add (not yet needed in the prototype)
+## Where these values live
 
-Semantic colours (success / warning / danger) and an `accent-soft` wash for
-selected states. These are needed before the apps adopt the system, not for the
-marketing page. Left out deliberately so the palette stays minimal until there
-is a real use.
+The palette is no longer defined in `src/app.css`. The source of truth is
+[`brand/tokens.json`](../brand/tokens.json), which generates `brand/tokens.css`
+(for the page and the static apps) and `brand/tokens.js` (for apps that build
+with a bundler). Both generated files are committed.
+
+```bash
+npm run tokens         # regenerate after editing the JSON
+npm run tokens:check   # fail if the JSON was edited but not regenerated (CI)
+```
+
+Never edit `tokens.css` or `tokens.js` by hand. Changing a **hue** changes the
+brand colour; changing a **lightness** fixes contrast. Keep the two accent tones
+~30–40° of lightness apart, and re-run the contrast check against both
+backgrounds before adopting a new value.
 
