@@ -1,8 +1,7 @@
 # Brand plan
 
 How the barbuz visual identity grows from the one page that has it into every
-thing the name touches. Written to be executed in order; each phase leaves the
-repo in a working state.
+thing the name touches.
 
 The design decisions themselves live in [DESIGN-NOTES.md](./DESIGN-NOTES.md).
 This file is the *plan*: what to build, in what order, and what is still open.
@@ -18,16 +17,24 @@ still free to be its own thing.
 Today only the personal page has a system. `byom`, `digitofono`,
 `match-the-gatherer` and `the stylus` each invented their own.
 
-## The principle
+## The principles
 
-Two rules carry the whole brand, and they already hold on the page:
-
-1. **Cool at night, warm by day. Blue is the one colour that crosses both.**
-2. **Mono type is the shared thread.** Bricolage/Instrument Serif set the mood
+1. **Content before layout.** Fix what the page says, then build the layout
+   around it. Not the other way round. This is why the copy pass runs before
+   any app work: a layout designed around placeholder text has to be rebuilt
+   once the real words land.
+2. **Cool at night, warm by day. Blue is the one colour that crosses both.**
+3. **Mono type is the shared thread.** Bricolage/Instrument Serif set the mood
    per face; JetBrains Mono is constant, which is what makes the two faces read
    as one site.
 
-Anything added to the brand has to survive both rules. That is the test.
+Anything added to the brand has to survive rules 2 and 3. That is the test.
+
+## The split
+
+Phases 0–3 happen **on the page only** (`barbuz.github.io`). The page is the
+place the system is designed and proven. Phases 4–5 are the first work that
+touches **other repos**, and they start only once the page is settled.
 
 ---
 
@@ -42,38 +49,65 @@ The page is built and the system exists as CSS custom properties.
 
 **Output:** `barbuz.github.io` is the source of truth for the palette.
 
-## Phase 1 — lift the tokens out of the page
+## Phase 1 — lift the tokens out of the page *(page)*
 
 The page currently owns the palette. The apps cannot use it until it is its own
-thing.
+thing. This is a near-mechanical extraction, and it is first because it is
+cheapest while the values are fresh and the contrast tables still hold.
 
-- Create `barbuz/brand` (or `brand/` in this repo) holding:
-  - `tokens.json` — the machine-readable source: every colour, the type stack,
-    spacing and radius scale, motion durations.
-  - `tokens.css` — the same values as custom properties, generated from the
-    JSON so the two can never drift.
-  - `README.md` — the two rules above, plus the contrast table from
-    DESIGN-NOTES.
-- Add the colours that the page did not need but the apps will: semantic
-  success / warning / danger, and an `accent-soft` wash for selected states.
-  These are listed as deliberately deferred in DESIGN-NOTES — this is where they
-  get designed, against both backgrounds.
-- Make `barbuz.github.io` consume `tokens.css` instead of defining the palette
-  inline. If the page and the package ever disagree, the package wins.
+- Create `tokens.json` — the machine-readable source: every colour, the type
+  stack, spacing and radius scale, motion durations.
+- Generate `tokens.css` from it, so the two can never drift.
+- Add the colours the page did not need but the apps will: semantic success /
+  warning / danger, and an `accent-soft` wash for selected states. These are
+  listed as deliberately deferred in DESIGN-NOTES — this is where they get
+  designed, against both backgrounds.
+- Point the page at the generated CSS instead of defining the palette inline.
 
-**Open decision — how apps consume it.** Three options:
+**Deliberately not decided here:** how the *apps* consume the tokens (npm
+package vs vendored file). That is a Phase 4 question, and it should not hold up
+the extraction. See open decision 1.
 
-| Option | Cost | Fits |
-|---|---|---|
-| Published npm package (`@barbuz/brand`) | needs a registry + a release step | best if the apps are built with a bundler and want semver |
-| `tokens.css` vendored into each repo | a copy to re-sync | simplest; fine for static sites that already copy assets |
-| git submodule | submodules to manage | painful, not recommended |
+**Why first:** the tokens are name-agnostic. If the mark or the name changes
+later, the colour system survives untouched. It is the safe work, and it is
+cheap this hour.
 
-Recommendation: **npm package from GitHub Packages**, because three of the four
-apps already run a build step. Fall back to vendoring for `the stylus` if it is a
-single static file.
+## Phase 2 — the mark *(page)*
 
-## Phase 2 — apply it, one app at a time
+There is no real logo yet — the page uses the wordmark "barbu**z**" and a
+placeholder favicon. Settle it before Phase 3, because the mark is content too.
+
+- Decide the direction: wordmark only, a monogram, or a mark + wordmark lockup.
+- Constraints: must work at 16px, must work in one colour, must hold on both the
+  night and the day background.
+- Produce the favicon and the app-icon set from it.
+
+**Why before the copy pass:** the mark is fixed content. If it arrives late, the
+hero and the nav get laid out around a placeholder and then rebuilt — the exact
+problem rule 1 exists to prevent.
+
+## Phase 3 — voice and copy *(page)*
+
+Settle what the page says. This runs before any app work so the layout is built
+around real words.
+
+- **Voice.** Two registers already exist: barbuz (maker, short sentences,
+  lowercase, dry) and Leo (engineer, professional, full sentences). Write both
+  down as a short style guide — it is the reference the copy pass is written
+  against, and the apps inherit it later.
+- **Copy pass.** `docs/COPY-NOTES.md` holds every draft-vs-current pair on the
+  Leo face. Settle each one. Then delete the file once it is fully folded in.
+
+The barbuz face needs the same treatment; it currently has no counterpart file.
+
+**Output:** the page's content is fixed, and the layout can be finalised.
+
+---
+
+*Everything below touches other repos. Nothing here starts until the page is
+settled.*
+
+## Phase 4 — apply it to the apps
 
 Order is deliberate: start with the app that is closest to the page, so the
 first port proves the system rather than fighting it.
@@ -88,31 +122,20 @@ first port proves the system rather than fighting it.
 4. **`the stylus`** — niche, low traffic, possibly a single file. Lowest
    priority; a palette swap may be the whole job.
 
-Per app, the checklist is the same:
+Decide the consumption method first (open decision 1). Per app, the checklist is
+the same:
 
-- [ ] palette tokens from the package, both light and dark if it supports both
+- [ ] palette tokens from the shared source, both light and dark if it supports both
 - [ ] type stack: display / body / mono
-- [ ] favicon redrawn from the shared mark
+- [ ] favicon and app icon from the shared mark
 - [ ] footer credit linking back to `barbuz.github.io`
+- [ ] voice: copy written in the app's register, not pasted from the page
 - [ ] contrast re-checked against that app's actual backgrounds
 
 **Do not** copy the page's layout. The brand is colour, type, voice and motion —
 not section order.
 
-## Phase 3 — copy and identity
-
-Text and logos are explicitly still draft. This phase settles them.
-
-- **Logo / mark.** There is no real logo yet; the page uses the wordmark
-  "barbu**z**" and a placeholder favicon. Decide: a wordmark only, a monogram,
-  or a mark + wordmark lockup. It has to work at 16px and in one colour.
-- **Voice.** Two registers exist already: barbuz (maker, short sentences,
-  lowercase, dry) and Leo (engineer, professional, full sentences). Write both
-  down as a short style guide so the apps inherit a consistent tone.
-- **Copy pass.** `docs/COPY-NOTES.md` holds every draft-vs-current pair on the
-  Leo face. Settle each one, then delete the file once it is fully folded in.
-
-## Phase 4 — join the apps up
+## Phase 5 — join the apps up
 
 The last step, and the one that makes them feel like a family rather than a
 palette swap.
@@ -128,13 +151,15 @@ palette swap.
 
 | # | Decision | Blocks |
 |---|---|---|
-| 1 | npm package vs vendored `tokens.css` | Phase 1 |
-| 2 | logo direction (wordmark / monogram / lockup) | Phase 3, favicons in Phase 2 |
-| 3 | does any app need a dark mode of its own, or is barbuz-night the only dark? | Phase 2 |
+| 1 | npm package vs vendored `tokens.css` for the apps | Phase 4 |
+| 2 | logo direction (wordmark / monogram / lockup) | Phase 2, then the icons in Phase 4 |
+| 3 | does any app need a dark mode of its own, or is barbuz-night the only dark? | Phase 4 |
 | 4 | the draft's three fake "Featured Projects" — delete or replace with the real apps | Phase 3 |
 
 ## Order of work
 
-Phase 1 first: nothing else is worth doing until the tokens are shared, and
-Phase 2 will surface any gap in the system that the page did not. Phase 3 runs
-alongside Phase 2. Phase 4 is last, and is cheap once the rest is done.
+Tokens, then the mark, then the copy pass — all on the page. Only then the apps.
+
+The mark is the one piece here that is creative rather than mechanical. If it
+stalls, do not let it block Phase 1: the token extraction is independent and can
+proceed the same day.

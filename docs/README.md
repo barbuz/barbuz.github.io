@@ -12,4 +12,4 @@ can publish from — that build source is "GitHub Actions", not "branch folder".
 |---|---|
 | [DESIGN-NOTES.md](./DESIGN-NOTES.md) | The palette decisions and the reasoning behind them: the two-tone accent, the temperature rule, the measured contrast table, the type stack. |
 | [BRAND-PLAN.md](./BRAND-PLAN.md) | The plan for growing the identity from the one page that has it into the apps. Phases, order, open decisions. |
-| [COPY-NOTES.md](./COPY-NOTES.md) | Draft-vs-current copy pairs on the Leo face, kept so the wording can be settled after the layout. |
+| [COPY-NOTES.md](./COPY-NOTES.md) | Draft-vs-current copy pairs on the Leo face, kept so the wording can be settled before the layout is finalised. |
