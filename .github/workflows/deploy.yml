@@ -17,7 +17,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '22'
 
     - name: Install dependencies
       run: npm ci
@@ -37,6 +37,8 @@ jobs:
 
   deploy:
     needs: build
+    # Only deploy from main; PR runs just build as a check.
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     permissions:
