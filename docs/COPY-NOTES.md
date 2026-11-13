@@ -2,7 +2,8 @@
 
 Working doc for the wording on the engineering (Leo) side. The prototype rewrote
 some of the draft's copy; this file keeps the original and the current version
-side by side so we can settle the text **after** the layout is agreed.
+side by side so we can settle the text **before** the layout is finalised — the
+layout gets built around the chosen words, not the other way round.
 
 Status legend: `draft` = from `barbuz.github.io` @ 2026-02-19 · `proto` = current prototype.
 
