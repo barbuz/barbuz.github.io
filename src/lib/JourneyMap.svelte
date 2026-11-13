@@ -25,7 +25,7 @@
 				target: this._button,
 				props: {
 					size: 16,
-					color: 'black'
+					color: '#1b1a17'
 				}
 			});
 			
@@ -47,13 +47,13 @@
 			// Add hover effect
 			this._button.addEventListener('mouseenter', () => {
 				if (this._button) {
-					this._button.style.backgroundColor = '#f3f4f6';
+					this._button.style.backgroundColor = '#f5f2ea';
 				}
 			});
 			
 			this._button.addEventListener('mouseleave', () => {
 				if (this._button) {
-					this._button.style.backgroundColor = 'white';
+					this._button.style.backgroundColor = '#ffffff';
 				}
 			});
 			
@@ -233,7 +233,7 @@
 						data: italyBoundary
 					},
 					paint: {
-						'line-color': '#3b82f6',
+						'line-color': '#1d4ed8',
 						'line-width': 2,
 						'line-opacity': 0.8
 					}
@@ -248,7 +248,7 @@
 						data: italyBoundary
 					},
 					paint: {
-						'fill-color': '#3b82f6',
+						'fill-color': '#1d4ed8',
 						'fill-opacity': 0
 					},
 					layout: {
@@ -267,7 +267,7 @@
 						data: australiaBoundary
 					},
 					paint: {
-						'line-color': '#10b981',
+						'line-color': '#3d7bff',
 						'line-width': 2,
 						'line-opacity': 0.8
 					}
@@ -282,7 +282,7 @@
 						data: australiaBoundary
 					},
 					paint: {
-						'fill-color': '#10b981',
+						'fill-color': '#3d7bff',
 						'fill-opacity': 0
 					},
 					layout: {
@@ -299,10 +299,10 @@
 			for (let i = 0; i < geodeticPath.length - 1; i++) {
 				const progress = i / (geodeticPath.length - 1);
 				
-				// Interpolate color from blue to green
-				const r = Math.round(59 + (16 - 59) * progress); // 59 -> 16
-				const g = Math.round(130 + (185 - 130) * progress); // 130 -> 185
-				const b = Math.round(246 + (129 - 246) * progress); // 246 -> 129
+				// Interpolate between the two accent tones (same hue, different lightness)
+				const r = Math.round(29 + (61 - 29) * progress); // 29 -> 61
+				const g = Math.round(78 + (123 - 78) * progress); // 78 -> 123
+				const b = Math.round(216 + (255 - 216) * progress); // 216 -> 255
 				const color = `rgb(${r}, ${g}, ${b})`;
 				
 				map.addLayer({
@@ -424,7 +424,7 @@
 	});
 </script>
 
-<div class="w-full h-96 bg-slate-100 rounded-lg overflow-hidden shadow-lg">
+<div class="w-full h-full">
 	<div bind:this={mapContainer} class="w-full h-full"></div>
 </div>
 
