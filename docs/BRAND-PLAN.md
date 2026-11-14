@@ -49,28 +49,27 @@ The page is built and the system exists as CSS custom properties.
 
 **Output:** `barbuz.github.io` is the source of truth for the palette.
 
-## Phase 1 — lift the tokens out of the page *(page)*
+## Phase 1 — lift the tokens out of the page ✅ done *(page)*
 
-The page currently owns the palette. The apps cannot use it until it is its own
-thing. This is a near-mechanical extraction, and it is first because it is
-cheapest while the values are fresh and the contrast tables still hold.
+The palette used to live in `src/app.css`. It is now its own thing, so the apps
+can use it.
 
-- Create `tokens.json` — the machine-readable source: every colour, the type
-  stack, spacing and radius scale, motion durations.
-- Generate `tokens.css` from it, so the two can never drift.
-- Add the colours the page did not need but the apps will: semantic success /
-  warning / danger, and an `accent-soft` wash for selected states. These are
-  listed as deliberately deferred in DESIGN-NOTES — this is where they get
-  designed, against both backgrounds.
-- Point the page at the generated CSS instead of defining the palette inline.
+- `brand/tokens.json` is the source of truth: colour per persona (including the
+  semantic success / warning / danger and the `accent-soft` wash), type, motion,
+  radius and space.
+- `brand/tokens.css` and `brand/tokens.js` are generated from it and committed,
+  so the site builds without running the generator.
+- `src/app.css` imports the generated CSS instead of defining the palette.
+- `npm run tokens` regenerates; `npm run tokens:check` fails CI if the JSON was
+  edited without regenerating.
+- The semantic colours and `accent-soft` were designed here, measured against
+  both backgrounds. See DESIGN-NOTES for the values and the contrast tables.
 
-**Deliberately not decided here:** how the *apps* consume the tokens (npm
-package vs vendored file). That is a Phase 4 question, and it should not hold up
-the extraction. See open decision 1.
+**Output:** the tokens are shareable. `docs/DESIGN-NOTES.md` records the
+reasoning; `brand/README.md` records how to consume them.
 
-**Why first:** the tokens are name-agnostic. If the mark or the name changes
-later, the colour system survives untouched. It is the safe work, and it is
-cheap this hour.
+**Still open (deliberately):** how the *apps* consume the tokens — npm package
+vs vendored file. That is a Phase 4 question. See open decision 1.
 
 ## Phase 2 — the mark *(page)*
 
@@ -160,6 +159,6 @@ palette swap.
 
 Tokens, then the mark, then the copy pass — all on the page. Only then the apps.
 
-The mark is the one piece here that is creative rather than mechanical. If it
-stalls, do not let it block Phase 1: the token extraction is independent and can
-proceed the same day.
+Phase 1 is done, so the next step is **Phase 2, the mark**. That is the one piece
+here that is creative rather than mechanical, and the one that most wants the
+owner's eye.
