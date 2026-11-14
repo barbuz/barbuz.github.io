@@ -2,95 +2,11 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* ============================================================
-   barbuz design tokens
-   Two personas, one accent hue. Every value here is a measured
-   choice: night is cool, day is warm, blue is the one colour
-   that crosses both. Keep it that way when adding to this file.
-   Rationale + contrast tables: docs/DESIGN-NOTES.md
-   Growth plan: docs/BRAND-PLAN.md
-   ============================================================ */
-
-:root {
-  --dur: 0.9s;
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  height: 100%;
-}
-
-body {
-  background: var(--page-bg, #0a0e17);
-  overflow: hidden;
-  font-family: var(--font-body, system-ui, sans-serif);
-}
-
-a {
-  color: inherit;
-}
-
-/* ---------- persona palettes (per face) ---------- */
-.face--barbuz {
-  --page-bg: #0a0e17;
-  --bg: #0a0e17;
-  --surface: #111726;
-  --surface-2: #161d2e;
-  --text: #e7eaf2;
-  --muted: #8a94aa;
-  --line: #232c40;
-  --accent: #3d7bff;
-  --accent-ink: #06090f;
-  --shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
-  --font-body: 'Bricolage Grotesque', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  color-scheme: dark;
-}
-
-.face--leo {
-  --page-bg: #faf8f3;
-  --bg: #faf8f3;
-  --surface: #ffffff;
-  --surface-2: #f5f2ea;
-  --text: #1b1a17;
-  --muted: #6e6a5f;
-  --line: #e6dfd1;
-  --accent: #1d4ed8;
-  --accent-ink: #ffffff;
-  --shadow: 0 18px 44px rgba(70, 58, 34, 0.12);
-  --font-display: 'Instrument Serif', Georgia, serif;
-  --font-body: 'Instrument Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  color-scheme: light;
-}
-
-/* ---------- chrome vars (fixed UI, follows active persona) ---------- */
-html[data-persona='barbuz'] {
-  --c-text: #e7eaf2;
-  --c-line: #232c40;
-  --c-accent: #3d7bff;
-  --c-accent-ink: #06090f;
-  --c-surface: rgba(17, 23, 38, 0.72);
-  --page-bg: #0a0e17;
-}
-
-html[data-persona='leo'] {
-  --c-text: #1b1a17;
-  --c-line: #e6dfd1;
-  --c-accent: #1d4ed8;
-  --c-accent-ink: #ffffff;
-  --c-surface: rgba(255, 255, 255, 0.72);
-  --page-bg: #faf8f3;
-}
+/* ---------- brand tokens ----------
+   Palette, type, scale and motion come from brand/tokens.json, generated into
+   brand/tokens.css. Do not define palette values here. After editing the JSON,
+   run `npm run tokens`. Rationale: docs/DESIGN-NOTES.md */
+@import "../brand/tokens.css";
 
 /* ---------- the flip ---------- */
 .stage {
