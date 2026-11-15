@@ -32,6 +32,10 @@ jobs:
     - name: Check generated tokens are current
       run: npm run tokens:check
 
+    # Fail if the mark geometry changed without regenerating the icon set.
+    - name: Check generated icons are current
+      run: npm run icons:check
+
     - name: Build
       run: npm run build
       env:

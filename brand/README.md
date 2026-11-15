@@ -14,12 +14,16 @@ scale and motion — the page and the apps all read from here.
 | `tokens.css` | no | Generated. CSS custom properties, for the page and static apps. |
 | `tokens.js` | no | Generated. The same values as ESM, for apps that build with a bundler. |
 | `generate.mjs` | yes | The generator. Reads the JSON, writes the two files above. |
+| `mark.mjs` | yes | The mark's geometry — the `b`, its strokes, and the SVG builders. Shared by the page and the icon generator. |
+| `generate-icons.mjs` | yes | The icon generator. Reads `mark.mjs`, writes the icon set into `static/`. |
 
 ## Usage
 
 ```bash
 npm run tokens         # regenerate tokens.css + tokens.js
 npm run tokens:check   # fail if the JSON was edited but not regenerated (runs in CI)
+npm run icons          # regenerate the icon set in static/
+npm run icons:check    # fail if mark.mjs changed but the icons did not (runs in CI)
 ```
 
 The generated files are committed, so the site builds without running the

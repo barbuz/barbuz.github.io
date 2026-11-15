@@ -159,3 +159,114 @@ brand colour; changing a **lightness** fixes contrast. Keep the two accent tones
 ~30–40° of lightness apart, and re-run the contrast check against both
 backgrounds before adopting a new value.
 
+
+## The mark
+
+The mark is the letter `b`, and the whole identity is built from it. This is not
+a monogram drawn beside a wordmark — it is the same shape, cut once.
+
+### One primitive, five letters
+
+Every letter of `barbuz` is a subset of the `b`'s four strokes:
+
+| Stroke | What it is |
+|---|---|
+| **S** | the stem |
+| **V** | the vertical |
+| **H** | the horizontal |
+| **D** | the diagonal |
+
+| Letter | Strokes | Reading |
+|---|---|---|
+| `b` | S + V + H + D | the whole — **this is the mark** |
+| `a` | V + H + D | the b without its ascender |
+| `r` | V + H | a corner |
+| `u` | V + D | an open bowl |
+| `z` | H + D | a bar and a diagonal |
+
+`S` and `V` are the same line at two lengths: `V` is the part of the stem below
+the x-height, `S` is the full stem. They are named separately because the
+difference between them *is* the difference between `b` and `a` — `a` drops the
+ascender. So the `b` draws as three segments (`S + D + H`), because `S` already
+covers `V`.
+
+**Containment is the rule.** Every letter is a piece of the `b`, and the `b` is
+the mark. So the mark is not a separate asset to be kept in sync — it *is* the
+first letter of the word, and the word is made of marks.
+
+### The consequences, stated plainly
+
+- **`z` never stands alone.** `z = {H, D}` is contained in the `b`, but on its
+  own it reads as a `7`. Adding a third stroke (`H + D + H`) makes it legible
+  alone but breaks containment. Containment won. The `z` is always set in the
+  word, where the eye reads it against `barbu` and resolves it instantly.
+- **The `u` needs negative curvature.** With straight strokes the `u` reads as
+  a `v`. Bulging the diagonal outward — away from the bowl's interior — gives it
+  the openness a `u` needs. This was the move that made the system work.
+- **The right angle sits at the top of the bowl.** The bowl's corner is the
+  right angle; the angle at the bottom of the diagonal is 45° or less.
+
+### Curvature
+
+Straight lines read as a geometric puzzle, not a typeface. One parameter, `k`,
+bulges a segment outward:
+
+```
+k = 0        straight
+k = 0.16     the value in use — the mark and the letters share it
+```
+
+**`k > 0` means outward**, away from the shape's interior. The sign convention
+is worth stating because it is easy to get backwards: the normal to a diagonal
+points one way or the other depending on which end you start from, so the
+generator resolves direction against a reference point rather than trusting the
+raw normal.
+
+The mark and the letters use the *same* `k`, and the mark's diagonal (63.7
+units) is within 2% of the letters' (62.5). That is what makes them one system:
+the same value produces the same absolute bulge, not just a similar one.
+
+### Stroked, round caps
+
+The mark is **stroked, never filled**, with **round caps and joins**, in both
+the wordmark and the icons. Filled and stroked were both tried; stroked keeps
+the counter open, which is what makes the `b` read as a `b` rather than a solid
+silhouette. Round caps match the letters.
+
+### The mark is heavier than the text
+
+| | Stroke | Why |
+|---|---|---|
+| the mark | 14 | must hold at 16px in a tab |
+| the letters | 9 | reads at body and display sizes |
+
+A 16px favicon has no room for a hairline. The mark is cut heavier so it
+survives the smallest size it will ever be asked to work at.
+
+### Assets
+
+Everything is generated from one geometry module, `brand/mark.mjs`, which holds
+the strokes and exports the SVG builders. Nothing is hand-drawn twice.
+
+```bash
+npm run icons          # regenerate static/favicon.svg + the icon set
+npm run icons:check    # fail if the geometry changed but the assets did not
+```
+
+`generate-icons.mjs` rasterizes the mark in plain JavaScript — signed distance
+to each stroke, supersampled. The mark is deliberately pure geometry, so this is
+exact, and it avoids a native SVG dependency in the toolchain. CI runs
+`icons:check` alongside `tokens:check`.
+
+| File | What it is |
+|---|---|
+| `static/favicon.svg` | the mark, vector, transparent |
+| `static/favicon.ico` | 16 / 32 / 48, the mark alone |
+| `static/apple-touch-icon.png` | 180, opaque |
+| `static/icon-192.png`, `icon-512.png` | manifest, tile form |
+| `static/icon-maskable-512.png` | manifest, padded for Android masks |
+| `static/og.png` | 1200×630 social card, mark + wordmark |
+
+**The tile is for app icons, not for tabs.** The mark is tall and narrow (60×102),
+so a square tile shrinks it to a few pixels at 16px. The favicon is therefore
+the bare mark; the rounded tile is used at 180px and up, where it has room.

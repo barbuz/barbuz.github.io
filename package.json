@@ -9,7 +9,9 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"tokens": "node brand/generate.mjs",
+		"icons": "node brand/generate-icons.mjs",
 		"tokens:check": "node brand/generate.mjs --check",
+		"icons:check": "node brand/generate-icons.mjs --check",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},

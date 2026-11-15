@@ -101,14 +101,39 @@ If a fully self-hosted basemap is ever wanted, `pmtiles extract` cuts a small
 global or regional archive — a world z0–5 extract is ~15 MB, which removes the
 external dependency entirely. Not done yet because it adds a build step.
 
+## Phase 2 scratch — the mark
+
+The **settled** geometry is in the repo: `brand/mark.mjs`, with the assets in
+`static/`. That is what to edit and what to reuse; see `brand/README.md` and
+`docs/DESIGN-NOTES.md#the-mark`.
+
+The **exploration** that got there lives outside the repo, in
+`/workspace/scratch/mark/` — specimen pages only, no artifact, nothing there
+belongs in a commit. Regenerate and serve them with:
+
+```bash
+cd /workspace/scratch/mark && python3 gen.py   # writes ./out/
+cd out && python3 -m http.server 12000
+```
+
+**Do not put it in `/tmp`.** `/tmp` is wiped mid-session here, which kills both
+the files and any server running from them. `/workspace/` persists.
+
+The direction it settled on: **the mark is the `b`** — stroked with round caps
+everywhere, in the wordmark and the icons alike — and `barbuz` is set in a
+derived typeface where every letter is a subset of the `b`'s four strokes
+`{S, V, H, D}` — `a = VHD`, `r = VH`, `u = VD`, `z = HD`. Containment is the
+rule, so `z` is never asked to stand alone; that is why it may read as a `7` in
+isolation. `k > 0` means curvature bulging **outward**.
+
 ## Order of work
 
 Page-only phases first, then the apps. `docs/BRAND-PLAN.md` is the authority;
 this is the short version:
 
 1. **Tokens** — extract to `brand/tokens.json` / `brand/tokens.css` (Phase 1). ✅ done
-2. **The mark** — settle the logo and favicon (Phase 2).
-3. **Voice and copy** — fix what the page says (Phase 3).
+2. **The mark** — settle the logo and favicon (Phase 2). ✅ done
+3. **Voice and copy** — fix what the page says (Phase 3). ← next
 4. **Then** apply to `match-the-gatherer`, `byom`, `digitofono`, `the stylus`.
 
 The governing rule is **content before layout**: settle the words first, then
