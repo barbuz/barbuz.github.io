@@ -30,11 +30,10 @@ import {
   MARK,
   TILE_INSET,
   markStrokes,
-  wordStrokes,
   markSvg,
   markFit,
-  segPoints,
-  bounds
+  lockup,
+  segPoints
 } from './mark.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -281,45 +280,34 @@ function markAlone(size, { ink = ACCENT, inset = FAVICON_INSET } = {}) {
   ]);
 }
 
-/** The social card: night ground, mark at the left, wordmark beside it. */
+/**
+ * The social card: night ground, the lockup centred.
+ *
+ * The lockup is the mark followed by "arbuz" — the mark is the b, so setting
+ * the full name would draw it twice. See `lockup()` in mark.mjs.
+ */
 function ogCard(w = 1200, h = 630) {
-  const word = wordStrokes('barbuz');
-  const wordBox = bounds(word.strokes, word.stroke);
-  const markBox = bounds(markStrokes(), MARK.stroke);
+  const lk = lockup('barbuz');
 
-  // The mark is the b, so it is scaled to the same height as the wordmark's
-  // ascender. Both then share a baseline, and the pair reads as one lockup.
+  // One scale for the pair, so the mark and the letters keep their relative
+  // sizes; it is the block, not the mark, that is sized to the card.
   const targetH = 216;
-  const wordScale = targetH / wordBox.h;
-  const markScale = targetH / markBox.h;
-  const wordW = wordBox.w * wordScale;
-  const markW = markBox.w * markScale;
+  const scale = targetH / lk.box.h;
+  const tx = (w - lk.box.w * scale) / 2 - lk.box.x * scale;
+  const ty = (h - lk.box.h * scale) / 2 - lk.box.y * scale;
 
-  const gap = 96;
-  const total = markW + gap + wordW;
-  const left = (w - total) / 2;
-
-  const markTx = left - markBox.x * markScale;
-  const markTy = (h - targetH) / 2 - markBox.y * markScale;
-  const wordTx = left + markW + gap - wordBox.x * wordScale;
-  const wordTy = (h - targetH) / 2 - wordBox.y * wordScale;
+  const layer = (part, ink) => ({
+    type: 'strokes',
+    polylines: part.strokes.map((s) => segPoints(s, 48)),
+    halfWidth: part.stroke / 2,
+    color: hex(ink),
+    transform: [tx, ty, scale]
+  });
 
   return rasterize(w, h, [
     { type: 'roundRect', size: w, radius: 0, color: hex(NIGHT) },
-    {
-      type: 'strokes',
-      polylines: markStrokes().map((s) => segPoints(s, 48)),
-      halfWidth: MARK.stroke / 2,
-      color: hex(ACCENT),
-      transform: [markTx, markTy, markScale]
-    },
-    {
-      type: 'strokes',
-      polylines: word.strokes.map((s) => segPoints(s, 48)),
-      halfWidth: word.stroke / 2,
-      color: hex(INK),
-      transform: [wordTx, wordTy, wordScale]
-    }
+    layer(lk.mark, ACCENT),
+    layer(lk.word, INK)
   ]);
 }
 

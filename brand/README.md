@@ -42,6 +42,15 @@ re-read `docs/DESIGN-NOTES.md` → "Why the rasterizer is hand-rolled".** The
 hand-rolled approach stops being exact at that point and a real renderer
 becomes the right call.
 
+## The lockup
+
+The mark is the `b`, so where the mark and the name appear together the mark
+**stands in for the first letter** and the word is `arbuz` — never `barbuz`,
+which draws the `b` twice. `lockup()` in `mark.mjs` places both parts, matches
+their bowls and shares a baseline, and returns them in the text's coordinate
+space so a caller scales and centres the pair as one block. Details and the two
+alignment rules: `docs/DESIGN-NOTES.md` → "The lockup".
+
 ## Consuming
 
 **CSS.** The page imports it directly, after the Tailwind directives:

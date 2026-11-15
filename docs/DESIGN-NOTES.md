@@ -243,6 +243,41 @@ silhouette. Round caps match the letters.
 A 16px favicon has no room for a hairline. The mark is cut heavier so it
 survives the smallest size it will ever be asked to work at.
 
+### The lockup: the mark is the first `b`
+
+Where the mark and the name sit together — the social card today — the mark
+**stands in for the first `b`**, and the word beside it is `arbuz`:
+
+```
+   [mark]  arbuz        ✅  the mark IS the b
+   [mark]  barbuz       ❌  b drawn twice
+```
+
+Setting the full name next to the mark doubles the letter: the reader sees
+`bbarbuz`. This is not a spacing tweak, it follows from the containment rule —
+the mark is not a badge that happens to sit near the word, it is the word's
+first letter. Any new lockup has to obey it.
+
+Two alignment rules come with it, and both are easy to get subtly wrong:
+
+- **Match the bowls, not the ink boxes.** The mark is scaled so its bowl
+  (baseline to x-height) equals the text's. The two then share a baseline. The
+  earlier version scaled the mark to the text's *ink height* and aligned *ink
+  tops* — which left the baselines **5.2px apart** on the card, because the
+  heavier stroke overshoots its cap more than the light one. Two boxes the same
+  height are not the same letter in the same place.
+- **Keep the letter gap even.** The word starts one letter-gap to the right of
+  the mark's ink, measured ink to ink (`gap - stroke`, i.e. 9 units), not from
+  the mark's nominal width. The mark is wider than a text `b` (60 vs 49 ink
+  units), so advancing by the letter's nominal width would open a hole after it.
+
+The mark stays a little taller and heavier than the letters in the lockup —
+bowls match, ascenders and weight do not, by design. That is the mark being the
+mark, not a fourth-rate text glyph.
+
+`lockup()` in `mark.mjs` returns the mark and the word already placed in the
+text's coordinate space, so a caller scales and centres the pair as one block.
+
 ### Assets
 
 Everything is generated from one geometry module, `brand/mark.mjs`, which holds
@@ -306,7 +341,7 @@ raising if the mark were ever rendered very large.
 | `static/apple-touch-icon.png` | 180, opaque |
 | `static/icon-192.png`, `icon-512.png` | manifest, tile form |
 | `static/icon-maskable-512.png` | manifest, padded for Android masks |
-| `static/og.png` | 1200×630 social card, mark + wordmark |
+| `static/og.png` | 1200×630 social card, the lockup (mark + `arbuz`) |
 
 **The tile is for app icons, not for tabs.** The mark is tall and narrow (60×102),
 so a square tile shrinks it to a few pixels at 16px. The favicon is therefore

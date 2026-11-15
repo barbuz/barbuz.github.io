@@ -167,6 +167,70 @@ export function wordStrokes(text = 'barbuz') {
   return { strokes, stroke: TEXT.stroke, width: (text.length - 1) * adv + TEXT.width, height: TEXT.base };
 }
 
+/**
+ * The lockup: the mark, then the rest of the name.
+ *
+ * The mark IS the b, so the word beside it is "arbuz". Setting the full name
+ * would draw the b twice — the mark once as a mark, then again as a letter.
+ *
+ * The mark is scaled so its bowl — baseline to x-height — matches the text's,
+ * and the two share a baseline, so the b's bowl sits level with a, r, u and z.
+ * Its ascender ends up a little taller and its stroke a little heavier than the
+ * text's, because the mark is a heavier cut; that is the point, not a defect.
+ *
+ * Everything comes back in the text's coordinate space (baseline `TEXT.base`,
+ * x-height `TEXT.xHeight`), so a caller scales and centres the pair as one.
+ */
+export function lockup(name = 'barbuz') {
+  if (name[0] !== 'b') throw new Error(`the lockup needs a name starting with b, got "${name}"`);
+
+  const s = (TEXT.base - TEXT.xHeight) / (MARK.base - MARK.xHeight);
+  const dy = TEXT.base - MARK.base * s;
+  const place = (st, dx) => ({
+    a: [st.a[0] * s + dx, st.a[1] * s + dy],
+    b: [st.b[0] * s + dx, st.b[1] * s + dy],
+    k: st.k,
+    ref: [st.ref[0] * s + dx, st.ref[1] * s + dy]
+  });
+  const shift = (st, dx) => ({
+    ...st,
+    a: [st.a[0] + dx, st.a[1]],
+    b: [st.b[0] + dx, st.b[1]],
+    ref: [st.ref[0] + dx, st.ref[1]]
+  });
+
+  const mark = { strokes: markStrokes().map((st) => place(st, 0)), stroke: MARK.stroke * s };
+  const markBox = bounds(mark.strokes, mark.stroke);
+
+  // A name of just "b" is the mark on its own — no word to set beside it.
+  let word = null;
+  if (name.length > 1) {
+    const w = wordStrokes(name.slice(1));
+    const wb = bounds(w.strokes, w.stroke);
+    // One letter gap, measured ink to ink: the advance minus the ink a letter
+    // occupies. The mark is wider than a text b, so the word starts further
+    // right than it would after a plain letter — that is what keeps the
+    // spacing even rather than opening a hole after the mark.
+    const dx = markBox.x + markBox.w + (TEXT.gap - TEXT.stroke) - wb.x;
+    word = { strokes: w.strokes.map((st) => shift(st, dx)), stroke: w.stroke };
+  }
+
+  const parts = word ? [mark, word] : [mark];
+  const boxes = parts.map((p) => bounds(p.strokes, p.stroke));
+  const x = Math.min(...boxes.map((b) => b.x));
+  const y = Math.min(...boxes.map((b) => b.y));
+  return {
+    mark,
+    word,
+    box: {
+      x,
+      y,
+      w: Math.max(...boxes.map((b) => b.x + b.w)) - x,
+      h: Math.max(...boxes.map((b) => b.y + b.h)) - y
+    }
+  };
+}
+
 /** The bounding box of a set of strokes, including the stroke width. */
 export function bounds(strokes, stroke) {
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
@@ -264,6 +328,7 @@ export default {
   markSvg,
   tileSvg,
   markFit,
+  lockup,
   bounds,
   segPoints
 };

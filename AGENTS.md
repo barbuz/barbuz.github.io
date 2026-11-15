@@ -134,6 +134,11 @@ trigger are in `docs/DESIGN-NOTES.md#why-the-rasterizer-is-hand-rolled--and-when
 Placement is shared too: `markFit()` in `mark.mjs` is the only place the
 square-tile fit lives, so the SVG and the raster cannot drift.
 
+**In any lockup, the mark is the first `b`** — so the word beside it is `arbuz`,
+never `barbuz`. Use `lockup()` in `mark.mjs`; it places both parts and matches
+the bowls and baseline. Setting the full name draws the `b` twice. See
+`docs/DESIGN-NOTES.md#the-lockup-the-mark-is-the-first-b`.
+
 ## Order of work
 
 Page-only phases first, then the apps. `docs/BRAND-PLAN.md` is the authority;
