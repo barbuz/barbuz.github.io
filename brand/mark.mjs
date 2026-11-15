@@ -20,6 +20,11 @@
  *
  * Pure data and pure functions — no DOM, no dependencies — so the page and the
  * icon generator share exactly one definition. See docs/DESIGN-NOTES.md.
+ *
+ * Richer geometry? The icon generator rasterizes these strokes by hand, which
+ * is exact only while the mark stays lines and quadratics. Filled shapes,
+ * gradients or path booleans would break that — see "Why the rasterizer is
+ * hand-rolled" in docs/DESIGN-NOTES.md before adding any.
  */
 
 /** Palette, mirrored from brand/tokens.json. */
@@ -177,6 +182,24 @@ export function bounds(strokes, stroke) {
   return { x: x0 - h, y: y0 - h, w: x1 - x0 + stroke, h: y1 - y0 + stroke };
 }
 
+/**
+ * The mark's default inset inside a square icon tile. One value, shared by
+ * every path that places the mark in a square, so the SVG and the raster
+ * cannot drift apart.
+ */
+export const TILE_INSET = 0.66;
+
+/**
+ * Fit the mark into a `size`×`size` square, returning the transform that
+ * places it. The mark is height-bound, so the scale comes from its height and
+ * the result is centred. This is the only place that formula lives.
+ */
+export function markFit(size, inset = TILE_INSET, stroke = MARK.stroke) {
+  const b = bounds(markStrokes(), stroke);
+  const s = (size * inset) / Math.max(b.w, b.h);
+  return { s, tx: (size - b.w * s) / 2 - b.x * s, ty: (size - b.h * s) / 2 - b.y * s };
+}
+
 /* --------------------------------------------------------------------- svg */
 
 /** A stroked path for a run of strokes, starting with an explicit M. */
@@ -210,22 +233,18 @@ export function markSvg({ ink = color.barbuz.accent, size = null, stroke = MARK.
   return svgEl(vb, size, body);
 }
 
-/** The mark inside the rounded tile — the app-icon shape. */
+/** The mark inside the rounded tile — the app-icon shape, as vector. */
 export function tileSvg({
   ink = color.barbuz.accent,
   bg = color.barbuz.bg,
   size = 512,
   radius = 0.22,
-  inset = 0.56,
+  inset = TILE_INSET,
   stroke = MARK.stroke
 } = {}) {
-  const strokes = markStrokes();
-  const b = bounds(strokes, stroke);
-  const s = (size * inset) / Math.max(b.w, b.h);
-  const tx = (size - b.w * s) / 2 - b.x * s;
-  const ty = (size - b.h * s) / 2 - b.y * s;
+  const { s, tx, ty } = markFit(size, inset, stroke);
   const rx = size * radius;
-  const glyph = `<path d="${strokedPath(strokes)}" ${strokeAttrs(stroke)} stroke="${ink}"/>`;
+  const glyph = `<path d="${strokedPath(markStrokes())}" ${strokeAttrs(stroke)} stroke="${ink}"/>`;
   return svgEl(
     `0 0 ${size} ${size}`,
     size,
@@ -234,20 +253,17 @@ export function tileSvg({
   );
 }
 
-/** The wordmark: "barbuz" in the derived typeface. */
-export function wordSvg({ text = 'barbuz', color: ink = color.barbuz.text, size = null, stroke = TEXT.stroke } = {}) {
-  const adv = TEXT.width + TEXT.gap;
-  const total = (text.length - 1) * adv + TEXT.width;
-  let body = '';
-  for (let i = 0; i < text.length; i++) {
-    const strokes = letterStrokes(text[i]);
-    body += `<g transform="translate(${num(i * adv)},0)"><path d="${strokedPath(
-      strokes
-    )}" ${strokeAttrs(stroke)} stroke="${ink}"/></g>`;
-  }
-  const h = stroke / 2;
-  const vb = `${num(-h)} ${num(-h)} ${num(total + stroke)} ${num(TEXT.base + stroke)}`;
-  return svgEl(vb, size, body);
-}
-
-export default { color, K, MARK, TEXT, markStrokes, letterStrokes, markSvg, tileSvg, wordSvg, bounds, segPoints };
+export default {
+  color,
+  K,
+  MARK,
+  TEXT,
+  TILE_INSET,
+  markStrokes,
+  letterStrokes,
+  markSvg,
+  tileSvg,
+  markFit,
+  bounds,
+  segPoints
+};

@@ -258,6 +258,47 @@ to each stroke, supersampled. The mark is deliberately pure geometry, so this is
 exact, and it avoids a native SVG dependency in the toolchain. CI runs
 `icons:check` alongside `tokens:check`.
 
+#### Why the rasterizer is hand-rolled — and when to stop
+
+This is a deliberate "fine now, revisit if the geometry gets richer" decision,
+not a permanent verdict. The reasoning is recorded here so it is not re-litigated
+from scratch, and so the trigger to revisit is written down rather than felt.
+
+**Why it is fine now.** The mark is three line segments and one quadratic.
+Nothing else — no fills, no gradients, no boolean operations, no winding rules.
+Signed distance to a segment is exact for that, so the hand-rolled rasterizer is
+not an approximation of a general renderer; for this input it *is* the
+computation. It is about 100 lines, and it keeps a native toolchain out of the
+repo.
+
+**The measurements, so nobody has to redo them.** The realistic alternative is
+`@resvg/resvg-js`, rendering the SVG that `tileSvg()` already produces. Tested
+on the same 512px tile:
+
+| | output | notes |
+|---|---|---|
+| hand-rolled | **5,782 bytes** | `filter=none` + `deflate 9` |
+| resvg | 9,153 bytes | 1.58× larger |
+| pngjs (encoder only) | 10,171 bytes | 1.76× larger |
+
+Pixel-wise the two renderers agree: max channel difference 64/255, confined to
+antialiased edges (610 edge pixels, 252 interior). That is two renderers
+converging, not one being wrong. `resvg` also declares 12 platform packages
+(~8 MB installed), which is the native dependency the generator exists to avoid.
+
+**The trigger to revisit.** Switch to a real renderer the moment the mark gains
+any of: filled shapes, gradients, more than one subpath with a fill rule, or
+path boolean operations. At that point the signed-distance approach stops being
+exact and starts being a geometry engine — which is a bad thing to maintain and
+exactly what `resvg` is for. Richer geometry also changes the calculus: if the
+mark is no longer three segments, "keep it dependency-free" is no longer worth
+the complexity.
+
+**One approximation, stated plainly.** The quadratic is flattened to a
+48-segment polyline (`segPoints(s, 48)`) rather than solved analytically. This
+is invisible at every size shipped, but it is an approximation and would need
+raising if the mark were ever rendered very large.
+
 | File | What it is |
 |---|---|
 | `static/favicon.svg` | the mark, vector, transparent |

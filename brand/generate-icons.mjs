@@ -28,9 +28,11 @@ import { deflateSync } from 'node:zlib';
 import {
   color as palette,
   MARK,
+  TILE_INSET,
   markStrokes,
   wordStrokes,
   markSvg,
+  markFit,
   segPoints,
   bounds
 } from './mark.mjs';
@@ -236,40 +238,46 @@ const hex = (s) => [
   parseInt(s.slice(5, 7), 16)
 ];
 
-/** Polylines for a set of strokes, plus the transform to fit a box. */
-function strokeLayer(strokes, strokeWidth, size, ink, inset) {
-  const polylines = strokes.map((s) => segPoints(s, 48));
-  const b = bounds(strokes, strokeWidth);
-  const s = (size * inset) / Math.max(b.w, b.h);
-  const tx = (size - b.w * s) / 2 - b.x * s;
-  const ty = (size - b.h * s) / 2 - b.y * s;
-  return { type: 'strokes', polylines, halfWidth: strokeWidth / 2, color: hex(ink), transform: [tx, ty, s] };
-}
-
 /* ================================================================= outputs */
 
 const NIGHT = palette.barbuz.bg;
 const ACCENT = palette.barbuz.accent;
 const INK = palette.barbuz.text;
 
-function iconTile(size, { ink = ACCENT, bg = NIGHT, radius = 0.22, inset = 0.66 } = {}) {
-  const r = size * radius;
+// The bare mark is inset less than a tile: no tile padding, and the tab needs
+// every pixel of stroke it can get.
+const FAVICON_INSET = 0.94;
+
+// A tile that carries its own padding (apple-touch, maskable) insets the mark
+// further. The maskable safe zone is the inner 80% of the square, which caps
+// the mark at 0.69; 0.62 sits inside that with room to spare.
+const PADDED_INSET = 0.62;
+
+function iconTile(size, { ink = ACCENT, bg = NIGHT, radius = 0.22, inset = TILE_INSET } = {}) {
+  const { s, tx, ty } = markFit(size, inset);
   return rasterize(size, size, [
-    { type: 'roundRect', size, radius: r, color: hex(bg) },
-    strokeLayer(markStrokes(), MARK.stroke, size, ink, inset)
+    { type: 'roundRect', size, radius: size * radius, color: hex(bg) },
+    {
+      type: 'strokes',
+      polylines: markStrokes().map((st) => segPoints(st, 48)),
+      halfWidth: MARK.stroke / 2,
+      color: hex(ink),
+      transform: [tx, ty, s]
+    }
   ]);
 }
 
 /** The mark alone on a square transparent canvas — the favicon and the tab. */
-function markAlone(size, { ink = ACCENT, inset = 0.92 } = {}) {
-  const strokes = markStrokes();
-  const b = bounds(strokes, MARK.stroke);
-  const s = (size * inset) / Math.max(b.w, b.h);
-  const tx = (size - b.w * s) / 2 - b.x * s;
-  const ty = (size - b.h * s) / 2 - b.y * s;
-  const polylines = strokes.map((st) => segPoints(st, 48));
+function markAlone(size, { ink = ACCENT, inset = FAVICON_INSET } = {}) {
+  const { s, tx, ty } = markFit(size, inset);
   return rasterize(size, size, [
-    { type: 'strokes', polylines, halfWidth: MARK.stroke / 2, color: hex(ink), transform: [tx, ty, s] }
+    {
+      type: 'strokes',
+      polylines: markStrokes().map((st) => segPoints(st, 48)),
+      halfWidth: MARK.stroke / 2,
+      color: hex(ink),
+      transform: [tx, ty, s]
+    }
   ]);
 }
 
@@ -330,14 +338,14 @@ outputs.push(['favicon.svg', Buffer.from(markSvg({ ink: ACCENT }), 'utf8')]);
 {
   const sizes = [16, 32, 48];
   const images = sizes.map((s) => {
-    const px = markAlone(s, { ink: ACCENT, inset: 0.94 });
+    const px = markAlone(s, { ink: ACCENT, inset: FAVICON_INSET });
     return { size: s, png: encodePng(s, s, px) };
   });
   outputs.push(['favicon.ico', encodeIco(images)]);
 }
 
 // apple-touch-icon.png — 180, opaque; iOS ignores transparency and rounds it.
-outputs.push(['apple-touch-icon.png', encodePng(180, 180, iconTile(180, { radius: 0, inset: 0.62 }))]);
+outputs.push(['apple-touch-icon.png', encodePng(180, 180, iconTile(180, { radius: 0, inset: PADDED_INSET }))]);
 
 // manifest icons
 outputs.push(['icon-192.png', encodePng(192, 192, iconTile(192))]);
@@ -345,7 +353,7 @@ outputs.push(['icon-512.png', encodePng(512, 512, iconTile(512))]);
 
 // maskable: the safe zone is the inner 80%, so the glyph is inset further and
 // the tile is a full bleed square (Android applies the mask).
-outputs.push(['icon-maskable-512.png', encodePng(512, 512, iconTile(512, { radius: 0, inset: 0.62 }))]);
+outputs.push(['icon-maskable-512.png', encodePng(512, 512, iconTile(512, { radius: 0, inset: PADDED_INSET }))]);
 
 // og.png — 1200x630 social card
 outputs.push(['og.png', encodePng(1200, 630, ogCard())]);

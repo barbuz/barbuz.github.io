@@ -15,7 +15,7 @@ scale and motion — the page and the apps all read from here.
 | `tokens.js` | no | Generated. The same values as ESM, for apps that build with a bundler. |
 | `generate.mjs` | yes | The generator. Reads the JSON, writes the two files above. |
 | `mark.mjs` | yes | The mark's geometry — the `b`, its strokes, and the SVG builders. Shared by the page and the icon generator. |
-| `generate-icons.mjs` | yes | The icon generator. Reads `mark.mjs`, writes the icon set into `static/`. |
+| `generate-icons.mjs` | yes | The icon generator. Reads `mark.mjs`, writes the icon set into `static/`. Hand-rolled rasterizer — see the note below. |
 
 ## Usage
 
@@ -28,6 +28,19 @@ npm run icons:check    # fail if mark.mjs changed but the icons did not (runs in
 
 The generated files are committed, so the site builds without running the
 generator. CI runs `tokens:check` to catch a JSON edit that was never applied.
+
+## The icon rasterizer
+
+`generate-icons.mjs` rasterizes the mark by hand — signed distance to each
+stroke, supersampled — rather than pulling in a renderer. That is exact while
+the mark stays **lines and quadratics**, which is all it is today: no fills, no
+gradients, no path booleans. It also measured smaller than the alternatives
+(5.8 KB vs 9.2 KB for resvg, 10.2 KB for pngjs) and avoids a native dependency.
+
+**If the mark ever gains fills, gradients or boolean path operations, stop and
+re-read `docs/DESIGN-NOTES.md` → "Why the rasterizer is hand-rolled".** The
+hand-rolled approach stops being exact at that point and a real renderer
+becomes the right call.
 
 ## Consuming
 

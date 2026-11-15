@@ -126,6 +126,14 @@ derived typeface where every letter is a subset of the `b`'s four strokes
 rule, so `z` is never asked to stand alone; that is why it may read as a `7` in
 isolation. `k > 0` means curvature bulging **outward**.
 
+**The icon rasterizer is hand-rolled, and that is load-bearing.** It is exact
+only while the mark stays lines and quadratics — which is all it is today. If
+the geometry ever gains fills, gradients or path booleans, it stops being exact
+and a real renderer (`resvg`) becomes the right call. The measurements and the
+trigger are in `docs/DESIGN-NOTES.md#why-the-rasterizer-is-hand-rolled--and-when-to-stop`.
+Placement is shared too: `markFit()` in `mark.mjs` is the only place the
+square-tile fit lives, so the SVG and the raster cannot drift.
+
 ## Order of work
 
 Page-only phases first, then the apps. `docs/BRAND-PLAN.md` is the authority;
