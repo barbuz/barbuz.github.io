@@ -36,6 +36,10 @@ jobs:
     - name: Check generated icons are current
       run: npm run icons:check
 
+    # Fail if an element kit entry breaks the bend rule or the 45° discipline.
+    - name: Check the element kit
+      run: npm run elements:check
+
     - name: Build
       run: npm run build
       env:

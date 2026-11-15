@@ -57,12 +57,27 @@ export const TEXT = {
 };
 TEXT.center = [TEXT.width / 3, (2 * TEXT.xHeight + TEXT.base) / 3];
 
+/**
+ * The node device: a knockout hole with a ring, as multiples of the stroke
+ * width. A node sits on a stroke endpoint, where the round cap already is.
+ *
+ * The hole is what makes it work. The mark is drawn in the accent, so an
+ * accent node on the mark would be invisible; carrying the contrast in the
+ * hole rather than in the node's own colour lets one device read on both the
+ * accent mark and the ink word.
+ */
+export const NODE = { hole: 0.42, ring: 0.42, width: 0.2 };
+
 const num = (v) => (Math.round(v * 1000) / 1000).toString();
 
 /* ---------------------------------------------------------------- geometry */
 
-/** A segment: two endpoints, a curvature and the point to bulge away from. */
-const seg = (a, b, k = 0, ref = [0, 0]) => ({ a, b, k, ref });
+/**
+ * A segment: two endpoints, a curvature and the point to bulge away from.
+ * Exported so the element library draws with the same machinery, and so a
+ * diagonal bulges by the same rule wherever it appears.
+ */
+export const seg = (a, b, k = 0, ref = [0, 0]) => ({ a, b, k, ref });
 
 /** The quadratic control point that bulges `s` away from `s.ref` by k*len. */
 function control(s) {
@@ -84,7 +99,7 @@ function control(s) {
 }
 
 /** SVG path fragment for one segment, continuing from the current point. */
-function segPath(s) {
+export function segPath(s) {
   const [bx, by] = s.b;
   if (Math.abs(s.k) < 1e-9) return `L${num(bx)},${num(by)}`;
   const [cx, cy] = control(s);
@@ -247,6 +262,50 @@ export function bounds(strokes, stroke) {
 }
 
 /**
+ * The distinct points a set of strokes runs between.
+ *
+ * Every stroke in the system ends on one of four points — the primitive's
+ * corners — so this returns at most four, and returns them in the primitive's
+ * own order: P1 the tip of the ascender, P2 the foot, P3 the shoulder, P4 the
+ * right angle. Containment is then node-set containment: the b touches all
+ * four, and every other letter touches P2, P3 and P4 only.
+ */
+export function nodePoints(strokes) {
+  const found = [];
+  for (const s of strokes) {
+    for (const p of [s.a, s.b]) {
+      if (!found.some((q) => Math.abs(q[0] - p[0]) < 1e-6 && Math.abs(q[1] - p[1]) < 1e-6)) {
+        found.push([p[0], p[1]]);
+      }
+    }
+  }
+  // Sort into the primitive's own order rather than discovery order, so the
+  // result does not depend on how the caller happened to draw the strokes.
+  return found.sort((a, b) => b[1] - a[1] || a[0] - b[0]);
+}
+
+/** Sample a circle to a polyline — for the rasterizer, which needs points. */
+export function circlePoints(cx, cy, r, n = 48) {
+  const out = [];
+  for (let i = 0; i <= n; i++) {
+    const t = (i / n) * Math.PI * 2;
+    out.push([cx + Math.cos(t) * r, cy + Math.sin(t) * r]);
+  }
+  return out;
+}
+
+/** The node device resolved to concrete radii, for a run of strokes. */
+export function nodeCircles(strokes, stroke, node = NODE) {
+  return nodePoints(strokes).map(([cx, cy]) => ({
+    cx,
+    cy,
+    hole: stroke * node.hole,
+    ring: stroke * node.ring,
+    width: stroke * node.width
+  }));
+}
+
+/**
  * The mark's default inset inside a square icon tile. One value, shared by
  * every path that places the mark in a square, so the SVG and the raster
  * cannot drift apart.
@@ -280,21 +339,70 @@ function strokedPath(strokes) {
   return d;
 }
 
-const svgEl = (vb, size, body) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"${
-    size ? ` width="${size}" height="${size}"` : ''
-  }>${body}</svg>`;
+// A size sets the width and scales the height by the viewBox's own aspect, so a
+// wide viewBox (the lockup) is not squashed into a square.
+const svgEl = (vb, size, body) => {
+  let dims = '';
+  if (size) {
+    const [, , w, h] = vb.split(' ').map(Number);
+    dims = ` width="${size}" height="${num((size * h) / w)}"`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"${dims}>${body}</svg>`;
+};
 
 const strokeAttrs = (stroke) =>
   `fill="none" stroke-width="${num(stroke)}" stroke-linecap="round" stroke-linejoin="round"`;
 
-/** The mark on its own, transparent background. */
-export function markSvg({ ink = color.barbuz.accent, size = null, stroke = MARK.stroke } = {}) {
+/**
+ * The node device as SVG: a mask that punches the holes out of the strokes,
+ * plus the rings that sit in them.
+ *
+ * A mask rather than a disc of ground colour, so the hole is a real hole and
+ * the mark reads on any background — including the transparent favicon, where
+ * a ground-coloured disc would show as a solid dot.
+ *
+ * `id` must be unique within the document, and `box` is the run's bounding box
+ * in its own coordinate space (the mask has to cover everything it keeps).
+ */
+export function nodeDevice(strokes, { stroke, ink, id, box, node = NODE } = {}) {
+  const circles = nodeCircles(strokes, stroke, node);
+  const rect = `x="${num(box.x)}" y="${num(box.y)}" width="${num(box.w)}" height="${num(box.h)}"`;
+  const holes = circles
+    .map((c) => `<circle cx="${num(c.cx)}" cy="${num(c.cy)}" r="${num(c.hole)}" fill="#000"/>`)
+    .join('');
+  const mask =
+    `<mask id="${id}" maskUnits="userSpaceOnUse" ${rect}>` +
+    `<rect ${rect} fill="#fff"/>${holes}</mask>`;
+  const rings = circles
+    .map(
+      (c) =>
+        `<circle cx="${num(c.cx)}" cy="${num(c.cy)}" r="${num(c.ring)}" fill="none" stroke="${ink}" stroke-width="${num(c.width)}"/>`
+    )
+    .join('');
+  return { mask, rings };
+}
+
+/**
+ * The mark on its own, transparent background.
+ *
+ * `nodes` is on by default — the node device is part of the mark, so it ships.
+ * The mask makes it a real hole, which is what lets the transparent favicon
+ * carry it.
+ */
+export function markSvg({
+  ink = color.barbuz.accent,
+  size = null,
+  stroke = MARK.stroke,
+  nodes = true,
+  id = 'bz-nodes'
+} = {}) {
   const strokes = markStrokes();
   const b = bounds(strokes, stroke);
   const vb = `${num(b.x)} ${num(b.y)} ${num(b.w)} ${num(b.h)}`;
-  const body = `<path d="${strokedPath(strokes)}" ${strokeAttrs(stroke)} stroke="${ink}"/>`;
-  return svgEl(vb, size, body);
+  const glyph = `<path d="${strokedPath(strokes)}" ${strokeAttrs(stroke)} stroke="${ink}"/>`;
+  if (!nodes) return svgEl(vb, size, glyph);
+  const { mask, rings } = nodeDevice(strokes, { stroke, ink, id, box: b });
+  return svgEl(vb, size, `${mask}<g mask="url(#${id})">${glyph}</g>${rings}`);
 }
 
 /** The mark inside the rounded tile — the app-icon shape, as vector. */
@@ -304,17 +412,70 @@ export function tileSvg({
   size = 512,
   radius = 0.22,
   inset = TILE_INSET,
-  stroke = MARK.stroke
+  stroke = MARK.stroke,
+  nodes = true,
+  id = 'bz-nodes'
 } = {}) {
   const { s, tx, ty } = markFit(size, inset, stroke);
   const rx = size * radius;
-  const glyph = `<path d="${strokedPath(markStrokes())}" ${strokeAttrs(stroke)} stroke="${ink}"/>`;
+  const strokes = markStrokes();
+  const glyph = `<path d="${strokedPath(strokes)}" ${strokeAttrs(stroke)} stroke="${ink}"/>`;
+  const rect = `<rect width="${size}" height="${size}" rx="${num(rx)}" fill="${bg}"/>`;
+  if (!nodes) {
+    return svgEl(
+      `0 0 ${size} ${size}`,
+      size,
+      rect + `<g transform="translate(${num(tx)},${num(ty)}) scale(${num(s)})">${glyph}</g>`
+    );
+  }
+  const box = bounds(strokes, stroke);
+  const { mask, rings } = nodeDevice(strokes, { stroke, ink, id, box });
   return svgEl(
     `0 0 ${size} ${size}`,
     size,
-    `<rect width="${size}" height="${size}" rx="${num(rx)}" fill="${bg}"/>` +
-      `<g transform="translate(${num(tx)},${num(ty)}) scale(${num(s)})">${glyph}</g>`
+    rect +
+      `<g transform="translate(${num(tx)},${num(ty)}) scale(${num(s)})">` +
+      `${mask}<g mask="url(#${id})">${glyph}</g>${rings}</g>`
   );
+}
+
+/**
+ * The lockup as one SVG: the mark, then the rest of the name, with the node
+ * device on both. The node radii are per-part, because the mark is a heavier
+ * cut than the letters — a node sized to the word would be too small on the
+ * mark, and vice versa.
+ */
+export function lockupSvg({
+  name = 'barbuz',
+  ink = color.barbuz.text,
+  accent = color.barbuz.accent,
+  nodes = true,
+  id = 'bz',
+  size = null
+} = {}) {
+  const lk = lockup(name);
+  const vb = `${num(lk.box.x)} ${num(lk.box.y)} ${num(lk.box.w)} ${num(lk.box.h)}`;
+  const markPath = `<path d="${strokedPath(lk.mark.strokes)}" ${strokeAttrs(lk.mark.stroke)} stroke="${accent}"/>`;
+  const wordPath = lk.word
+    ? `<path d="${strokedPath(lk.word.strokes)}" ${strokeAttrs(lk.word.stroke)} stroke="${ink}"/>`
+    : '';
+  if (!nodes) return svgEl(vb, size, markPath + wordPath);
+
+  // Two masks, because the mark and the letters are different weights and so
+  // have different node radii. Both use the lockup's own box, so a mask can
+  // never clip the run it belongs to.
+  const markId = `${id}-mark-nodes`;
+  const wordId = `${id}-word-nodes`;
+  const markDev = nodeDevice(lk.mark.strokes, { stroke: lk.mark.stroke, ink: accent, id: markId, box: lk.box });
+  const wordDev = lk.word
+    ? nodeDevice(lk.word.strokes, { stroke: lk.word.stroke, ink, id: wordId, box: lk.box })
+    : { mask: '', rings: '' };
+  const body =
+    markDev.mask + wordDev.mask +
+    `<g mask="url(#${markId})">${markPath}</g>` +
+    (lk.word ? `<g mask="url(#${wordId})">${wordPath}</g>` : '') +
+    markDev.rings + wordDev.rings;
+  return svgEl(vb, size, body);
 }
 
 export default {
@@ -322,11 +483,17 @@ export default {
   K,
   MARK,
   TEXT,
+  NODE,
   TILE_INSET,
   markStrokes,
   letterStrokes,
+  nodePoints,
+  nodeCircles,
+  circlePoints,
+  nodeDevice,
   markSvg,
   tileSvg,
+  lockupSvg,
   markFit,
   lockup,
   bounds,

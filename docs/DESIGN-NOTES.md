@@ -194,6 +194,70 @@ covers `V`.
 the mark. So the mark is not a separate asset to be kept in sync — it *is* the
 first letter of the word, and the word is made of marks.
 
+### The primitive is four points, and four edges
+
+The strokes above are really a graph. Every stroke in the system ends on one of
+four points, and no stroke ends anywhere else:
+
+| Point | Where | Which letters reach it |
+|---|---|---|
+| **P1** | the tip of the ascender | `b` only |
+| **P4** | the right angle, top of the bowl | `b` `a` `r` `u` `z` |
+| **P3** | the shoulder, top-right | `b` `a` `r` `u` `z` |
+| **P2** | the foot, bottom-left | `b` `a` `r` `u` `z` |
+
+The four edges are the whole vocabulary — `S` (P1–P2), `V` (P4–P2), `H` (P4–P3)
+and `D` (P2–P3). Read this way, **containment is node-set containment**, and it
+is exact rather than approximate: `b` reaches all four points, and every other
+letter reaches the same three. `b` is the whole because it is the only letter
+that touches `P1`.
+
+`nodePoints()` in `mark.mjs` returns these, and the test of the claim is that
+`nodePoints(letterStrokes('a'))`, `('r')`, `('u')` and `('z')` all return the
+identical three points.
+
+### Only the diagonal bends
+
+Of the four edges, three are axis-aligned — `S` and `V` are vertical, `H` is
+horizontal. Curvature has nowhere to act on them; they are straight because they
+cannot be anything else. `D` is the only edge that is neither vertical nor
+horizontal, so it is the only one that can bulge.
+
+That is why `k` is a property of one edge rather than a treatment applied to the
+shapes. Any new element added to the kit inherits the bend automatically if, and
+only if, it runs along `D`.
+
+### The node device
+
+A **node** marks a corner: a knockout hole punched through the stroke, with a
+ring in the stroke's own ink. `NODE` in `mark.mjs` holds the three radii as
+multiples of the stroke width, so the device scales with whatever it is drawn on.
+
+The hole is what makes it work. The mark is drawn in the accent, so an
+accent-coloured node *on the mark* would be invisible. Carrying the contrast in
+the hole rather than in the node's own colour lets one device read on both the
+accent mark and the ink word.
+
+**The hole is a real hole.** The knockout is a mask (`nodeDevice()`), not a disc
+of ground colour painted over the stroke. That distinction matters in one place:
+the favicon is transparent, and a ground-coloured disc there would show as a
+solid dot on a coloured tab. A mask cuts the stroke and leaves the background
+visible, so the same markup works on any ground. The rasterizer follows the same
+rule — an erasing disc, except on the opaque tiles and the social card, where
+painting the ground colour keeps the icon opaque (an apple-touch icon with a
+transparent dot is wrong).
+
+**It ships.** The device is part of the mark, so it is on by default:
+`markSvg()`, `tileSvg()` and `lockupSvg()` all draw it, and the icon set carries
+it. Pass `{ nodes: false }` to get the bare stroke.
+
+**One size has to opt out.** In the 16px favicon the stroke is only ~2px and the
+knockout is ~1.7px across: at that size the device cannot be read, and hollowing
+the stem tip actively costs legibility. The 16px entry is therefore drawn without
+it; 32px and 48px keep it, and there it reads clearly. This is a size threshold,
+not a taste call — the device is legible from 32px up.
+
+
 ### The consequences, stated plainly
 
 - **`z` never stands alone.** `z = {H, D}` is contained in the `b`, but on its
@@ -278,6 +342,48 @@ mark, not a fourth-rate text glyph.
 `lockup()` in `mark.mjs` returns the mark and the word already placed in the
 text's coordinate space, so a caller scales and centres the pair as one block.
 
+### The element kit
+
+The mark is one shape. The kit is the *grammar* it was built from, freed from
+the letters, so a project can build UI that reads as barbuz without redrawing
+the logo. `brand/elements.mjs`.
+
+These are **not** pieces of the `b`. An earlier attempt cut the kit strictly
+from the `b`'s own strokes, and it was useless — every element was a fragment of
+one letter, so nothing could be used for a chevron or a play button. The useful
+thing was never the letter; it was the three rules the letter obeys. So the kit
+applies the rules to other shapes instead:
+
+1. **Straight or bulged, never both on one edge.** An axis-aligned edge is
+   straight; a diagonal bulges by the shared `K`. This is the same rule as the
+   mark's (§ "Only the diagonal bends"), and it is applied in one place —
+   `edges()` — so no element has to think about it. An element is defined as a
+   list of points; the rule decides which edges bend.
+
+2. **45° discipline.** The mark's diagonal is at 45°. The kit keeps its
+   diagonals there too, so a chevron and the mark's bowl read as one family.
+   A diagonal at some other angle would look like a different brand.
+
+3. **Nodes on corners.** The corner device travels with the grammar. Any element
+   can carry it: `elementSvg('arrow', { nodes: true })`.
+
+The three rules are asserted by `npm run elements:check`, which runs in CI. That
+matters more than it sounds: rule 1 is the kind of thing that erodes silently.
+Add a chevron with a slightly-off diagonal and nothing looks broken; the family
+just weakens. The check fails the build instead.
+
+**Two documented exceptions.** `check` and `cross` are straight, via an
+`orthogonal: true` flag. Rule 1 exists because the bend marks a diagonal; on a
+tick, a bend reads as a wobble — the hand-drawn look it gives a letter is wrong
+for a symbol that is supposed to be mechanical. The exception is explicit and
+named, so it is a decision rather than a drift.
+
+**What is in the kit.** `corner`, `wedge`, `chevron`, `play`, `caret`, `slash`,
+`divider`, `branch`, `arrow`, `bracket`, `bullet`, `check`, `cross`, `dot`,
+`ring`, `progress`. Elements are drawn in a nominal 0..100 box and scaled by the
+caller, and everything is lines and quadratics — the same primitives as the
+mark, so the same hand-rolled rasterizer can draw them.
+
 ### Assets
 
 Everything is generated from one geometry module, `brand/mark.mjs`, which holds
@@ -336,12 +442,15 @@ raising if the mark were ever rendered very large.
 
 | File | What it is |
 |---|---|
-| `static/favicon.svg` | the mark, vector, transparent |
-| `static/favicon.ico` | 16 / 32 / 48, the mark alone |
+| `static/favicon.svg` | the mark, vector, transparent, with the node device |
+| `static/favicon.ico` | 16 / 32 / 48, the mark alone (16px without the device) |
 | `static/apple-touch-icon.png` | 180, opaque |
 | `static/icon-192.png`, `icon-512.png` | manifest, tile form |
 | `static/icon-maskable-512.png` | manifest, padded for Android masks |
 | `static/og.png` | 1200×630 social card, the lockup (mark + `arbuz`) |
+
+All of them carry the node device except the 16px favicon entry, for the size
+reason given above.
 
 **The tile is for app icons, not for tabs.** The mark is tall and narrow (60×102),
 so a square tile shrinks it to a few pixels at 16px. The favicon is therefore

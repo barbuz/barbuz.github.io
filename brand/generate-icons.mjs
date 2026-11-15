@@ -33,7 +33,9 @@ import {
   markSvg,
   markFit,
   lockup,
-  segPoints
+  segPoints,
+  nodeCircles,
+  circlePoints
 } from './mark.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -76,8 +78,13 @@ const SAMPLES = 4; // supersampling factor per axis
 
 /** Device-space bounding box of a strokes layer, including stroke width. */
 function layerBBox(layer) {
+  if (layer.type === 'disc') {
+    const h = layer.r + 1;
+    return [layer.cx - h, layer.cy - h, layer.cx + h, layer.cy + h];
+  }
   if (layer.type !== 'strokes') return null;
-  const [tx, ty, s] = layer.transform;
+  // Layers without a transform are already in device space (the node rings).
+  const [tx, ty, s] = layer.transform || [0, 0, 1];
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
   for (const pl of layer.polylines) {
     for (const [x, y] of pl) {
@@ -97,6 +104,11 @@ function layerBBox(layer) {
  * Rasterize a scene to RGBA. The scene is a list of layers, painted in order:
  *   { type: 'roundRect', size, radius, color }
  *   { type: 'strokes', polylines, halfWidth, color, transform }
+ *   { type: 'disc', cx, cy, r, color }        a filled circle
+ *   { type: 'disc', cx, cy, r, erase: true }  cuts a hole instead of painting
+ *
+ * `erase` is what lets the node device work on a transparent icon: the hole is
+ * a real hole, not a disc of ground colour.
  */
 function rasterize(width, height, layers) {
   const px = Buffer.alloc(width * height * 4);
@@ -121,6 +133,9 @@ function rasterize(width, height, layers) {
             if (layer.type === 'roundRect') {
               hit = inRoundRect(fx, fy, layer.size, layer.radius) ? 1 : 0;
               col = layer.color;
+            } else if (layer.type === 'disc') {
+              hit = Math.hypot(fx - layer.cx, fy - layer.cy) <= layer.r ? 1 : 0;
+              col = layer.color;
             } else {
               let lx = fx, ly = fy;
               if (layer.transform) {
@@ -132,8 +147,12 @@ function rasterize(width, height, layers) {
               col = layer.color;
             }
             if (hit) {
-              // source-over
-              cr = col[0]; cg = col[1]; cb = col[2]; ca = 1;
+              if (layer.erase) {
+                cr = 0; cg = 0; cb = 0; ca = 0;
+              } else {
+                // source-over
+                cr = col[0]; cg = col[1]; cb = col[2]; ca = 1;
+              }
             }
           }
           r += cr; g += cg; b += cb; a += ca;
@@ -252,9 +271,9 @@ const FAVICON_INSET = 0.94;
 // the mark at 0.69; 0.62 sits inside that with room to spare.
 const PADDED_INSET = 0.62;
 
-function iconTile(size, { ink = ACCENT, bg = NIGHT, radius = 0.22, inset = TILE_INSET } = {}) {
+function iconTile(size, { ink = ACCENT, bg = NIGHT, radius = 0.22, inset = TILE_INSET, nodes = true } = {}) {
   const { s, tx, ty } = markFit(size, inset);
-  return rasterize(size, size, [
+  const layers = [
     { type: 'roundRect', size, radius: size * radius, color: hex(bg) },
     {
       type: 'strokes',
@@ -263,13 +282,51 @@ function iconTile(size, { ink = ACCENT, bg = NIGHT, radius = 0.22, inset = TILE_
       color: hex(ink),
       transform: [tx, ty, s]
     }
-  ]);
+  ];
+  if (nodes) layers.push(...nodeLayers(markStrokes(), MARK.stroke, ink, [tx, ty, s], bg));
+  return rasterize(size, size, layers);
+}
+
+/**
+ * The node device as rasterizer layers, in device space.
+ *
+ * Per node: a knockout disc, then the ring. How the knockout is made depends
+ * on what is behind it, and the two cases are genuinely different:
+ *
+ *   - `ground` given (an opaque tile or card): paint the disc in the ground
+ *     colour. The icon must stay opaque — an apple-touch icon with a
+ *     transparent dot is wrong.
+ *   - `ground` null (the transparent favicon): erase, so the hole is a real
+ *     hole and the mark reads on any tab colour.
+ *
+ * `transform` is the same [tx, ty, scale] the strokes layer uses, so the nodes
+ * land exactly on the drawn corners.
+ */
+function nodeLayers(strokes, stroke, ink, transform, ground = null) {
+  const [tx, ty, s] = transform;
+  const layers = [];
+  for (const c of nodeCircles(strokes, stroke)) {
+    const cx = c.cx * s + tx;
+    const cy = c.cy * s + ty;
+    layers.push(
+      ground
+        ? { type: 'disc', cx, cy, r: c.hole * s, color: hex(ground) }
+        : { type: 'disc', cx, cy, r: c.hole * s, erase: true }
+    );
+    layers.push({
+      type: 'strokes',
+      polylines: [circlePoints(cx, cy, c.ring * s, 32)],
+      halfWidth: (c.width * s) / 2,
+      color: hex(ink)
+    });
+  }
+  return layers;
 }
 
 /** The mark alone on a square transparent canvas — the favicon and the tab. */
-function markAlone(size, { ink = ACCENT, inset = FAVICON_INSET } = {}) {
+function markAlone(size, { ink = ACCENT, inset = FAVICON_INSET, nodes = true } = {}) {
   const { s, tx, ty } = markFit(size, inset);
-  return rasterize(size, size, [
+  const layers = [
     {
       type: 'strokes',
       polylines: markStrokes().map((st) => segPoints(st, 48)),
@@ -277,7 +334,9 @@ function markAlone(size, { ink = ACCENT, inset = FAVICON_INSET } = {}) {
       color: hex(ink),
       transform: [tx, ty, s]
     }
-  ]);
+  ];
+  if (nodes) layers.push(...nodeLayers(markStrokes(), MARK.stroke, ink, [tx, ty, s]));
+  return rasterize(size, size, layers);
 }
 
 /**
@@ -307,7 +366,9 @@ function ogCard(w = 1200, h = 630) {
   return rasterize(w, h, [
     { type: 'roundRect', size: w, radius: 0, color: hex(NIGHT) },
     layer(lk.mark, ACCENT),
-    layer(lk.word, INK)
+    layer(lk.word, INK),
+    ...nodeLayers(lk.mark.strokes, lk.mark.stroke, ACCENT, [tx, ty, scale], NIGHT),
+    ...nodeLayers(lk.word.strokes, lk.word.stroke, INK, [tx, ty, scale], NIGHT)
   ]);
 }
 
@@ -326,7 +387,11 @@ outputs.push(['favicon.svg', Buffer.from(markSvg({ ink: ACCENT }), 'utf8')]);
 {
   const sizes = [16, 32, 48];
   const images = sizes.map((s) => {
-    const px = markAlone(s, { ink: ACCENT, inset: FAVICON_INSET });
+    // At 16px the stroke is only ~2px and the knockout is ~1.7px across: the
+    // device cannot be read at that size, and hollowing the stem tip actively
+    // costs legibility. It is dropped there and kept from 32px up, where it
+    // reads clearly.
+    const px = markAlone(s, { ink: ACCENT, inset: FAVICON_INSET, nodes: s >= 32 });
     return { size: s, png: encodePng(s, s, px) };
   });
   outputs.push(['favicon.ico', encodeIco(images)]);

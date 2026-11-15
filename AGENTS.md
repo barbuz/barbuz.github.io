@@ -57,6 +57,49 @@ and fails on drift. Details: `brand/README.md`.
 The active persona is the `data-persona` attribute on `<html>`, set before first
 paint by the script in `src/app.html` so there is no flash.
 
+## The mark
+
+The mark is the letter `b` — the one letter that touches all four corners of the
+primitive. The primitive is a **graph on four points**: P1 the ascender tip
+(reached by `b` only), P4 the right angle, P3 the shoulder, P2 the foot. Every
+stroke in the system ends on one of those four, so containment is node-set
+containment and it is exact. Of the four edges, three are axis-aligned and stay
+straight; **only the diagonal `D` bends**. That is why `k` is a property of one
+edge, not a treatment applied to shapes.
+
+`brand/mark.mjs` is the source of truth. `nodePoints()` returns the four points;
+the check is that `nodePoints(letterStrokes(c))` is the same three points for
+`c` in `a r u z`.
+
+The **node device** (a knockout hole plus a ring at each corner) ships with the
+mark: `markSvg()`, `tileSvg()` and `lockupSvg()` all draw it, and so does the
+icon set. The knockout is a **mask**, not a disc of ground colour, so the hole
+is real and reads on a transparent background (the favicon). In the rasterizer
+it is an erasing disc, except on the opaque tiles and the card, where painting
+the ground colour keeps the icon opaque. Pass `{ nodes: false }` for the bare
+stroke. The 16px favicon entry opts out: the knockout is ~1.7px there, so it is
+unreadable and hollows the stem tip.
+
+Reasoning and the full argument: `docs/DESIGN-NOTES.md`, "The mark".
+
+## The element kit
+
+`brand/elements.mjs` is a reusable element library — `chevron`, `corner`,
+`play`, `arrow`, `dot`, `ring`, `progress` and more — for other projects. These
+are **not** cut from the `b`; they apply the mark's *grammar* to other shapes:
+
+1. **An edge bends iff it is a diagonal.** Axis-aligned edges stay straight,
+   diagonals bulge by the shared `K`. Applied in one place (`edges()`), so an
+   element is just a list of points.
+2. **45° discipline** on every bulged edge, like the mark's diagonal.
+3. **Nodes on corners** — the corner device is available on any element.
+
+`check` and `cross` are deliberately straight (`orthogonal: true`); a bend on a
+tick reads as a wobble.
+
+`npm run elements:check` asserts all three rules and runs in CI — rule 1 erodes
+silently otherwise. Kit rationale: `docs/DESIGN-NOTES.md` → "The element kit".
+
 ## Basemap tiles (the Journey map)
 
 The Journey map reads a Protomaps vector tileset over PMTiles, so its base layer
