@@ -33,6 +33,7 @@ import {
   markSvg,
   markFit,
   lockup,
+  splitAccent,
   segPoints,
   nodeCircles,
   circlePoints
@@ -363,10 +364,16 @@ function ogCard(w = 1200, h = 630) {
     transform: [tx, ty, scale]
   });
 
+  // The word draws in two inks: its own, and the accent for the z's foot,
+  // which is the mark's stroke. Same split as `lockupSvg`, and the same order —
+  // the accent first, so the letter's ink paints over it.
+  const word = splitAccent(lk.word.strokes);
+
   return rasterize(w, h, [
     { type: 'roundRect', size: w, radius: 0, color: hex(NIGHT) },
     layer(lk.mark, ACCENT),
-    layer(lk.word, INK),
+    layer({ strokes: word.accent, stroke: lk.word.stroke }, ACCENT),
+    layer({ strokes: word.ink, stroke: lk.word.stroke }, INK),
     ...nodeLayers(lk.mark.strokes, lk.mark.stroke, ACCENT, [tx, ty, scale], NIGHT),
     ...nodeLayers(lk.word.strokes, lk.word.stroke, INK, [tx, ty, scale], NIGHT)
   ]);
@@ -387,11 +394,12 @@ outputs.push(['favicon.svg', Buffer.from(markSvg({ ink: ACCENT }), 'utf8')]);
 {
   const sizes = [16, 32, 48];
   const images = sizes.map((s) => {
-    // At 16px the stroke is only ~2px and the knockout is ~1.7px across: the
-    // device cannot be read at that size, and hollowing the stem tip actively
-    // costs legibility. It is dropped there and kept from 32px up, where it
-    // reads clearly.
-    const px = markAlone(s, { ink: ACCENT, inset: FAVICON_INSET, nodes: s >= 32 });
+    // The device is never turned off by size. At 16px it does not read as
+    // nodes — the ring is sub-pixel (~0.4px) and the knockout is ~84% of the
+    // ~2px stroke, so the stem tip softens. That is preferred over a mark with
+    // no nodes, and it is what favicon.svg already does at 16px, so the two
+    // agree. See docs/DESIGN-NOTES.md, "The mark".
+    const px = markAlone(s, { ink: ACCENT, inset: FAVICON_INSET, nodes: true });
     return { size: s, png: encodePng(s, s, px) };
   });
   outputs.push(['favicon.ico', encodeIco(images)]);

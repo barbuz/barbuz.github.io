@@ -20,7 +20,7 @@
  * Everything is lines and quadratics, same as the mark, so the same hand-rolled
  * rasterizer can draw it. See docs/DESIGN-NOTES.md → "The element kit".
  */
-import { seg, segPath, K, NODE, color } from './mark.mjs';
+import { seg, strokedPath, K, NODE, color } from './mark.mjs';
 
 /** The nominal box every element is drawn in. */
 export const BOX = 100;
@@ -238,32 +238,23 @@ export function elementSvg(name, {
     return `${open}${track}${bar}</svg>`;
   }
 
-  const d = el.segs
-    .map((sg, i) => (i === 0 ? `M${num(sg.a[0] * s)},${num(sg.a[1] * s)}` : '') + ' ' + segPathScaled(sg, s))
-    .join(' ');
-  const glyph = el.fill
-    ? `<path d="${d} Z" fill="${ink}"/>`
-    : `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${num(w)}" stroke-linecap="round" stroke-linejoin="round"/>`;
-
-  if (!withNodes || el.fill) return `${open}${glyph}</svg>`;
-
   const scaled = el.segs.map((sg) => ({
     a: [sg.a[0] * s, sg.a[1] * s],
     b: [sg.b[0] * s, sg.b[1] * s],
     k: sg.k,
     ref: [sg.ref[0] * s, sg.ref[1] * s]
   }));
+  // Shared with the mark, so an element made of several runs — `divider`,
+  // `arrow`, `cross` — gets an `M` per run instead of a line across the gap.
+  const d = strokedPath(scaled);
+  const glyph = el.fill
+    ? `<path d="${d} Z" fill="${ink}"/>`
+    : `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${num(w)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  if (!withNodes || el.fill) return `${open}${glyph}</svg>`;
+
   const { mask, rings } = nodes(scaled, { stroke: w, ink, id, size });
   return `${open}${mask}<g mask="url(#${id})">${glyph}</g>${rings}</svg>`;
-}
-
-/** segPath for already-scaled segments. */
-function segPathScaled(s, scale) {
-  const a = [s.a[0] * scale, s.a[1] * scale];
-  const b = [s.b[0] * scale, s.b[1] * scale];
-  if (Math.abs(s.k) < 1e-9) return `L${num(b[0])},${num(b[1])}`;
-  const ref = [s.ref[0] * scale, s.ref[1] * scale];
-  return segPath({ a, b, k: s.k, ref });
 }
 
 export default { BOX, NAMES, element, elementSvg };

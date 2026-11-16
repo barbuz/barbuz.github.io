@@ -1,5 +1,6 @@
 <script lang="ts">
   import { setPersona } from '$lib/persona.svelte';
+  import Wordmark from '$lib/Wordmark.svelte';
 
   const apps = [
     {
@@ -25,7 +26,7 @@
 
 <div class="wrap">
   <nav class="bar-nav">
-    <div class="bar-mark">barbu<span>z</span></div>
+    <div class="bar-mark"><Wordmark /></div>
     <div class="bar-links">
       <a href="#apps">Apps</a>
       <a href="#tools">Tools</a>

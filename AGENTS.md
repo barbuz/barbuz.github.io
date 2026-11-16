@@ -73,14 +73,34 @@ edge, not a treatment applied to shapes.
 the check is that `nodePoints(letterStrokes(c))` is the same three points for
 `c` in `a r u z`.
 
+The `z` is the one letter that carries a stroke outside the `b`'s vocabulary:
+a **foot**, `H` set at the baseline, without which `H + D` reads as a `7`. It is
+drawn in the **accent** — the mark's ink — so it reads as the mark's stroke
+rather than a third edge of the letter, and `nodePoints()` skips accent strokes
+so the letter still reaches exactly P2, P3 and P4. `splitAccent()` returns the
+two runs; `lockupSvg()` and the social card draw the foot as its own
+accent-coloured path, **behind** the word ink — the foot meets the diagonal at
+the baseline, so painting it last would put it on top of the letter and read as
+crossing it rather than tucking behind it.
+
 The **node device** (a knockout hole plus a ring at each corner) ships with the
 mark: `markSvg()`, `tileSvg()` and `lockupSvg()` all draw it, and so does the
 icon set. The knockout is a **mask**, not a disc of ground colour, so the hole
 is real and reads on a transparent background (the favicon). In the rasterizer
 it is an erasing disc, except on the opaque tiles and the card, where painting
 the ground colour keeps the icon opaque. Pass `{ nodes: false }` for the bare
-stroke. The 16px favicon entry opts out: the knockout is ~1.7px there, so it is
-unreadable and hollows the stem tip.
+stroke. **No size opts out:** the device is kept even at 16px, where it is
+texture rather than a readable ring — a mark with the device, however small, is
+preferred to one without it. This also makes `favicon.ico` agree with
+`favicon.svg`, which always drew it.
+
+The page reads the mark too: `src/lib/Wordmark.svelte` renders the nav lockup
+from `lockupSvg()`, sized by a `height` prop (default 28px). The device is on
+in the nav, as it is everywhere else. 28px is a sizing default, not a
+device threshold: the word's thinner stroke makes its knockouts the smallest
+elements on the page, and 28px keeps them near 1.9px. `mark.mjs` is not in the
+type-checked program, so `brand/mark.d.mts` declares the surface the page
+imports — update it if a signature changes.
 
 Reasoning and the full argument: `docs/DESIGN-NOTES.md`, "The mark".
 
@@ -101,6 +121,22 @@ tick reads as a wobble.
 
 `npm run elements:check` asserts all three rules and runs in CI — rule 1 erodes
 silently otherwise. Kit rationale: `docs/DESIGN-NOTES.md` → "The element kit".
+
+## Paths: one `M` per run
+
+`strokedPath()` in `mark.mjs` turns a list of strokes into an SVG `d`. A stroke
+carries only its two endpoints, so each contributes a bare `L`/`Q` that assumes
+the pen already sits on its start — true only while the strokes form **one
+continuous line**. One letter is; a **word is not**, and neither is an element
+like `divider`, `arrow` or `cross`. Drawn without a fresh `M`, the pen travels
+straight across the gap and the shape fuses: the lockup's `arbuz` rendered as a
+single blob, and `cross` lost a diagonal.
+
+`strokedPath()` now starts a subpath wherever the pen jumps, and both
+`mark.mjs` and `elements.mjs` share it. `npm run mark:check` and rule 4 of
+`elements:check` assert one `M` per run, so a future multi-run shape cannot
+regress silently. The rasterizer was never affected — it draws polylines, not
+paths.
 
 ## Basemap tiles (the Journey map)
 
@@ -167,9 +203,9 @@ the files and any server running from them. `/workspace/` persists.
 The direction it settled on: **the mark is the `b`** — stroked with round caps
 everywhere, in the wordmark and the icons alike — and `barbuz` is set in a
 derived typeface where every letter is a subset of the `b`'s four strokes
-`{S, V, H, D}` — `a = VHD`, `r = VH`, `u = VD`, `z = HD`. Containment is the
-rule, so `z` is never asked to stand alone; that is why it may read as a `7` in
-isolation. `k > 0` means curvature bulging **outward**.
+`{S, V, H, D}` — `a = VHD`, `r = VH`, `u = VD`, `z = HD`. The `z` also carries
+a foot in the accent (see "The mark"), so `HD` alone would read as a `7`.
+`k > 0` means curvature bulging **outward**.
 
 **The icon rasterizer is hand-rolled, and that is load-bearing.** It is exact
 only while the mark stays lines and quadratics — which is all it is today. If

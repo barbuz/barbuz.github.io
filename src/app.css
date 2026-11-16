@@ -203,15 +203,11 @@ html[data-persona='leo'] .switch__thumb {
   padding: 1.6rem 0 0;
 }
 
+/* The nav lockup: the mark stands in for the first `b`, so it reads [b]arbuz.
+   Sized by the Wordmark component; this is just the placement box. */
 .bar-mark {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.3rem;
-  letter-spacing: -0.03em;
-}
-
-.bar-mark span {
-  color: var(--accent);
+  display: flex;
+  align-items: center;
 }
 
 .bar-links {

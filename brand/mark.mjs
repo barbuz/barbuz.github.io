@@ -9,10 +9,16 @@
  *   a = V + H + D
  *   r = V + H
  *   u = V + D
- *   z = H + D
+ *   z = H + D              (plus its foot, in the accent — see below)
  *
  * Containment is the rule. The b is the whole, every other letter is a piece
- * of it, and the mark is the b. That is why z is never asked to stand alone.
+ * of it, and the mark is the b.
+ *
+ * The z is the one exception, and it is marked as one. `H + D` alone reads as
+ * a 7, so the z carries a foot: `H` again, set at the baseline. The foot is
+ * not a third edge of the z — it is the mark's own `H` — so it is drawn in the
+ * accent, the mark's ink, while the z stays `H + D`. Containment holds for the
+ * letter; the foot is visibly the mark's stroke rather than the letter's.
  *
  * Curvature: k > 0 bulges a segment AWAY from its reference point, i.e.
  * outward. k = 0 is a straight line. The mark and the letters share one k, so
@@ -138,7 +144,8 @@ function strokesFor({ top, base, xHeight, width, center }) {
     D: seg([0, base], [width, xHeight], K, center),               // diagonal, bottom-left up
     Vb: seg([0, base], [0, xHeight]),                             // vertical, drawn upward
     Hb: seg([width, xHeight], [0, xHeight]),                      // horizontal, drawn right to left
-    Db: seg([width, xHeight], [0, base], K, center)               // diagonal, top-right down
+    Db: seg([width, xHeight], [0, base], K, center),              // diagonal, top-right down
+    F: seg([0, base], [width, base])                              // foot, left to right, at the baseline
   };
 }
 
@@ -159,9 +166,25 @@ export function letterStrokes(ch) {
     case 'a': return [s.V, s.D, s.Hb];   // down, diagonal up, bar back
     case 'r': return [s.Vb, s.H];        // up, bar right
     case 'u': return [s.V, s.D];         // down, diagonal up
-    case 'z': return [s.H, s.Db];        // bar right, diagonal down-left
+    // The z is H + D, which alone reads as a 7, plus a foot. The foot is the
+    // mark's own H, not a third edge of the letter, so it is tagged accent and
+    // the node device skips it — see `nodePoints`.
+    case 'z': return [s.H, s.Db, { ...s.F, accent: true }];
     default: throw new Error(`no letter "${ch}"`);
   }
+}
+
+/**
+ * Split a run of strokes into the letter's own ink and the accent strokes.
+ *
+ * Only the z's foot is accent today. Keeping the tag on the stroke rather than
+ * returning a second list means bounds, spacing and continuity all still see
+ * one run; only the ink decision looks at the tag.
+ */
+export function splitAccent(strokes) {
+  const ink = strokes.filter((s) => !s.accent);
+  const accent = strokes.filter((s) => s.accent);
+  return { ink, accent };
 }
 
 /** All the strokes of the wordmark in absolute coordinates, for rasterizing. */
@@ -175,7 +198,8 @@ export function wordStrokes(text = 'barbuz') {
         a: [s.a[0] + dx, s.a[1]],
         b: [s.b[0] + dx, s.b[1]],
         k: s.k,
-        ref: [s.ref[0] + dx, s.ref[1]]
+        ref: [s.ref[0] + dx, s.ref[1]],
+        ...(s.accent ? { accent: true } : {})
       });
     }
   }
@@ -205,7 +229,8 @@ export function lockup(name = 'barbuz') {
     a: [st.a[0] * s + dx, st.a[1] * s + dy],
     b: [st.b[0] * s + dx, st.b[1] * s + dy],
     k: st.k,
-    ref: [st.ref[0] * s + dx, st.ref[1] * s + dy]
+    ref: [st.ref[0] * s + dx, st.ref[1] * s + dy],
+    ...(st.accent ? { accent: true } : {})
   });
   const shift = (st, dx) => ({
     ...st,
@@ -269,10 +294,16 @@ export function bounds(strokes, stroke) {
  * own order: P1 the tip of the ascender, P2 the foot, P3 the shoulder, P4 the
  * right angle. Containment is then node-set containment: the b touches all
  * four, and every other letter touches P2, P3 and P4 only.
+ *
+ * Accent strokes are skipped. The z's foot is the mark's own `H` borrowed to
+ * close the letter, not an edge of it, so it makes no node claim — if it did,
+ * its far end would be a fifth point and containment would stop being exact.
+ * The z still reaches P2, P3 and P4, the same three points as a, r and u.
  */
 export function nodePoints(strokes) {
   const found = [];
   for (const s of strokes) {
+    if (s.accent) continue;
     for (const p of [s.a, s.b]) {
       if (!found.some((q) => Math.abs(q[0] - p[0]) < 1e-6 && Math.abs(q[1] - p[1]) < 1e-6)) {
         found.push([p[0], p[1]]);
@@ -325,16 +356,34 @@ export function markFit(size, inset = TILE_INSET, stroke = MARK.stroke) {
 
 /* --------------------------------------------------------------------- svg */
 
-/** A stroked path for a run of strokes, starting with an explicit M. */
-function strokedPath(strokes) {
-  let d = '';
-  let first = true;
+/**
+ * The contiguous runs in a stroke list: a new run starts wherever the pen
+ * jumps. One letter is one run; a word is one run per letter.
+ */
+export function strokeRuns(strokes) {
+  let n = 0;
+  let pen = null;
   for (const s of strokes) {
-    if (first) {
-      d += `M${num(s.a[0])},${num(s.a[1])}`;
-      first = false;
+    if (!pen || Math.hypot(s.a[0] - pen[0], s.a[1] - pen[1]) > 1e-6) n++;
+    pen = s.b;
+  }
+  return n;
+}
+
+/** A stroked path for a run of strokes, starting an explicit M per subpath. */
+export function strokedPath(strokes) {
+  let d = '';
+  let pen = null;
+  for (const s of strokes) {
+    // Start a new subpath whenever the pen is not already at the stroke's
+    // start. One letter is a single continuous line, so this never fires for
+    // it; a word is several lines, and without this the `L` would draw a
+    // segment straight across the gap between two letters.
+    if (!pen || Math.hypot(s.a[0] - pen[0], s.a[1] - pen[1]) > 1e-6) {
+      d += (d ? ' ' : '') + `M${num(s.a[0])},${num(s.a[1])}`;
     }
-    d += ' ' + segPath(s);
+    d += (d ? ' ' : '') + segPath(s);
+    pen = s.b;
   }
   return d;
 }
@@ -456,10 +505,18 @@ export function lockupSvg({
   const lk = lockup(name);
   const vb = `${num(lk.box.x)} ${num(lk.box.y)} ${num(lk.box.w)} ${num(lk.box.h)}`;
   const markPath = `<path d="${strokedPath(lk.mark.strokes)}" ${strokeAttrs(lk.mark.stroke)} stroke="${accent}"/>`;
-  const wordPath = lk.word
-    ? `<path d="${strokedPath(lk.word.strokes)}" ${strokeAttrs(lk.word.stroke)} stroke="${ink}"/>`
-    : '';
-  if (!nodes) return svgEl(vb, size, markPath + wordPath);
+  // The word's own ink and its accent strokes are separate paths, because a
+  // path carries one stroke colour and the z's foot is the mark's ink.
+  const parts = lk.word ? splitAccent(lk.word.strokes) : { ink: [], accent: [] };
+  const wordPath = (list, inkColor) =>
+    list.length
+      ? `<path d="${strokedPath(list)}" ${strokeAttrs(lk.word.stroke)} stroke="${inkColor}"/>`
+      : '';
+  // The accent goes first, so the letter's own ink paints over it. The foot
+  // meets the diagonal at the baseline; drawn last it would sit on top and read
+  // as crossing the letter, not as tucked behind it.
+  const wordInk = wordPath(parts.accent, accent) + wordPath(parts.ink, ink);
+  if (!nodes) return svgEl(vb, size, markPath + wordInk);
 
   // Two masks, because the mark and the letters are different weights and so
   // have different node radii. Both use the lockup's own box, so a mask can
@@ -473,7 +530,9 @@ export function lockupSvg({
   const body =
     markDev.mask + wordDev.mask +
     `<g mask="url(#${markId})">${markPath}</g>` +
-    (lk.word ? `<g mask="url(#${wordId})">${wordPath}</g>` : '') +
+    (lk.word
+      ? `<g mask="url(#${wordId})">${wordInk}</g>`
+      : '') +
     markDev.rings + wordDev.rings;
   return svgEl(vb, size, body);
 }
@@ -487,6 +546,12 @@ export default {
   TILE_INSET,
   markStrokes,
   letterStrokes,
+  wordStrokes,
+  splitAccent,
+  lockup,
+  bounds,
+  strokeRuns,
+  strokedPath,
   nodePoints,
   nodeCircles,
   circlePoints,
