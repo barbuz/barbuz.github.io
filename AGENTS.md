@@ -83,8 +83,10 @@ stroke. The 16px favicon entry opts out: the knockout is ~1.7px there, so it is
 unreadable and hollows the stem tip.
 
 The page reads the mark too: `src/lib/Wordmark.svelte` renders the nav lockup
-from `lockupSvg()`, sized by a `height` prop (default 22px, which puts the
-word's x-height on the old 1.3rem text's 11px). `mark.mjs` is not in the
+from `lockupSvg()`, sized by a `height` prop (default 28px — the floor at which
+the word's thinner stroke still clears the node device's ~1.7px legibility
+floor; at 22px the mark's nodes read but the word's do not). The device is on
+in the nav, as it is everywhere else. `mark.mjs` is not in the
 type-checked program, so `brand/mark.d.mts` declares the surface the page
 imports — update it if a signature changes.
 
