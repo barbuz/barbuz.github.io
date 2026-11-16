@@ -1,6 +1,14 @@
 /**
  * The barbuz element kit — reusable graphical elements in the mark's style.
  *
+ * **Frozen, experimental, not shipping.** Nothing imports this module and no
+ * app consumes it yet. It is kept as a proof that the mark's grammar generates
+ * usable UI shapes, not as a shipped asset. The catalogue below is the core set
+ * — the elements with a real UI verb — and the rest were parked (see
+ * docs/DESIGN-NOTES.md → "The element kit", which lists them). Do not polish or
+ * extend this module on spec: grow it from a real screen that needs an icon, in
+ * Phase 4, and add back only what that screen asks for.
+ *
  * These are not pieces of the `b`. They are the mark's *grammar* applied to
  * other shapes, so a project can build UI that reads as barbuz without
  * redrawing the logo:
@@ -20,10 +28,17 @@
  * Everything is lines and quadratics, same as the mark, so the same hand-rolled
  * rasterizer can draw it. See docs/DESIGN-NOTES.md → "The element kit".
  */
-import { seg, strokedPath, K, NODE, color } from './mark.mjs';
+import { seg, segPoints, strokedPath, K, NODE, color } from './mark.mjs';
 
 /** The nominal box every element is drawn in. */
 export const BOX = 100;
+
+/**
+ * The kit's default stroke weight, used for the node device on a filled
+ * element. A filled element has no stroke of its own, but the device still
+ * needs a weight to size its hole and ring against, or it would be empty.
+ */
+const DEFAULT_STROKE = 12;
 
 /* ------------------------------------------------------------------ helpers */
 
@@ -64,19 +79,6 @@ function edges(points, { bend = K, ref = [BOX / 3, BOX / 3], close = false } = {
  * from rule 1, for symbols where the bend would read as a wobble.
  */
 const ELEMENTS = {
-  /** A corner bracket: two straight arms. The right angle, on its own. */
-  corner: () => ({
-    segs: edges([[0, 100], [0, 0], [100, 0]], { ref: [40, 60] }),
-    stroke: 12
-  }),
-
-  /** The primitive closed — the mark's bowl as a standalone shape. */
-  wedge: () => ({
-    segs: edges([[0, 100], [0, 0], [100, 0]], { ref: [40, 60], close: true }),
-    stroke: 0,
-    fill: true
-  }),
-
   /** A chevron pointing right: both arms diagonal, both bulged. */
   chevron: () => ({
     segs: edges([[0, 0], [50, 50], [0, 100]], { ref: [0, 50] }),
@@ -96,27 +98,6 @@ const ELEMENTS = {
     stroke: 12
   }),
 
-  /** One bulged diagonal — the mark's diagonal as a standalone mark. */
-  slash: () => ({
-    segs: edges([[0, 100], [100, 0]], { ref: [50, 100] }),
-    stroke: 12
-  }),
-
-  /** The slash crossed by a straight rule. */
-  divider: () => ({
-    segs: [
-      ...edges([[0, 100], [100, 0]], { ref: [50, 100] }),
-      seg([0, 50], [100, 50])
-    ],
-    stroke: 10
-  }),
-
-  /** A straight stem with a bulged diagonal — the b's gesture, abstracted. */
-  branch: () => ({
-    segs: edges([[0, 0], [0, 100], [100, 0]], { ref: [40, 60] }),
-    stroke: 12
-  }),
-
   /** An arrow: straight shaft, bulged head. */
   arrow: () => ({
     segs: [
@@ -124,19 +105,6 @@ const ELEMENTS = {
       ...edges([[62, 12], [100, 50], [62, 88]], { ref: [62, 50] })
     ],
     stroke: 10
-  }),
-
-  /** A bracket: straight arms only. */
-  bracket: () => ({
-    segs: edges([[100, 0], [0, 0], [0, 100], [100, 100]], { ref: [50, 50] }),
-    stroke: 12
-  }),
-
-  /** A bullet: a filled corner triangle. */
-  bullet: () => ({
-    segs: edges([[0, 0], [100, 0], [0, 100]], { ref: [60, 40], close: true }),
-    stroke: 0,
-    fill: true
   }),
 
   /** A tick. Two straight strokes: the bend would read as a wobble here. */
@@ -163,10 +131,17 @@ const ELEMENTS = {
   progress: () => ({ segs: [seg([0, 50], [100, 50])], stroke: 16, progress: 0.6 })
 };
 
-/** The names in the kit, in a sensible presentation order. */
+/**
+ * The names in the kit, in a sensible presentation order.
+ *
+ * This is the core set: the elements that name a UI verb. Seven more were
+ * parked — `corner`, `wedge`, `slash`, `divider`, `branch`, `bracket`,
+ * `bullet` — because nothing on any screen called for them. They are recorded
+ * in docs/DESIGN-NOTES.md rather than kept here as dead geometry; restore one
+ * when a real screen needs it.
+ */
 export const NAMES = [
-  'corner', 'wedge', 'chevron', 'play', 'caret', 'slash',
-  'divider', 'branch', 'arrow', 'bracket', 'bullet',
+  'chevron', 'play', 'caret', 'arrow',
   'check', 'cross', 'dot', 'ring', 'progress'
 ];
 
@@ -180,17 +155,40 @@ export function element(name) {
 /* --------------------------------------------------------------------- svg */
 
 /**
+ * How far an element's ink reaches beyond its nominal square, at `size`.
+ *
+ * The nominal box is the *centrelines'* box, so a round cap reaches half a
+ * stroke past it, and the node device's ring reaches a little further still.
+ * The viewBox and the node mask both have to cover that reach, or the caps and
+ * the outer half of a corner ring are clipped.
+ */
+function inkPad(el, size, stroke, device) {
+  const s = size / BOX;
+  let pad = Math.max(stroke / 2, device ? device * (NODE.ring + NODE.width / 2) : 0);
+  for (const sg of el.segs) {
+    for (const [x, y] of segPoints(sg, 24)) {
+      const px = x * s;
+      const py = y * s;
+      pad = Math.max(pad, -px, px - size, -py, py - size);
+    }
+  }
+  return Math.max(pad, 0);
+}
+
+/**
  * The node device for an element, as a mask plus rings — the same construction
  * as the mark's, so a corner node looks identical wherever it is used.
  */
-function nodes(segs, { stroke, ink, id, size, nodesAt }) {
+function nodes(segs, { stroke, ink, id, size, pad, nodesAt }) {
   const pts = nodesAt || segs.flatMap((s) => [s.a, s.b]);
   const uniq = [];
   for (const p of pts) {
     if (!uniq.some((q) => Math.abs(q[0] - p[0]) < 1e-6 && Math.abs(q[1] - p[1]) < 1e-6)) uniq.push(p);
   }
   const r = stroke * NODE.hole;
-  const rect = `x="0" y="0" width="${size}" height="${size}"`;
+  const x0 = num(-pad);
+  const span = num(size + 2 * pad);
+  const rect = `x="${x0}" y="${x0}" width="${span}" height="${span}"`;
   const holes = uniq
     .map((p) => `<circle cx="${num(p[0])}" cy="${num(p[1])}" r="${num(r)}" fill="#000"/>`)
     .join('');
@@ -220,7 +218,12 @@ export function elementSvg(name, {
   const el = element(name);
   const s = size / BOX;
   const w = (stroke ?? el.stroke) * s;
-  const open = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">`;
+  // A filled element has no stroke of its own, so the device sizes against the
+  // kit default. Without that its hole and ring radii would be zero and the
+  // device would silently vanish.
+  const device = el.fill ? DEFAULT_STROKE * s : w;
+  const pad = withNodes ? inkPad(el, size, w, device) : inkPad(el, size, w, 0);
+  const open = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${num(-pad)} ${num(-pad)} ${num(size + 2 * pad)} ${num(size + 2 * pad)}" width="${size}" height="${size}">`;
 
   if (el.dot || el.ring) {
     const r = (el.ring ? 0.4 : 0.32) * size;
@@ -244,16 +247,16 @@ export function elementSvg(name, {
     k: sg.k,
     ref: [sg.ref[0] * s, sg.ref[1] * s]
   }));
-  // Shared with the mark, so an element made of several runs — `divider`,
-  // `arrow`, `cross` — gets an `M` per run instead of a line across the gap.
+  // Shared with the mark, so an element made of several runs — `arrow`,
+  // `cross` — gets an `M` per run instead of a line across the gap.
   const d = strokedPath(scaled);
   const glyph = el.fill
     ? `<path d="${d} Z" fill="${ink}"/>`
     : `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${num(w)}" stroke-linecap="round" stroke-linejoin="round"/>`;
 
-  if (!withNodes || el.fill) return `${open}${glyph}</svg>`;
+  if (!withNodes) return `${open}${glyph}</svg>`;
 
-  const { mask, rings } = nodes(scaled, { stroke: w, ink, id, size });
+  const { mask, rings } = nodes(scaled, { stroke: device, ink, id, size, pad });
   return `${open}${mask}<g mask="url(#${id})">${glyph}</g>${rings}</svg>`;
 }
 

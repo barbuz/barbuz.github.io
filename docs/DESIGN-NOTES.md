@@ -383,10 +383,10 @@ applies the rules to other shapes instead:
 3. **Nodes on corners.** The corner device travels with the grammar. Any element
    can carry it: `elementSvg('arrow', { nodes: true })`.
 
-The three rules are asserted by `npm run elements:check`, which runs in CI. That
-matters more than it sounds: rule 1 is the kind of thing that erodes silently.
-Add a chevron with a slightly-off diagonal and nothing looks broken; the family
-just weakens. The check fails the build instead.
+The three rules are asserted by `npm run elements:check`. That matters more
+than it sounds: rule 1 is the kind of thing that erodes silently. Add a chevron
+with a slightly-off diagonal and nothing looks broken; the family just weakens.
+The check fails instead.
 
 **Two documented exceptions.** `check` and `cross` are straight, via an
 `orthogonal: true` flag. Rule 1 exists because the bend marks a diagonal; on a
@@ -394,11 +394,69 @@ tick, a bend reads as a wobble — the hand-drawn look it gives a letter is wron
 for a symbol that is supposed to be mechanical. The exception is explicit and
 named, so it is a decision rather than a drift.
 
-**What is in the kit.** `corner`, `wedge`, `chevron`, `play`, `caret`, `slash`,
-`divider`, `branch`, `arrow`, `bracket`, `bullet`, `check`, `cross`, `dot`,
-`ring`, `progress`. Elements are drawn in a nominal 0..100 box and scaled by the
+**What is in the kit.** Nine elements, the ones that name a UI verb:
+`chevron`, `play`, `caret`, `arrow`, `check`, `cross`, `dot`, `ring`,
+`progress`. Elements are drawn in a nominal 0..100 box and scaled by the
 caller, and everything is lines and quadratics — the same primitives as the
 mark, so the same hand-rolled rasterizer can draw them.
+
+**Frozen, and trimmed from sixteen.** The kit started with sixteen shapes, but
+the other seven — `corner`, `wedge`, `slash`, `divider`, `branch`, `bracket`,
+`bullet` — named no screen and no verb. They were built on spec, before
+anything asked for them, which is the thing the plan's first principle ("content
+before layout") exists to prevent. A shape nobody has needed yet is not a brand
+asset; it is geometry to keep correct, and it had already cost several rounds of
+bug-fixing and two expansions of the checker.
+
+So the kit is **frozen at the nine with a verb, and marked experimental**:
+nothing imports `elements.mjs`, no app consumes it, and it is not a shipped
+asset. It is not in the plan — `docs/BRAND-PLAN.md` never mentions it, and its
+Phase 4 checklist (tokens, type, mark-derived icons, footer, voice) does not ask
+for it. Treat the kit as a proof that the mark's grammar generates usable UI
+shapes, not as something to maintain. Grow it from a real screen that needs an
+icon, in Phase 4, and add back only what that screen asks for.
+
+The parked seven, with their geometry, so they are a one-line restore rather
+than a re-derivation:
+
+| Element | Geometry | Why parked |
+|---|---|---|
+| `corner` | `edges([[0,100],[0,0],[100,0]], { ref: [40,60] })`, stroke 12 | A "barbuz card" framing motif, if one is ever wanted |
+| `wedge` | `edges([[0,100],[0,0],[100,0]], { ref: [40,60], close: true })`, fill | The bowl as a standalone blob; nothing calls for it |
+| `slash` | `edges([[0,100],[100,0]], { ref: [50,100] })`, stroke 12 | The mark's diagonal alone; decoration |
+| `divider` | the slash, plus `seg([0,50],[100,50])`, stroke 10 | Competes with a CSS rule |
+| `branch` | `edges([[0,0],[0,100],[100,0]], { ref: [40,60] })`, stroke 12 | The `b`'s gesture abstracted; no meaning on any screen |
+| `bracket` | `edges([[100,0],[0,0],[0,100],[100,100]], { ref: [50,50] })`, stroke 12 | Straight arms only; the framing motif again |
+| `bullet` | `edges([[0,0],[100,0],[0,100]], { ref: [60,40], close: true })`, fill | A list marker; text lists want `::marker`, not an SVG |
+
+**The checker is no longer a CI gate.** `npm run elements:check` still asserts
+every rule and is worth running whenever the module is touched, but it was
+removed from the deploy workflow at the freeze: it was the only CI step guarding
+a module nothing ships, while the mark — which does ship, in the favicon and
+every app icon — is what `icons:check` and `mark:check` protect. Spending CI
+rigour on the unused thing and not the shipped one had the priority backwards.
+
+**The engine is the reusable part.** `edges()`, `seg()`, the shared `K` and the
+node device are what make a new icon read as barbuz, and they are a few dozen
+lines. The catalogue is the speculative part, and it is the part that was
+trimmed. If a Phase 4 app needs an icon the nine do not cover, the right move is
+to compose it from `edges()` against a real screen — not to re-add the parked
+seven wholesale.
+
+**Two defects that were silent, and are now asserted.** Neither broke rendering,
+so nothing looked wrong while the output was:
+
+- **The viewBox clipped the ink.** The nominal box is the *centrelines'* box, so
+  a round cap reaches half a stroke past it. The viewBox was the bare box, so
+  every element whose stroke touched an edge had its caps cut off, and the node
+  mask was sized from the same bare box, so a node on an edge lost its knockout.
+  Both are now sized from the real ink, and `elements:check` asserts the viewBox
+  covers it.
+- **A filled element drew no node device.** `elementSvg` short-circuited on
+  `el.fill`, so `nodes: true` was a no-op for `play` — and the reason was
+  upstream: the device sizes its hole and ring from the element's stroke, and a
+  filled element has none, so the radii were zero. Sizing from the kit default
+  fixes it; the checker asserts a mask and rings are always emitted.
 
 ### Assets
 
