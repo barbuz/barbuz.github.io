@@ -96,14 +96,17 @@ problem rule 1 exists to prevent.
 Settle what the page says. This runs before any app work so the layout is built
 around real words.
 
-- **Voice.** Two registers already exist: barbuz (maker, short sentences,
-  lowercase, dry) and Leo (engineer, professional, full sentences). Write both
-  down as a short style guide — it is the reference the copy pass is written
-  against, and the apps inherit it later.
+- **Voice.** ✅ Written down in [`docs/VOICE-NOTES.md`](./VOICE-NOTES.md). The
+  registers are barbuz (maker: short, direct, pragmatic, dry, lowercase labels)
+  and Leo (engineer: colloquial and professional, longer sentences, Title Case
+  headings). The guide also settles the shared mechanics, including **Australian
+  spelling**. The apps inherit this in Phase 4.
 - **Copy pass.** `docs/COPY-NOTES.md` holds every draft-vs-current pair on the
   Leo face. Settle each one. Then delete the file once it is fully folded in.
 
 The barbuz face needs the same treatment; it currently has no counterpart file.
+Its copy is still draft, and it is the default landing at `/`, so it is what
+most visitors read — do it first.
 
 **Output:** the page's content is fixed, and the layout can be finalised.
 

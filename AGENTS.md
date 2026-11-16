@@ -21,6 +21,7 @@ nothing in `docs/` reaches the public site. Do not move it into `static/`.
 |---|---|
 | `docs/DESIGN-NOTES.md` | Palette decisions and the reasoning: the two-tone accent, the temperature rule, measured contrast tables, the type stack. |
 | `docs/BRAND-PLAN.md` | The plan for growing the identity into the apps. Phases, order, open decisions. Authority for what to do next. |
+| `docs/VOICE-NOTES.md` | The two registers and the shared rules. The reference the copy pass is written against. |
 | `docs/COPY-NOTES.md` | Draft-vs-current copy pairs on the Leo face. |
 
 ## Build and run
@@ -189,7 +190,8 @@ this is the short version:
 
 1. **Tokens** — extract to `brand/tokens.json` / `brand/tokens.css` (Phase 1). ✅ done
 2. **The mark** — settle the logo and favicon (Phase 2). ✅ done
-3. **Voice and copy** — fix what the page says (Phase 3). ← next
+3. **Voice and copy** — fix what the page says (Phase 3). ← next. The voice
+   guide is done (`docs/VOICE-NOTES.md`); the copy pass itself is not.
 4. **Then** apply to `match-the-gatherer`, `byom`, `digitofono`, `the stylus`.
 
 The governing rule is **content before layout**: settle the words first, then
