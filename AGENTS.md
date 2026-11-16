@@ -82,6 +82,12 @@ the ground colour keeps the icon opaque. Pass `{ nodes: false }` for the bare
 stroke. The 16px favicon entry opts out: the knockout is ~1.7px there, so it is
 unreadable and hollows the stem tip.
 
+The page reads the mark too: `src/lib/Wordmark.svelte` renders the nav lockup
+from `lockupSvg()`, sized by a `height` prop (default 22px, which puts the
+word's x-height on the old 1.3rem text's 11px). `mark.mjs` is not in the
+type-checked program, so `brand/mark.d.mts` declares the surface the page
+imports — update it if a signature changes.
+
 Reasoning and the full argument: `docs/DESIGN-NOTES.md`, "The mark".
 
 ## The element kit

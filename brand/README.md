@@ -15,6 +15,7 @@ scale and motion — the page and the apps all read from here.
 | `tokens.js` | no | Generated. The same values as ESM, for apps that build with a bundler. |
 | `generate.mjs` | yes | The generator. Reads the JSON, writes the two files above. |
 | `mark.mjs` | yes | The mark's geometry — the `b`, its strokes, and the SVG builders. Shared by the page and the icon generator. |
+| `mark.d.mts` | yes | Types for `mark.mjs`, for the page's import. Keep in step with the real signatures. |
 | `elements.mjs` | yes | The element kit: reusable graphical elements (chevron, corner, play, arrow, dot, …) in the mark's grammar. See below. |
 | `check-elements.mjs` | yes | The kit's rule checker. Runs in CI. |
 | `generate-icons.mjs` | yes | The icon generator. Reads `mark.mjs`, writes the icon set into `static/`. Hand-rolled rasterizer — see the note below. |
