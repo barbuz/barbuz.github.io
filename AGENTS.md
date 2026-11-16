@@ -79,7 +79,9 @@ drawn in the **accent** — the mark's ink — so it reads as the mark's stroke
 rather than a third edge of the letter, and `nodePoints()` skips accent strokes
 so the letter still reaches exactly P2, P3 and P4. `splitAccent()` returns the
 two runs; `lockupSvg()` and the social card draw the foot as its own
-accent-coloured path.
+accent-coloured path, **behind** the word ink — the foot meets the diagonal at
+the baseline, so painting it last would put it on top of the letter and read as
+crossing it rather than tucking behind it.
 
 The **node device** (a knockout hole plus a ring at each corner) ships with the
 mark: `markSvg()`, `tileSvg()` and `lockupSvg()` all draw it, and so does the

@@ -365,14 +365,15 @@ function ogCard(w = 1200, h = 630) {
   });
 
   // The word draws in two inks: its own, and the accent for the z's foot,
-  // which is the mark's stroke. Same split as `lockupSvg`.
+  // which is the mark's stroke. Same split as `lockupSvg`, and the same order —
+  // the accent first, so the letter's ink paints over it.
   const word = splitAccent(lk.word.strokes);
 
   return rasterize(w, h, [
     { type: 'roundRect', size: w, radius: 0, color: hex(NIGHT) },
     layer(lk.mark, ACCENT),
-    layer({ strokes: word.ink, stroke: lk.word.stroke }, INK),
     layer({ strokes: word.accent, stroke: lk.word.stroke }, ACCENT),
+    layer({ strokes: word.ink, stroke: lk.word.stroke }, INK),
     ...nodeLayers(lk.mark.strokes, lk.mark.stroke, ACCENT, [tx, ty, scale], NIGHT),
     ...nodeLayers(lk.word.strokes, lk.word.stroke, INK, [tx, ty, scale], NIGHT)
   ]);

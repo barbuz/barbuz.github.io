@@ -276,7 +276,10 @@ stroke, but no shipped asset uses it for size.
   `z` is the same three points as `a`, `r` and `u`), and the foot reads as the
   mark reaching into the word rather than as a third edge of the letter.
   `nodePoints()` skips accent strokes for exactly this reason: the foot's far
-  end is a fifth point, and it must make no node claim.
+  end is a fifth point, and it must make no node claim. The foot also paints
+  **behind** the letter's ink: it meets the diagonal at the baseline, and drawn
+  last its round cap would sit on top of that junction, reading as a stroke
+  crossing the letter rather than tucked under it.
 - **The `u` needs negative curvature.** With straight strokes the `u` reads as
   a `v`. Bulging the diagonal outward — away from the bowl's interior — gives it
   the openness a `u` needs. This was the move that made the system work.

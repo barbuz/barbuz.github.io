@@ -512,7 +512,11 @@ export function lockupSvg({
     list.length
       ? `<path d="${strokedPath(list)}" ${strokeAttrs(lk.word.stroke)} stroke="${inkColor}"/>`
       : '';
-  if (!nodes) return svgEl(vb, size, markPath + wordPath(parts.ink, ink) + wordPath(parts.accent, accent));
+  // The accent goes first, so the letter's own ink paints over it. The foot
+  // meets the diagonal at the baseline; drawn last it would sit on top and read
+  // as crossing the letter, not as tucked behind it.
+  const wordInk = wordPath(parts.accent, accent) + wordPath(parts.ink, ink);
+  if (!nodes) return svgEl(vb, size, markPath + wordInk);
 
   // Two masks, because the mark and the letters are different weights and so
   // have different node radii. Both use the lockup's own box, so a mask can
@@ -527,7 +531,7 @@ export function lockupSvg({
     markDev.mask + wordDev.mask +
     `<g mask="url(#${markId})">${markPath}</g>` +
     (lk.word
-      ? `<g mask="url(#${wordId})">${wordPath(parts.ink, ink)}${wordPath(parts.accent, accent)}</g>`
+      ? `<g mask="url(#${wordId})">${wordInk}</g>`
       : '') +
     markDev.rings + wordDev.rings;
   return svgEl(vb, size, body);

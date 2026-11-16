@@ -19,7 +19,7 @@
  *
  * Runs in CI, next to tokens:check, icons:check and elements:check.
  */
-import { markStrokes, lockup, markSvg, tileSvg, lockupSvg, nodePoints, letterStrokes, splitAccent } from './mark.mjs';
+import { color, markStrokes, lockup, markSvg, tileSvg, lockupSvg, nodePoints, letterStrokes, splitAccent } from './mark.mjs';
 
 /** The contiguous runs in a stroke list: a new run starts wherever the pen jumps. */
 function runs(strokes) {
@@ -32,6 +32,26 @@ function runs(strokes) {
   return n;
 }
 
+/**
+ * Every `<path>` in an SVG as `{ d, stroke, width }`, parsed from the markup.
+ * The check selects paths by their numeric stroke weight and colour rather than
+ * by index, so a change in paint order cannot hide a path from it — the order
+ * is a drawing decision, the weights and colours are the invariants.
+ */
+const pathInfos = (svg) =>
+  [...svg.matchAll(/<path\b[^>]*\/>/g)].map((m) => {
+    const p = m[0];
+    const attr = (name) => {
+      const v = p.match(new RegExp(`${name}="([^"]+)"`));
+      return v ? v[1] : null;
+    };
+    return { d: attr('d'), stroke: attr('stroke'), width: Number(attr('stroke-width')) };
+  });
+
+// The SVG rounds stroke-width to three decimals, so compare with a tolerance
+// wider than that rounding but far narrower than the gap between the weights.
+const near = (a, b) => Math.abs(a - b) < 0.01;
+
 /** The `d` attributes in an SVG, in document order. */
 const paths = (svg) => [...svg.matchAll(/<path d="([^"]+)"/g)].map((m) => m[1]);
 
@@ -40,16 +60,13 @@ const subpaths = (d) => (d.match(/M/g) || []).length;
 const problems = [];
 
 /**
- * The `d` at `index` in `svg` must have one subpath per run in `strokes`.
- * `index` picks which path to look at when the SVG carries more than one
- * (the lockup emits the mark and the word separately).
+ * `d` must have one `M` per run in `strokes`. A run is a contiguous line; a
+ * fresh `M` is what stops the pen drawing across the gap to the next one.
  */
-function check(label, svg, strokes, index = 0) {
+function checkD(label, d, strokes) {
+  if (!d) return problems.push(`${label}: no path emitted`);
   const want = runs(strokes);
-  const ds = paths(svg);
-  if (!ds.length) return problems.push(`${label}: no path emitted`);
-  if (index >= ds.length) return problems.push(`${label}: expected a path at index ${index}, found ${ds.length}`);
-  const got = subpaths(ds[index]);
+  const got = subpaths(d);
   if (got !== want) {
     problems.push(
       `${label}: ${got} subpath(s) for ${want} run(s) of strokes — ` +
@@ -59,28 +76,47 @@ function check(label, svg, strokes, index = 0) {
 }
 
 // The mark: one run, so one M — the case that always worked.
-check('markSvg', markSvg({ nodes: false }), markStrokes());
-check('markSvg (nodes)', markSvg({ nodes: true }), markStrokes());
-check('tileSvg', tileSvg({ nodes: false }), markStrokes());
-check('tileSvg (nodes)', tileSvg({ nodes: true }), markStrokes());
+checkD('markSvg', paths(markSvg({ nodes: false }))[0], markStrokes());
+checkD('markSvg (nodes)', paths(markSvg({ nodes: true }))[0], markStrokes());
+checkD('tileSvg', paths(tileSvg({ nodes: false }))[0], markStrokes());
+checkD('tileSvg (nodes)', paths(tileSvg({ nodes: true }))[0], markStrokes());
 
-// The lockup: the mark is path 0 (one run) and the word is path 1 (five runs).
+// The lockup: the mark is one run at mark weight; the word is five runs at text
+// weight. Select by stroke weight, so a change in paint order cannot hide a
+// path from the check.
 const lk = lockup('barbuz');
-check('lockupSvg — mark', lockupSvg({ nodes: false }), lk.mark.strokes, 0);
-check('lockupSvg — word', lockupSvg({ nodes: false }), lk.word.strokes, 1);
-check('lockupSvg (nodes) — mark', lockupSvg({ nodes: true }), lk.mark.strokes, 0);
-check('lockupSvg (nodes) — word', lockupSvg({ nodes: true }), lk.word.strokes, 1);
+for (const nodes of [false, true]) {
+  const svg = lockupSvg({ nodes });
+  const suffix = nodes ? ' (nodes)' : '';
+  const infos = pathInfos(svg);
+  const mark = infos.filter((p) => near(p.width, lk.mark.stroke));
+  const word = infos.filter((p) => near(p.width, lk.word.stroke));
+
+  if (mark.length !== 1) problems.push(`lockupSvg${suffix}: expected one mark path, found ${mark.length}`);
+  else checkD(`lockupSvg${suffix} — mark`, mark[0].d, lk.mark.strokes);
+
+  // The word splits into ink and accent paths. Each must carry one M per run
+  // of *its own* stroke list: the foot chains to the diagonal, so the split
+  // itself adds an M, and an aggregate count would be off by that.
+  const parts = splitAccent(lk.word.strokes);
+  const want = parts.accent.length ? 2 : 1;
+  if (word.length !== want) problems.push(`lockupSvg${suffix} — word: expected ${want} path(s), found ${word.length}`);
+  const inkPath = word.find((p) => p.stroke !== color.barbuz.accent);
+  const footPath = word.find((p) => p.stroke === color.barbuz.accent);
+  checkD(`lockupSvg${suffix} — word ink`, inkPath && inkPath.d, parts.ink);
+  if (parts.accent.length) checkD(`lockupSvg${suffix} — foot`, footPath && footPath.d, parts.accent);
+
+  // The foot must paint *behind* the word ink, so the ink covers the junction.
+  const wordOrder = word.map((p) => (p.stroke === color.barbuz.accent ? 'accent' : 'ink'));
+  if (wordOrder.join(',') !== 'accent,ink') {
+    problems.push(`lockupSvg${suffix}: word paints ${wordOrder.join(' then ')} — the foot must be behind the ink`);
+  }
+}
 
 // The word is five runs; assert that directly too, so the count cannot be
 // satisfied by accident.
 if (runs(lk.word.strokes) !== 'arbuz'.length) {
   problems.push(`lockup word: expected ${'arbuz'.length} runs, got ${runs(lk.word.strokes)}`);
-}
-
-// A word's own path must have as many M as letters.
-const wordDs = paths(lockupSvg({ nodes: false }))[1];
-if (wordDs && subpaths(wordDs) !== 'arbuz'.length) {
-  problems.push(`lockup word: ${subpaths(wordDs)} subpath(s) for ${'arbuz'.length} letters`);
 }
 
 // Containment: `b` reaches all four points, every other letter the same three.
