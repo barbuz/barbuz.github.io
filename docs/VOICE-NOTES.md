@@ -22,9 +22,7 @@ the copy sound like a person rather than a brochure.
 2. **Concrete beats abstract.** `GeoParquet`, `Ollama`, `3 Card Blind`, `16px`.
    A reader trusts a sentence they could check.
 3. **Active voice, first person.** "I build" — not "solutions are built".
-4. **Start at the verb.** Cut the runway. "I'm committed to open-source" is
-   runway; "I build in the open" is the sentence.
-5. **One idea per sentence.** The registers differ in how many words carry that
+4. **One idea per sentence.** The registers differ in how many words carry that
    idea, not in how many ideas get stacked into one breath.
 
 ### The test
