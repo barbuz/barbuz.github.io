@@ -104,23 +104,39 @@ imports — update it if a signature changes.
 
 Reasoning and the full argument: `docs/DESIGN-NOTES.md`, "The mark".
 
-## The element kit
+## The element kit (frozen, experimental — not shipping)
 
-`brand/elements.mjs` is a reusable element library — `chevron`, `corner`,
-`play`, `arrow`, `dot`, `ring`, `progress` and more — for other projects. These
-are **not** cut from the `b`; they apply the mark's *grammar* to other shapes:
+`brand/elements.mjs` is a reusable element library for other projects. It is
+**frozen at nine elements and marked experimental**: nothing imports it, no app
+consumes it, and it is not in `docs/BRAND-PLAN.md`. Do not polish or extend it
+on spec — grow it from a real screen that needs an icon, in Phase 4.
+
+The core set names a UI verb: `chevron`, `play`, `caret`, `arrow`, `check`,
+`cross`, `dot`, `ring`, `progress`. Seven more were parked — `corner`, `wedge`,
+`slash`, `divider`, `branch`, `bracket`, `bullet` — with their geometry recorded
+in `docs/DESIGN-NOTES.md` → "The element kit" for a one-line restore.
+
+These are **not** cut from the `b`; they apply the mark's *grammar* to other
+shapes:
 
 1. **An edge bends iff it is a diagonal.** Axis-aligned edges stay straight,
    diagonals bulge by the shared `K`. Applied in one place (`edges()`), so an
    element is just a list of points.
 2. **45° discipline** on every bulged edge, like the mark's diagonal.
-3. **Nodes on corners** — the corner device is available on any element.
+3. **Nodes on corners** — the corner device is available on any element. A
+   filled element (`play`) has no stroke, so the device sizes from the kit
+   default instead, or its radii would be zero.
 
 `check` and `cross` are deliberately straight (`orthogonal: true`); a bend on a
 tick reads as a wobble.
 
-`npm run elements:check` asserts all three rules and runs in CI — rule 1 erodes
-silently otherwise. Kit rationale: `docs/DESIGN-NOTES.md` → "The element kit".
+The viewBox is padded to cover the ink — a round cap reaches half a stroke past
+the nominal box, and a node ring a little further — so nothing is clipped.
+
+`npm run elements:check` asserts the rules and the emitted geometry. **It is no
+longer a CI gate** — run it by hand when the module is touched; it was dropped
+from the workflow at the freeze because it guarded a module nothing ships.
+Kit rationale: `docs/DESIGN-NOTES.md` → "The element kit".
 
 ## Paths: one `M` per run
 
@@ -128,7 +144,7 @@ silently otherwise. Kit rationale: `docs/DESIGN-NOTES.md` → "The element kit".
 carries only its two endpoints, so each contributes a bare `L`/`Q` that assumes
 the pen already sits on its start — true only while the strokes form **one
 continuous line**. One letter is; a **word is not**, and neither is an element
-like `divider`, `arrow` or `cross`. Drawn without a fresh `M`, the pen travels
+like `arrow` or `cross`. Drawn without a fresh `M`, the pen travels
 straight across the gap and the shape fuses: the lockup's `arbuz` rendered as a
 single blob, and `cross` lost a diagonal.
 
