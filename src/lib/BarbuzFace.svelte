@@ -6,7 +6,7 @@
       tag: 'PWA · offline',
       name: 'byom',
       href: 'https://barbuz.github.io/byom/',
-      body: 'Bring Your Own Map. Georeference a photo or PDF of any map, then see your GPS position on it. Even with no signal.'
+      body: 'Bring Your Own Map. Take a photo of any map, add some reference points, then see your live GPS position on it. Even with no signal.'
     },
     {
       tag: 'Web Audio',
@@ -101,7 +101,7 @@
   </section>
 
   <footer class="foot">
-    <span>barbuz · built in the open</span>
+    <span>barbuz</span>
     <span><a href="https://github.com/barbuz" target="_blank" rel="noopener">github.com/barbuz</a></span>
     <span>© 2026</span>
   </footer>
