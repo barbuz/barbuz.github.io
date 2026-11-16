@@ -57,6 +57,49 @@ and fails on drift. Details: `brand/README.md`.
 The active persona is the `data-persona` attribute on `<html>`, set before first
 paint by the script in `src/app.html` so there is no flash.
 
+## The mark
+
+The mark is the letter `b` — the one letter that touches all four corners of the
+primitive. The primitive is a **graph on four points**: P1 the ascender tip
+(reached by `b` only), P4 the right angle, P3 the shoulder, P2 the foot. Every
+stroke in the system ends on one of those four, so containment is node-set
+containment and it is exact. Of the four edges, three are axis-aligned and stay
+straight; **only the diagonal `D` bends**. That is why `k` is a property of one
+edge, not a treatment applied to shapes.
+
+`brand/mark.mjs` is the source of truth. `nodePoints()` returns the four points;
+the check is that `nodePoints(letterStrokes(c))` is the same three points for
+`c` in `a r u z`.
+
+The **node device** (a knockout hole plus a ring at each corner) ships with the
+mark: `markSvg()`, `tileSvg()` and `lockupSvg()` all draw it, and so does the
+icon set. The knockout is a **mask**, not a disc of ground colour, so the hole
+is real and reads on a transparent background (the favicon). In the rasterizer
+it is an erasing disc, except on the opaque tiles and the card, where painting
+the ground colour keeps the icon opaque. Pass `{ nodes: false }` for the bare
+stroke. The 16px favicon entry opts out: the knockout is ~1.7px there, so it is
+unreadable and hollows the stem tip.
+
+Reasoning and the full argument: `docs/DESIGN-NOTES.md`, "The mark".
+
+## The element kit
+
+`brand/elements.mjs` is a reusable element library — `chevron`, `corner`,
+`play`, `arrow`, `dot`, `ring`, `progress` and more — for other projects. These
+are **not** cut from the `b`; they apply the mark's *grammar* to other shapes:
+
+1. **An edge bends iff it is a diagonal.** Axis-aligned edges stay straight,
+   diagonals bulge by the shared `K`. Applied in one place (`edges()`), so an
+   element is just a list of points.
+2. **45° discipline** on every bulged edge, like the mark's diagonal.
+3. **Nodes on corners** — the corner device is available on any element.
+
+`check` and `cross` are deliberately straight (`orthogonal: true`); a bend on a
+tick reads as a wobble.
+
+`npm run elements:check` asserts all three rules and runs in CI — rule 1 erodes
+silently otherwise. Kit rationale: `docs/DESIGN-NOTES.md` → "The element kit".
+
 ## Basemap tiles (the Journey map)
 
 The Journey map reads a Protomaps vector tileset over PMTiles, so its base layer
@@ -101,14 +144,52 @@ If a fully self-hosted basemap is ever wanted, `pmtiles extract` cuts a small
 global or regional archive — a world z0–5 extract is ~15 MB, which removes the
 external dependency entirely. Not done yet because it adds a build step.
 
+## Phase 2 scratch — the mark
+
+The **settled** geometry is in the repo: `brand/mark.mjs`, with the assets in
+`static/`. That is what to edit and what to reuse; see `brand/README.md` and
+`docs/DESIGN-NOTES.md#the-mark`.
+
+The **exploration** that got there lives outside the repo, in
+`/workspace/scratch/mark/` — specimen pages only, no artifact, nothing there
+belongs in a commit. Regenerate and serve them with:
+
+```bash
+cd /workspace/scratch/mark && python3 gen.py   # writes ./out/
+cd out && python3 -m http.server 12000
+```
+
+**Do not put it in `/tmp`.** `/tmp` is wiped mid-session here, which kills both
+the files and any server running from them. `/workspace/` persists.
+
+The direction it settled on: **the mark is the `b`** — stroked with round caps
+everywhere, in the wordmark and the icons alike — and `barbuz` is set in a
+derived typeface where every letter is a subset of the `b`'s four strokes
+`{S, V, H, D}` — `a = VHD`, `r = VH`, `u = VD`, `z = HD`. Containment is the
+rule, so `z` is never asked to stand alone; that is why it may read as a `7` in
+isolation. `k > 0` means curvature bulging **outward**.
+
+**The icon rasterizer is hand-rolled, and that is load-bearing.** It is exact
+only while the mark stays lines and quadratics — which is all it is today. If
+the geometry ever gains fills, gradients or path booleans, it stops being exact
+and a real renderer (`resvg`) becomes the right call. The measurements and the
+trigger are in `docs/DESIGN-NOTES.md#why-the-rasterizer-is-hand-rolled--and-when-to-stop`.
+Placement is shared too: `markFit()` in `mark.mjs` is the only place the
+square-tile fit lives, so the SVG and the raster cannot drift.
+
+**In any lockup, the mark is the first `b`** — so the word beside it is `arbuz`,
+never `barbuz`. Use `lockup()` in `mark.mjs`; it places both parts and matches
+the bowls and baseline. Setting the full name draws the `b` twice. See
+`docs/DESIGN-NOTES.md#the-lockup-the-mark-is-the-first-b`.
+
 ## Order of work
 
 Page-only phases first, then the apps. `docs/BRAND-PLAN.md` is the authority;
 this is the short version:
 
 1. **Tokens** — extract to `brand/tokens.json` / `brand/tokens.css` (Phase 1). ✅ done
-2. **The mark** — settle the logo and favicon (Phase 2).
-3. **Voice and copy** — fix what the page says (Phase 3).
+2. **The mark** — settle the logo and favicon (Phase 2). ✅ done
+3. **Voice and copy** — fix what the page says (Phase 3). ← next
 4. **Then** apply to `match-the-gatherer`, `byom`, `digitofono`, `the stylus`.
 
 The governing rule is **content before layout**: settle the words first, then

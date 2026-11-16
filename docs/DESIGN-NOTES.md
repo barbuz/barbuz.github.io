@@ -159,3 +159,299 @@ brand colour; changing a **lightness** fixes contrast. Keep the two accent tones
 ~30–40° of lightness apart, and re-run the contrast check against both
 backgrounds before adopting a new value.
 
+
+## The mark
+
+The mark is the letter `b`, and the whole identity is built from it. This is not
+a monogram drawn beside a wordmark — it is the same shape, cut once.
+
+### One primitive, five letters
+
+Every letter of `barbuz` is a subset of the `b`'s four strokes:
+
+| Stroke | What it is |
+|---|---|
+| **S** | the stem |
+| **V** | the vertical |
+| **H** | the horizontal |
+| **D** | the diagonal |
+
+| Letter | Strokes | Reading |
+|---|---|---|
+| `b` | S + V + H + D | the whole — **this is the mark** |
+| `a` | V + H + D | the b without its ascender |
+| `r` | V + H | a corner |
+| `u` | V + D | an open bowl |
+| `z` | H + D | a bar and a diagonal |
+
+`S` and `V` are the same line at two lengths: `V` is the part of the stem below
+the x-height, `S` is the full stem. They are named separately because the
+difference between them *is* the difference between `b` and `a` — `a` drops the
+ascender. So the `b` draws as three segments (`S + D + H`), because `S` already
+covers `V`.
+
+**Containment is the rule.** Every letter is a piece of the `b`, and the `b` is
+the mark. So the mark is not a separate asset to be kept in sync — it *is* the
+first letter of the word, and the word is made of marks.
+
+### The primitive is four points, and four edges
+
+The strokes above are really a graph. Every stroke in the system ends on one of
+four points, and no stroke ends anywhere else:
+
+| Point | Where | Which letters reach it |
+|---|---|---|
+| **P1** | the tip of the ascender | `b` only |
+| **P4** | the right angle, top of the bowl | `b` `a` `r` `u` `z` |
+| **P3** | the shoulder, top-right | `b` `a` `r` `u` `z` |
+| **P2** | the foot, bottom-left | `b` `a` `r` `u` `z` |
+
+The four edges are the whole vocabulary — `S` (P1–P2), `V` (P4–P2), `H` (P4–P3)
+and `D` (P2–P3). Read this way, **containment is node-set containment**, and it
+is exact rather than approximate: `b` reaches all four points, and every other
+letter reaches the same three. `b` is the whole because it is the only letter
+that touches `P1`.
+
+`nodePoints()` in `mark.mjs` returns these, and the test of the claim is that
+`nodePoints(letterStrokes('a'))`, `('r')`, `('u')` and `('z')` all return the
+identical three points.
+
+### Only the diagonal bends
+
+Of the four edges, three are axis-aligned — `S` and `V` are vertical, `H` is
+horizontal. Curvature has nowhere to act on them; they are straight because they
+cannot be anything else. `D` is the only edge that is neither vertical nor
+horizontal, so it is the only one that can bulge.
+
+That is why `k` is a property of one edge rather than a treatment applied to the
+shapes. Any new element added to the kit inherits the bend automatically if, and
+only if, it runs along `D`.
+
+### The node device
+
+A **node** marks a corner: a knockout hole punched through the stroke, with a
+ring in the stroke's own ink. `NODE` in `mark.mjs` holds the three radii as
+multiples of the stroke width, so the device scales with whatever it is drawn on.
+
+The hole is what makes it work. The mark is drawn in the accent, so an
+accent-coloured node *on the mark* would be invisible. Carrying the contrast in
+the hole rather than in the node's own colour lets one device read on both the
+accent mark and the ink word.
+
+**The hole is a real hole.** The knockout is a mask (`nodeDevice()`), not a disc
+of ground colour painted over the stroke. That distinction matters in one place:
+the favicon is transparent, and a ground-coloured disc there would show as a
+solid dot on a coloured tab. A mask cuts the stroke and leaves the background
+visible, so the same markup works on any ground. The rasterizer follows the same
+rule — an erasing disc, except on the opaque tiles and the social card, where
+painting the ground colour keeps the icon opaque (an apple-touch icon with a
+transparent dot is wrong).
+
+**It ships.** The device is part of the mark, so it is on by default:
+`markSvg()`, `tileSvg()` and `lockupSvg()` all draw it, and the icon set carries
+it. Pass `{ nodes: false }` to get the bare stroke.
+
+**One size has to opt out.** In the 16px favicon the stroke is only ~2px and the
+knockout is ~1.7px across: at that size the device cannot be read, and hollowing
+the stem tip actively costs legibility. The 16px entry is therefore drawn without
+it; 32px and 48px keep it, and there it reads clearly. This is a size threshold,
+not a taste call — the device is legible from 32px up.
+
+
+### The consequences, stated plainly
+
+- **`z` never stands alone.** `z = {H, D}` is contained in the `b`, but on its
+  own it reads as a `7`. Adding a third stroke (`H + D + H`) makes it legible
+  alone but breaks containment. Containment won. The `z` is always set in the
+  word, where the eye reads it against `barbu` and resolves it instantly.
+- **The `u` needs negative curvature.** With straight strokes the `u` reads as
+  a `v`. Bulging the diagonal outward — away from the bowl's interior — gives it
+  the openness a `u` needs. This was the move that made the system work.
+- **The right angle sits at the top of the bowl.** The bowl's corner is the
+  right angle; the angle at the bottom of the diagonal is 45° or less.
+
+### Curvature
+
+Straight lines read as a geometric puzzle, not a typeface. One parameter, `k`,
+bulges a segment outward:
+
+```
+k = 0        straight
+k = 0.16     the value in use — the mark and the letters share it
+```
+
+**`k > 0` means outward**, away from the shape's interior. The sign convention
+is worth stating because it is easy to get backwards: the normal to a diagonal
+points one way or the other depending on which end you start from, so the
+generator resolves direction against a reference point rather than trusting the
+raw normal.
+
+The mark and the letters use the *same* `k`, and the mark's diagonal (63.7
+units) is within 2% of the letters' (62.5). That is what makes them one system:
+the same value produces the same absolute bulge, not just a similar one.
+
+### Stroked, round caps
+
+The mark is **stroked, never filled**, with **round caps and joins**, in both
+the wordmark and the icons. Filled and stroked were both tried; stroked keeps
+the counter open, which is what makes the `b` read as a `b` rather than a solid
+silhouette. Round caps match the letters.
+
+### The mark is heavier than the text
+
+| | Stroke | Why |
+|---|---|---|
+| the mark | 14 | must hold at 16px in a tab |
+| the letters | 9 | reads at body and display sizes |
+
+A 16px favicon has no room for a hairline. The mark is cut heavier so it
+survives the smallest size it will ever be asked to work at.
+
+### The lockup: the mark is the first `b`
+
+Where the mark and the name sit together — the social card today — the mark
+**stands in for the first `b`**, and the word beside it is `arbuz`:
+
+```
+   [mark]  arbuz        ✅  the mark IS the b
+   [mark]  barbuz       ❌  b drawn twice
+```
+
+Setting the full name next to the mark doubles the letter: the reader sees
+`bbarbuz`. This is not a spacing tweak, it follows from the containment rule —
+the mark is not a badge that happens to sit near the word, it is the word's
+first letter. Any new lockup has to obey it.
+
+Two alignment rules come with it, and both are easy to get subtly wrong:
+
+- **Match the bowls, not the ink boxes.** The mark is scaled so its bowl
+  (baseline to x-height) equals the text's. The two then share a baseline. The
+  earlier version scaled the mark to the text's *ink height* and aligned *ink
+  tops* — which left the baselines **5.2px apart** on the card, because the
+  heavier stroke overshoots its cap more than the light one. Two boxes the same
+  height are not the same letter in the same place.
+- **Keep the letter gap even.** The word starts one letter-gap to the right of
+  the mark's ink, measured ink to ink (`gap - stroke`, i.e. 9 units), not from
+  the mark's nominal width. The mark is wider than a text `b` (60 vs 49 ink
+  units), so advancing by the letter's nominal width would open a hole after it.
+
+The mark stays a little taller and heavier than the letters in the lockup —
+bowls match, ascenders and weight do not, by design. That is the mark being the
+mark, not a fourth-rate text glyph.
+
+`lockup()` in `mark.mjs` returns the mark and the word already placed in the
+text's coordinate space, so a caller scales and centres the pair as one block.
+
+### The element kit
+
+The mark is one shape. The kit is the *grammar* it was built from, freed from
+the letters, so a project can build UI that reads as barbuz without redrawing
+the logo. `brand/elements.mjs`.
+
+These are **not** pieces of the `b`. An earlier attempt cut the kit strictly
+from the `b`'s own strokes, and it was useless — every element was a fragment of
+one letter, so nothing could be used for a chevron or a play button. The useful
+thing was never the letter; it was the three rules the letter obeys. So the kit
+applies the rules to other shapes instead:
+
+1. **Straight or bulged, never both on one edge.** An axis-aligned edge is
+   straight; a diagonal bulges by the shared `K`. This is the same rule as the
+   mark's (§ "Only the diagonal bends"), and it is applied in one place —
+   `edges()` — so no element has to think about it. An element is defined as a
+   list of points; the rule decides which edges bend.
+
+2. **45° discipline.** The mark's diagonal is at 45°. The kit keeps its
+   diagonals there too, so a chevron and the mark's bowl read as one family.
+   A diagonal at some other angle would look like a different brand.
+
+3. **Nodes on corners.** The corner device travels with the grammar. Any element
+   can carry it: `elementSvg('arrow', { nodes: true })`.
+
+The three rules are asserted by `npm run elements:check`, which runs in CI. That
+matters more than it sounds: rule 1 is the kind of thing that erodes silently.
+Add a chevron with a slightly-off diagonal and nothing looks broken; the family
+just weakens. The check fails the build instead.
+
+**Two documented exceptions.** `check` and `cross` are straight, via an
+`orthogonal: true` flag. Rule 1 exists because the bend marks a diagonal; on a
+tick, a bend reads as a wobble — the hand-drawn look it gives a letter is wrong
+for a symbol that is supposed to be mechanical. The exception is explicit and
+named, so it is a decision rather than a drift.
+
+**What is in the kit.** `corner`, `wedge`, `chevron`, `play`, `caret`, `slash`,
+`divider`, `branch`, `arrow`, `bracket`, `bullet`, `check`, `cross`, `dot`,
+`ring`, `progress`. Elements are drawn in a nominal 0..100 box and scaled by the
+caller, and everything is lines and quadratics — the same primitives as the
+mark, so the same hand-rolled rasterizer can draw them.
+
+### Assets
+
+Everything is generated from one geometry module, `brand/mark.mjs`, which holds
+the strokes and exports the SVG builders. Nothing is hand-drawn twice.
+
+```bash
+npm run icons          # regenerate static/favicon.svg + the icon set
+npm run icons:check    # fail if the geometry changed but the assets did not
+```
+
+`generate-icons.mjs` rasterizes the mark in plain JavaScript — signed distance
+to each stroke, supersampled. The mark is deliberately pure geometry, so this is
+exact, and it avoids a native SVG dependency in the toolchain. CI runs
+`icons:check` alongside `tokens:check`.
+
+#### Why the rasterizer is hand-rolled — and when to stop
+
+This is a deliberate "fine now, revisit if the geometry gets richer" decision,
+not a permanent verdict. The reasoning is recorded here so it is not re-litigated
+from scratch, and so the trigger to revisit is written down rather than felt.
+
+**Why it is fine now.** The mark is three line segments and one quadratic.
+Nothing else — no fills, no gradients, no boolean operations, no winding rules.
+Signed distance to a segment is exact for that, so the hand-rolled rasterizer is
+not an approximation of a general renderer; for this input it *is* the
+computation. It is about 100 lines, and it keeps a native toolchain out of the
+repo.
+
+**The measurements, so nobody has to redo them.** The realistic alternative is
+`@resvg/resvg-js`, rendering the SVG that `tileSvg()` already produces. Tested
+on the same 512px tile:
+
+| | output | notes |
+|---|---|---|
+| hand-rolled | **5,782 bytes** | `filter=none` + `deflate 9` |
+| resvg | 9,153 bytes | 1.58× larger |
+| pngjs (encoder only) | 10,171 bytes | 1.76× larger |
+
+Pixel-wise the two renderers agree: max channel difference 64/255, confined to
+antialiased edges (610 edge pixels, 252 interior). That is two renderers
+converging, not one being wrong. `resvg` also declares 12 platform packages
+(~8 MB installed), which is the native dependency the generator exists to avoid.
+
+**The trigger to revisit.** Switch to a real renderer the moment the mark gains
+any of: filled shapes, gradients, more than one subpath with a fill rule, or
+path boolean operations. At that point the signed-distance approach stops being
+exact and starts being a geometry engine — which is a bad thing to maintain and
+exactly what `resvg` is for. Richer geometry also changes the calculus: if the
+mark is no longer three segments, "keep it dependency-free" is no longer worth
+the complexity.
+
+**One approximation, stated plainly.** The quadratic is flattened to a
+48-segment polyline (`segPoints(s, 48)`) rather than solved analytically. This
+is invisible at every size shipped, but it is an approximation and would need
+raising if the mark were ever rendered very large.
+
+| File | What it is |
+|---|---|
+| `static/favicon.svg` | the mark, vector, transparent, with the node device |
+| `static/favicon.ico` | 16 / 32 / 48, the mark alone (16px without the device) |
+| `static/apple-touch-icon.png` | 180, opaque |
+| `static/icon-192.png`, `icon-512.png` | manifest, tile form |
+| `static/icon-maskable-512.png` | manifest, padded for Android masks |
+| `static/og.png` | 1200×630 social card, the lockup (mark + `arbuz`) |
+
+All of them carry the node device except the 16px favicon entry, for the size
+reason given above.
+
+**The tile is for app icons, not for tabs.** The mark is tall and narrow (60×102),
+so a square tile shrinks it to a few pixels at 16px. The favicon is therefore
+the bare mark; the rounded tile is used at 180px and up, where it has room.

@@ -71,15 +71,21 @@ reasoning; `brand/README.md` records how to consume them.
 **Still open (deliberately):** how the *apps* consume the tokens — npm package
 vs vendored file. That is a Phase 4 question. See open decision 1.
 
-## Phase 2 — the mark *(page)*
+## Phase 2 — the mark *(page)* ✅ done
 
-There is no real logo yet — the page uses the wordmark "barbu**z**" and a
-placeholder favicon. Settle it before Phase 3, because the mark is content too.
+The mark is the letter `b`, cut from one primitive. Every letter of `barbuz` is
+a subset of the `b`'s four strokes `{S, V, H, D}` — `a = VHD`, `r = VH`,
+`u = VD`, `z = HD` — so the wordmark and the mark are the same shape, not two
+assets to keep in sync.
 
-- Decide the direction: wordmark only, a monogram, or a mark + wordmark lockup.
-- Constraints: must work at 16px, must work in one colour, must hold on both the
-  night and the day background.
-- Produce the favicon and the app-icon set from it.
+- ✅ Direction settled: **mark + wordmark**, and they are the same letterform.
+- ✅ Constraints met: holds at 16px, one colour, both backgrounds, stroked with
+  round caps.
+- ✅ `static/favicon.svg` and the app-icon set generated from `brand/mark.mjs`.
+
+The reasoning — the `z` containment trade-off, why the `u` needs outward
+curvature, the `k` convention — is in
+[`docs/DESIGN-NOTES.md`](DESIGN-NOTES.md#the-mark).
 
 **Why before the copy pass:** the mark is fixed content. If it arrives late, the
 hero and the nav get laid out around a placeholder and then rebuilt — the exact
@@ -126,7 +132,7 @@ the same:
 
 - [ ] palette tokens from the shared source, both light and dark if it supports both
 - [ ] type stack: display / body / mono
-- [ ] favicon and app icon from the shared mark
+- [ ] favicon and app icon from the shared mark — reuse `brand/mark.mjs`, do not redraw
 - [ ] footer credit linking back to `barbuz.github.io`
 - [ ] voice: copy written in the app's register, not pasted from the page
 - [ ] contrast re-checked against that app's actual backgrounds
@@ -151,7 +157,7 @@ palette swap.
 | # | Decision | Blocks |
 |---|---|---|
 | 1 | npm package vs vendored `tokens.css` for the apps | Phase 4 |
-| 2 | logo direction (wordmark / monogram / lockup) | Phase 2, then the icons in Phase 4 |
+| 2 | ~~logo direction~~ — **settled**: the mark is the `b`, and the wordmark is built from the same strokes | done |
 | 3 | does any app need a dark mode of its own, or is barbuz-night the only dark? | Phase 4 |
 | 4 | the draft's three fake "Featured Projects" — delete or replace with the real apps | Phase 3 |
 
@@ -159,6 +165,6 @@ palette swap.
 
 Tokens, then the mark, then the copy pass — all on the page. Only then the apps.
 
-Phase 1 is done, so the next step is **Phase 2, the mark**. That is the one piece
-here that is creative rather than mechanical, and the one that most wants the
-owner's eye.
+Phase 1 is done, and **Phase 2 is done** — the mark is settled and its assets
+generated. The next step is **Phase 3, voice and copy**. That is the remaining
+creative work on the page.
