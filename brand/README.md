@@ -28,6 +28,7 @@ npm run tokens:check    # fail if the JSON was edited but not regenerated (runs 
 npm run icons           # regenerate the icon set in static/
 npm run icons:check     # fail if mark.mjs changed but the icons did not (runs in CI)
 npm run elements:check  # fail if an element breaks the kit's rules (runs in CI)
+npm run mark:check      # fail if a mark path draws across a gap between strokes (runs in CI)
 ```
 
 The generated files are committed, so the site builds without running the

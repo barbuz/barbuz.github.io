@@ -108,6 +108,22 @@ tick reads as a wobble.
 `npm run elements:check` asserts all three rules and runs in CI — rule 1 erodes
 silently otherwise. Kit rationale: `docs/DESIGN-NOTES.md` → "The element kit".
 
+## Paths: one `M` per run
+
+`strokedPath()` in `mark.mjs` turns a list of strokes into an SVG `d`. A stroke
+carries only its two endpoints, so each contributes a bare `L`/`Q` that assumes
+the pen already sits on its start — true only while the strokes form **one
+continuous line**. One letter is; a **word is not**, and neither is an element
+like `divider`, `arrow` or `cross`. Drawn without a fresh `M`, the pen travels
+straight across the gap and the shape fuses: the lockup's `arbuz` rendered as a
+single blob, and `cross` lost a diagonal.
+
+`strokedPath()` now starts a subpath wherever the pen jumps, and both
+`mark.mjs` and `elements.mjs` share it. `npm run mark:check` and rule 4 of
+`elements:check` assert one `M` per run, so a future multi-run shape cannot
+regress silently. The rasterizer was never affected — it draws polylines, not
+paths.
+
 ## Basemap tiles (the Journey map)
 
 The Journey map reads a Protomaps vector tileset over PMTiles, so its base layer

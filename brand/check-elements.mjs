@@ -13,10 +13,14 @@
  *   2. Every bulged edge runs at 45°, matching the mark's diagonal.
  *   3. Every element renders well-formed SVG, with each mask reference
  *      resolving to an id in the same document.
+ *   4. A multi-run element (`divider`, `arrow`, `cross`) emits one `M` per
+ *      run. With only the first `M`, the pen draws straight across the gap and
+ *      the element fuses into a shape it was never meant to be.
  *
  * Runs in CI, next to tokens:check and icons:check.
  */
 import { NAMES, element, elementSvg } from './elements.mjs';
+import { strokeRuns } from './mark.mjs';
 
 const isDiagonal = (a, b) =>
   Math.abs(a[0] - b[0]) > 1e-9 && Math.abs(a[1] - b[1]) > 1e-9;
@@ -63,6 +67,16 @@ for (const name of NAMES) {
       if (!ids.includes(ref)) problems.push(`${name}: mask reference "${ref}" has no matching id`);
     }
     if (ids.length !== new Set(ids).size) problems.push(`${name}: duplicate id in one SVG`);
+  }
+
+  // Rule 4 — one `M` per contiguous run, so a multi-run element does not fuse.
+  const d = elementSvg(name, { size: 48 }).match(/<path d="([^"]+)"/);
+  if (d) {
+    const want = el.fill ? 1 : strokeRuns(el.segs);
+    const got = (d[1].match(/M/g) || []).length;
+    if (got !== want) {
+      problems.push(`${name}: ${got} subpath(s) for ${want} run(s) — the pen draws across the gap`);
+    }
   }
 }
 

@@ -13,6 +13,7 @@
 		"tokens:check": "node brand/generate.mjs --check",
 		"icons:check": "node brand/generate-icons.mjs --check",
 		"elements:check": "node brand/check-elements.mjs",
+		"mark:check": "node brand/check-mark.mjs",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},

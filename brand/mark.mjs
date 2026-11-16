@@ -325,16 +325,34 @@ export function markFit(size, inset = TILE_INSET, stroke = MARK.stroke) {
 
 /* --------------------------------------------------------------------- svg */
 
-/** A stroked path for a run of strokes, starting with an explicit M. */
-function strokedPath(strokes) {
-  let d = '';
-  let first = true;
+/**
+ * The contiguous runs in a stroke list: a new run starts wherever the pen
+ * jumps. One letter is one run; a word is one run per letter.
+ */
+export function strokeRuns(strokes) {
+  let n = 0;
+  let pen = null;
   for (const s of strokes) {
-    if (first) {
-      d += `M${num(s.a[0])},${num(s.a[1])}`;
-      first = false;
+    if (!pen || Math.hypot(s.a[0] - pen[0], s.a[1] - pen[1]) > 1e-6) n++;
+    pen = s.b;
+  }
+  return n;
+}
+
+/** A stroked path for a run of strokes, starting an explicit M per subpath. */
+export function strokedPath(strokes) {
+  let d = '';
+  let pen = null;
+  for (const s of strokes) {
+    // Start a new subpath whenever the pen is not already at the stroke's
+    // start. One letter is a single continuous line, so this never fires for
+    // it; a word is several lines, and without this the `L` would draw a
+    // segment straight across the gap between two letters.
+    if (!pen || Math.hypot(s.a[0] - pen[0], s.a[1] - pen[1]) > 1e-6) {
+      d += (d ? ' ' : '') + `M${num(s.a[0])},${num(s.a[1])}`;
     }
-    d += ' ' + segPath(s);
+    d += (d ? ' ' : '') + segPath(s);
+    pen = s.b;
   }
   return d;
 }
@@ -487,6 +505,11 @@ export default {
   TILE_INSET,
   markStrokes,
   letterStrokes,
+  wordStrokes,
+  lockup,
+  bounds,
+  strokeRuns,
+  strokedPath,
   nodePoints,
   nodeCircles,
   circlePoints,
