@@ -79,14 +79,16 @@ icon set. The knockout is a **mask**, not a disc of ground colour, so the hole
 is real and reads on a transparent background (the favicon). In the rasterizer
 it is an erasing disc, except on the opaque tiles and the card, where painting
 the ground colour keeps the icon opaque. Pass `{ nodes: false }` for the bare
-stroke. The 16px favicon entry opts out: the knockout is ~1.7px there, so it is
-unreadable and hollows the stem tip.
+stroke. **No size opts out:** the device is kept even at 16px, where it is
+texture rather than a readable ring — a mark with the device, however small, is
+preferred to one without it. This also makes `favicon.ico` agree with
+`favicon.svg`, which always drew it.
 
 The page reads the mark too: `src/lib/Wordmark.svelte` renders the nav lockup
-from `lockupSvg()`, sized by a `height` prop (default 28px — the floor at which
-the word's thinner stroke still clears the node device's ~1.7px legibility
-floor; at 22px the mark's nodes read but the word's do not). The device is on
-in the nav, as it is everywhere else. `mark.mjs` is not in the
+from `lockupSvg()`, sized by a `height` prop (default 28px). The device is on
+in the nav, as it is everywhere else. 28px is a sizing default, not a
+device threshold: the word's thinner stroke makes its knockouts the smallest
+elements on the page, and 28px keeps them near 1.9px. `mark.mjs` is not in the
 type-checked program, so `brand/mark.d.mts` declares the surface the page
 imports — update it if a signature changes.
 

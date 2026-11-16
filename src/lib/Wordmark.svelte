@@ -5,12 +5,11 @@
     /**
      * Rendered height in px. The width follows the lockup's own aspect.
      *
-     * 28px clears the node device's legibility floor. The word's stroke is
-     * thinner than the mark's, so its knockouts (0.84 x stroke, i.e. 0.068 x
-     * this height) are what set the floor: they fall below the ~1.7px the 16px
-     * favicon opts out at under ~25px, and only the mark's would read. At 28px
-     * the word's are ~1.9px. Below that, either drop `nodes` or expect only the
-     * mark's nodes to resolve.
+     * This is a sizing default, not a device threshold — the node device is on
+     * at every height. 28px is chosen so the word's knockouts (0.84 x stroke,
+     * i.e. 0.068 x this height) stay near 1.9px: the word's stroke is thinner
+     * than the mark's, so its knockouts are the smallest thing the lockup draws
+     * and the first to turn to texture as it shrinks.
      */
     height?: number;
     /**

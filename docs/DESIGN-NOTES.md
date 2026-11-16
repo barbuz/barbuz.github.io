@@ -251,11 +251,17 @@ transparent dot is wrong).
 `markSvg()`, `tileSvg()` and `lockupSvg()` all draw it, and the icon set carries
 it. Pass `{ nodes: false }` to get the bare stroke.
 
-**One size has to opt out.** In the 16px favicon the stroke is only ~2px and the
-knockout is ~1.7px across: at that size the device cannot be read, and hollowing
-the stem tip actively costs legibility. The 16px entry is therefore drawn without
-it; 32px and 48px keep it, and there it reads clearly. This is a size threshold,
-not a taste call — the device is legible from 32px up.
+**No size opts out.** The device is never turned off by size. At 16px it does
+not read as nodes — the ring is sub-pixel (~0.4px) and the knockout is ~84% of
+the ~2px stroke, so the stem tip softens and the ascender tip can look detached.
+That is the accepted trade: a mark with the device, however small, over one
+without it. It also removes an inconsistency — `favicon.svg` is built by
+`markSvg()`, which always drew the device, so before this the two favicons
+disagreed at 16px. Now they agree.
+
+The device is legible from ~32px up. Below that it is texture, not a readable
+ring. `{ nodes: false }` remains available for a caller that wants the bare
+stroke, but no shipped asset uses it for size.
 
 
 ### The consequences, stated plainly
@@ -443,14 +449,15 @@ raising if the mark were ever rendered very large.
 | File | What it is |
 |---|---|
 | `static/favicon.svg` | the mark, vector, transparent, with the node device |
-| `static/favicon.ico` | 16 / 32 / 48, the mark alone (16px without the device) |
+| `static/favicon.ico` | 16 / 32 / 48, the mark alone, with the node device |
 | `static/apple-touch-icon.png` | 180, opaque |
 | `static/icon-192.png`, `icon-512.png` | manifest, tile form |
 | `static/icon-maskable-512.png` | manifest, padded for Android masks |
 | `static/og.png` | 1200×630 social card, the lockup (mark + `arbuz`) |
 
-All of them carry the node device except the 16px favicon entry, for the size
-reason given above.
+All of them carry the node device, at every size. The device is legible from
+~32px up; at 16px it is texture rather than a readable ring, and it is kept
+anyway — a mark with the device, however small, over one without it.
 
 **The tile is for app icons, not for tabs.** The mark is tall and narrow (60×102),
 so a square tile shrinks it to a few pixels at 16px. The favicon is therefore

@@ -387,11 +387,12 @@ outputs.push(['favicon.svg', Buffer.from(markSvg({ ink: ACCENT }), 'utf8')]);
 {
   const sizes = [16, 32, 48];
   const images = sizes.map((s) => {
-    // At 16px the stroke is only ~2px and the knockout is ~1.7px across: the
-    // device cannot be read at that size, and hollowing the stem tip actively
-    // costs legibility. It is dropped there and kept from 32px up, where it
-    // reads clearly.
-    const px = markAlone(s, { ink: ACCENT, inset: FAVICON_INSET, nodes: s >= 32 });
+    // The device is never turned off by size. At 16px it does not read as
+    // nodes — the ring is sub-pixel (~0.4px) and the knockout is ~84% of the
+    // ~2px stroke, so the stem tip softens. That is preferred over a mark with
+    // no nodes, and it is what favicon.svg already does at 16px, so the two
+    // agree. See docs/DESIGN-NOTES.md, "The mark".
+    const px = markAlone(s, { ink: ACCENT, inset: FAVICON_INSET, nodes: true });
     return { size: s, png: encodePng(s, s, px) };
   });
   outputs.push(['favicon.ico', encodeIco(images)]);
