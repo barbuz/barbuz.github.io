@@ -182,7 +182,7 @@ Every letter of `barbuz` is a subset of the `b`'s four strokes:
 | `a` | V + H + D | the b without its ascender |
 | `r` | V + H | a corner |
 | `u` | V + D | an open bowl |
-| `z` | H + D | a bar and a diagonal |
+| `z` | H + D | a bar and a diagonal, plus an accent foot |
 
 `S` and `V` are the same line at two lengths: `V` is the part of the stem below
 the x-height, `S` is the full stem. They are named separately because the
@@ -266,10 +266,17 @@ stroke, but no shipped asset uses it for size.
 
 ### The consequences, stated plainly
 
-- **`z` never stands alone.** `z = {H, D}` is contained in the `b`, but on its
-  own it reads as a `7`. Adding a third stroke (`H + D + H`) makes it legible
-  alone but breaks containment. Containment won. The `z` is always set in the
-  word, where the eye reads it against `barbu` and resolves it instantly.
+- **The `z` carries a foot, drawn in the accent.** `z = {H, D}` alone reads as
+  a `7`. Adding a third stroke (`H + D + H`) makes it legible alone, but the
+  extra stroke is not part of the `b`'s vocabulary, so a plain third stroke
+  would break containment. The resolution is the foot's **colour**: the foot is
+  `H` again — the mark's own stroke — set at the baseline, and it is drawn in
+  the accent, the mark's ink, while the letter stays in the word's ink. So the
+  letter is still `H + D`, containment still holds exactly (`nodePoints` of the
+  `z` is the same three points as `a`, `r` and `u`), and the foot reads as the
+  mark reaching into the word rather than as a third edge of the letter.
+  `nodePoints()` skips accent strokes for exactly this reason: the foot's far
+  end is a fifth point, and it must make no node claim.
 - **The `u` needs negative curvature.** With straight strokes the `u` reads as
   a `v`. Bulging the diagonal outward — away from the bowl's interior — gives it
   the openness a `u` needs. This was the move that made the system work.

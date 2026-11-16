@@ -33,6 +33,7 @@ import {
   markSvg,
   markFit,
   lockup,
+  splitAccent,
   segPoints,
   nodeCircles,
   circlePoints
@@ -363,10 +364,15 @@ function ogCard(w = 1200, h = 630) {
     transform: [tx, ty, scale]
   });
 
+  // The word draws in two inks: its own, and the accent for the z's foot,
+  // which is the mark's stroke. Same split as `lockupSvg`.
+  const word = splitAccent(lk.word.strokes);
+
   return rasterize(w, h, [
     { type: 'roundRect', size: w, radius: 0, color: hex(NIGHT) },
     layer(lk.mark, ACCENT),
-    layer(lk.word, INK),
+    layer({ strokes: word.ink, stroke: lk.word.stroke }, INK),
+    layer({ strokes: word.accent, stroke: lk.word.stroke }, ACCENT),
     ...nodeLayers(lk.mark.strokes, lk.mark.stroke, ACCENT, [tx, ty, scale], NIGHT),
     ...nodeLayers(lk.word.strokes, lk.word.stroke, INK, [tx, ty, scale], NIGHT)
   ]);

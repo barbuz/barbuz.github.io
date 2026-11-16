@@ -19,7 +19,7 @@
  *
  * Runs in CI, next to tokens:check, icons:check and elements:check.
  */
-import { markStrokes, lockup, markSvg, tileSvg, lockupSvg } from './mark.mjs';
+import { markStrokes, lockup, markSvg, tileSvg, lockupSvg, nodePoints, letterStrokes, splitAccent } from './mark.mjs';
 
 /** The contiguous runs in a stroke list: a new run starts wherever the pen jumps. */
 function runs(strokes) {
@@ -81,6 +81,24 @@ if (runs(lk.word.strokes) !== 'arbuz'.length) {
 const wordDs = paths(lockupSvg({ nodes: false }))[1];
 if (wordDs && subpaths(wordDs) !== 'arbuz'.length) {
   problems.push(`lockup word: ${subpaths(wordDs)} subpath(s) for ${'arbuz'.length} letters`);
+}
+
+// Containment: `b` reaches all four points, every other letter the same three.
+// The z's accent foot must not add a point, or the rule stops being exact.
+{
+  const four = JSON.stringify(nodePoints(letterStrokes('b')));
+  const three = JSON.stringify(nodePoints(letterStrokes('a')));
+  for (const c of ['r', 'u', 'z']) {
+    const got = JSON.stringify(nodePoints(letterStrokes(c)));
+    if (got !== three) {
+      problems.push(`containment: "${c}" reaches ${got}, expected the same three as "a" ${three}`);
+    }
+  }
+  if (JSON.parse(four).length !== 4) problems.push(`containment: "b" should reach four points, got ${four}`);
+  // And the foot must actually be there, in the accent.
+  const z = splitAccent(letterStrokes('z'));
+  if (z.accent.length !== 1) problems.push(`z foot: expected one accent stroke, got ${z.accent.length}`);
+  if (z.ink.length !== 2) problems.push(`z: expected two ink strokes (H + D), got ${z.ink.length}`);
 }
 
 if (problems.length) {

@@ -27,6 +27,15 @@ export interface Lockup {
 
 export declare function lockup(name?: string): Lockup;
 
+/**
+ * Split a run into the letter's own ink and its accent strokes. The z's foot
+ * is the only accent stroke today.
+ */
+export declare function splitAccent(strokes: unknown[]): {
+  ink: unknown[];
+  accent: unknown[];
+};
+
 export declare function lockupSvg(opts?: {
   name?: string;
   ink?: string;

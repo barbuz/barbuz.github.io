@@ -73,6 +73,14 @@ edge, not a treatment applied to shapes.
 the check is that `nodePoints(letterStrokes(c))` is the same three points for
 `c` in `a r u z`.
 
+The `z` is the one letter that carries a stroke outside the `b`'s vocabulary:
+a **foot**, `H` set at the baseline, without which `H + D` reads as a `7`. It is
+drawn in the **accent** — the mark's ink — so it reads as the mark's stroke
+rather than a third edge of the letter, and `nodePoints()` skips accent strokes
+so the letter still reaches exactly P2, P3 and P4. `splitAccent()` returns the
+two runs; `lockupSvg()` and the social card draw the foot as its own
+accent-coloured path.
+
 The **node device** (a knockout hole plus a ring at each corner) ships with the
 mark: `markSvg()`, `tileSvg()` and `lockupSvg()` all draw it, and so does the
 icon set. The knockout is a **mask**, not a disc of ground colour, so the hole
@@ -193,9 +201,9 @@ the files and any server running from them. `/workspace/` persists.
 The direction it settled on: **the mark is the `b`** — stroked with round caps
 everywhere, in the wordmark and the icons alike — and `barbuz` is set in a
 derived typeface where every letter is a subset of the `b`'s four strokes
-`{S, V, H, D}` — `a = VHD`, `r = VH`, `u = VD`, `z = HD`. Containment is the
-rule, so `z` is never asked to stand alone; that is why it may read as a `7` in
-isolation. `k > 0` means curvature bulging **outward**.
+`{S, V, H, D}` — `a = VHD`, `r = VH`, `u = VD`, `z = HD`. The `z` also carries
+a foot in the accent (see "The mark"), so `HD` alone would read as a `7`.
+`k > 0` means curvature bulging **outward**.
 
 **The icon rasterizer is hand-rolled, and that is load-bearing.** It is exact
 only while the mark stays lines and quadratics — which is all it is today. If
