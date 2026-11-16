@@ -101,12 +101,12 @@ around real words.
   and Leo (engineer: colloquial and professional, longer sentences, Title Case
   headings). The guide also settles the shared mechanics, including **Australian
   spelling**. The apps inherit this in Phase 4.
-- **Copy pass.** `docs/COPY-NOTES.md` holds every draft-vs-current pair on the
-  Leo face. Settle each one. Then delete the file once it is fully folded in.
+- **Copy pass.** Two files, one per face: `docs/COPY-NOTES-BARBUZ.md` and
+  `docs/COPY-NOTES-LEO.md`. Settle each pair, apply it to the page, then delete
+  the file once it is fully folded in.
 
-The barbuz face needs the same treatment; it currently has no counterpart file.
-Its copy is still draft, and it is the default landing at `/`, so it is what
-most visitors read — do it first.
+The barbuz face is done first because it is the default landing at `/`, so it is
+what most visitors read.
 
 **Output:** the page's content is fixed, and the layout can be finalised.
 
