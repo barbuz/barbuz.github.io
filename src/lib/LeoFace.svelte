@@ -71,7 +71,6 @@
   <section class="section" id="expertise">
     <div class="section__head">
       <h2>Core Expertise</h2>
-      <span class="eyebrow">03</span>
     </div>
     <div class="leo-grid">
       <div class="leo-card reveal" style="animation-delay: 0.08s">

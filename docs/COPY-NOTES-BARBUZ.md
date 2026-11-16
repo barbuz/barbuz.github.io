@@ -107,9 +107,15 @@ decisions.
 In register, and the second sentence carries the link to the Leo face without
 explaining the joke. Leave it.
 
-## 7. Section eyebrows — the open problem
+## 7. Section eyebrows — numbers removed
 
-| Face | Section | Eyebrow | What it is |
+The eyebrow is the small mono label above a heading. It is `text-transform:
+uppercase` in CSS, so the lowercase labels in the markup (`niche by design`)
+render as `NICHE BY DESIGN`.
+
+**Before:** the slot held four different kinds of thing across the two faces.
+
+| Face | Section | Eyebrow | What it was |
 |---|---|---|---|
 | barbuz | hero | `// maker · small sharp tools` | a role line |
 | barbuz | Apps | `03` | a card count |
@@ -118,17 +124,28 @@ explaining the joke. Leave it.
 | Leo | hero | `Software Engineer` | a role line |
 | Leo | Expertise | `03` | a card count |
 
-The eyebrow is the small mono label above a heading. It is `text-transform:
-uppercase` in CSS, so the lowercase labels in the markup (`niche by design`)
-render as `NICHE BY DESIGN`.
+The two `03`s were not section numbers — barbuz's Apps is the first section on
+its face and Leo's Expertise is the second on its, so a running number would
+read `01` and `02`. They were **card counts**, and both happened to be 3, which
+is why the mismatch went unnoticed.
 
-The slot holds **four different kinds of thing** across the two faces. The two
-`03`s are not section numbers — barbuz's Apps is the first section on its face
-and Leo's Expertise is the second on its, so a running number would read `01`
-and `02`. They are **card counts**, and both happen to be 3.
+**Applied (author): both number eyebrows removed**, from barbuz Apps and Leo
+Expertise. The count is already visible in the grid, and it was the only thing
+in the slot that could silently go stale.
 
-Not changed, because the fix is a design decision rather than a wording one —
-see below.
+**What remains:**
+
+| Face | Section | Eyebrow | What it is |
+|---|---|---|---|
+| barbuz | hero | `// maker · small sharp tools` | a role line |
+| barbuz | Tools | `niche by design` | a phrase |
+| Leo | hero | `Software Engineer` | a role line |
+
+The hero labels do real work — they name the role, which the `h1` does not — so
+they are not in question. `niche by design` on Tools is now the **only section
+head on either face with an eyebrow**, which is the leftover to settle: either
+it goes too, or the other section heads get one. Not changed here, since the
+request was specifically the numbers.
 
 ## 8. Footer, nav, buttons
 
@@ -184,27 +201,12 @@ the more popular app and its audience includes people who do not. Spell it out
 where the audience is broad, abbreviate where it is narrow. Recorded here so it
 is not re-flagged as an inconsistency later.
 
-**2. The eyebrow — open. A design decision, not a wording one.**
+**2. The number eyebrows — settled: removed.** The two `03`s are gone from
+barbuz Apps and Leo Expertise. A card count in the section head duplicates what
+the grid already shows, and it was the one part of the slot that could go stale
+without anyone noticing. See §7.
 
-The slot holds four different kinds of thing (see §7). Three ways to fix it:
-
-- **(a) One job: a category.** Make the eyebrow always name the thing the
-  section is about — `apps`, `tools`, `about`; `geospatial`, `machine learning`,
-  `llms`. It reads as a label rather than a decoration, and it is the only
-  option that works when the card count changes.
-- **(b) One job: a count.** Keep `03`, and give every section that holds a
-  collection its count — including Tools, which currently holds one card and
-  says `niche by design` instead. Honest, but it makes a section of one card
-  advertise its smallness, and the count has to be maintained by hand.
-- **(c) Remove it.** The hero keeps its role line; the sections keep just the
-  `h2`. The heading already says what the section is, so the eyebrow is
-  currently decoration on three of four sections.
-
-**Recommendation: (c), remove it from the section heads.** The `h2` already names
-the section, so the eyebrow repeats it in a second register — which is the actual
-problem, not which content it holds. It stays on the hero, where it does real
-work: it names the role, which the `h1` (`barbuz`, or the Leo headline) does not.
-
-This is a layout change, not a copy change, so it is left for the layout pass
-rather than done here. It is recorded because the *content* decision has to be
-made before the layout is finalised — the same rule as the rest of Phase 3.
+**3. `niche by design` on Tools — open, small.** It is now the only section head
+on either face carrying an eyebrow. Two options: drop it for consistency with
+the other section heads, or accept it as a deliberate one-off on the section
+that most needs explaining. Left as-is here, since the request was the numbers.

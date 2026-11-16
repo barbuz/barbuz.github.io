@@ -49,7 +49,6 @@
   <section class="section" id="apps">
     <div class="section__head">
       <h2>Apps</h2>
-      <span class="eyebrow">03</span>
     </div>
     <div class="cards">
       {#each apps as app, i (app.name)}
