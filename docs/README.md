@@ -13,7 +13,8 @@ can publish from — that build source is "GitHub Actions", not "branch folder".
 | [DESIGN-NOTES.md](./DESIGN-NOTES.md) | The palette decisions and the reasoning behind them: the two-tone accent, the temperature rule, the measured contrast table, the semantic colours, the type stack, and where the values now live. |
 | [BRAND-PLAN.md](./BRAND-PLAN.md) | The plan for growing the identity from the one page that has it into the apps. Phases, order, open decisions. |
 | [VOICE-NOTES.md](./VOICE-NOTES.md) | The two registers — barbuz (short, dry, maker) and Leo (longer, friendly, engineer) — and the shared rules both obey. The reference the copy pass is written against. |
-| [COPY-NOTES.md](./COPY-NOTES.md) | Draft-vs-current copy pairs on the Leo face, kept so the wording can be settled before the layout is finalised. |
+| [COPY-NOTES-BARBUZ.md](./COPY-NOTES-BARBUZ.md) | Current-vs-proposed copy pairs on the barbuz face, with the reason from the voice guide for each change. |
+| [COPY-NOTES-LEO.md](./COPY-NOTES-LEO.md) | Draft-vs-current copy pairs on the Leo face, kept so the wording can be settled before the layout is finalised. |
 
 The tokens themselves are in [`brand/`](../brand/) — see
 [`brand/README.md`](../brand/README.md). That folder is also not served.

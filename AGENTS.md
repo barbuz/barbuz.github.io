@@ -22,7 +22,8 @@ nothing in `docs/` reaches the public site. Do not move it into `static/`.
 | `docs/DESIGN-NOTES.md` | Palette decisions and the reasoning: the two-tone accent, the temperature rule, measured contrast tables, the type stack. |
 | `docs/BRAND-PLAN.md` | The plan for growing the identity into the apps. Phases, order, open decisions. Authority for what to do next. |
 | `docs/VOICE-NOTES.md` | The two registers and the shared rules. The reference the copy pass is written against. |
-| `docs/COPY-NOTES.md` | Draft-vs-current copy pairs on the Leo face. |
+| `docs/COPY-NOTES-BARBUZ.md` | Current-vs-proposed copy pairs on the barbuz face. |
+| `docs/COPY-NOTES-LEO.md` | Draft-vs-current copy pairs on the Leo face. |
 
 ## Build and run
 

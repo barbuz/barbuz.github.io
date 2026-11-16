@@ -6,13 +6,13 @@
       tag: 'PWA · offline',
       name: 'byom',
       href: 'https://barbuz.github.io/byom/',
-      body: 'Bring Your Own Map — georeference a photo or PDF of any map, then see your GPS position on it, even with no signal.'
+      body: 'Bring Your Own Map. Georeference a photo or PDF of any map, then see your GPS position on it. Even with no signal.'
     },
     {
       tag: 'Web Audio',
       name: 'digitofono',
       href: 'https://barbuz.github.io/digitofono/',
-      body: 'A streamlined touchscreen instrument. Tap or drag anywhere on a near-blank surface and it sings.'
+      body: 'A touchscreen instrument. Tap or drag anywhere on a near-blank surface and it sings.'
     },
     {
       tag: 'daily game',
@@ -73,8 +73,8 @@
         <span class="card__tag">for 3CB gurus</span>
         <h3>the stylus</h3>
         <p>
-          A browser tool for gurus who edit 3 Card Blind MTG result sheets. Small, specific, and
-          sharp at its one job.
+          A browser tool for editing 3 Card Blind MTG result sheets. Small, specific, and sharp at
+          its one job.
         </p>
         <span class="card__go">open ↗</span>
       </a>
