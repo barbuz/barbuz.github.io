@@ -24,6 +24,11 @@ change, and the hero is the guide's own worked example of the register working.
 This pass is therefore light — four edits, not a rewrite. A copy pass that
 invents work to look busy would make the page worse.
 
+**Follow-up pass (§10).** A later round applied the author's own changes: the
+three app tags, a GitHub button on every card, and an icon-only persona
+switcher. Those are recorded in §10 rather than as proposals, since the wording
+came from the author directly.
+
 ---
 
 ## 1. Hero
@@ -172,6 +177,93 @@ stop, external link marked `↗`. No change.
 In register and it does the job — names the apps and the second face in two
 clauses. The `og:description` is the same sentence in Title case ("Small, sharp
 tools."). Harmless, and not worth a change on its own.
+
+---
+
+## 10. Follow-up pass — tags, GitHub buttons, icon-only switcher
+
+Three changes made directly by the author, on the barbuz face only. Recorded
+here so the decisions are not re-derived later.
+
+### 10a. App tags
+
+The tag is the small mono label above each card's `h3`.
+
+| Card | Before | After |
+|---|---|---|
+| byom | `PWA · offline` | `real world maps` |
+| digitofono | `Web Audio` | `music pad` |
+| match the gatherer | `daily game` | `MTG daily game` |
+| the stylus | `for 3CB gurus` | *(unchanged)* |
+
+The old tags named the **technology** (`PWA`, `Web Audio`); the new ones name
+**what the app is**, which is the concrete thing rule 2 asks for. All four are
+lowercase labels, per the case rule. `MTG daily game` keeps the acronym in caps
+inside the lowercase label, exactly as `Web Audio` did — the label is lowercase,
+the proper noun is not. It also matches decision 1 below: `MTG` on the two
+cards whose audience already knows it, spelled out in prose on match the
+gatherer's body.
+
+### 10b. A GitHub button on every card
+
+Each card now carries a small GitHub mark that links straight to the source
+repo, separate from the card's own "open" target:
+
+| Card | Repo |
+|---|---|
+| byom | `github.com/barbuz/byom` |
+| digitofono | `github.com/barbuz/digitofono` |
+| match the gatherer | `github.com/barbuz/match-the-gatherer` |
+| the stylus | `github.com/barbuz/the-stylus` |
+
+This is the first place on the page where a card has **two destinations**, so
+the card is no longer one big `<a>`. The card is an `<article>`; the "open ↗"
+link is stretched over the whole card with a `::after`, and the GitHub button
+sits above it (`z-index: 1`) so it stays its own click. A click anywhere else
+opens the app, as before. Two anchors cannot nest, which is why the structure
+changed rather than adding a second link inside the old one.
+
+The icon-only button needs its own accessible name — it has no visible text —
+so it carries `aria-label="Source for <app> on GitHub"`, and `title="Source on
+GitHub"` for the pointer tooltip. It is `target="_blank"`, so it gets `rel=
+"noopener"`.
+
+The button is **icon only**, so it adds no words to the card. The link's meaning
+lives in the mark and the accessible name, not in a visible `GitHub ↗` label;
+the visible-text version would have crowded a card whose `card__go` already
+says "open ↗".
+
+### 10c. The persona switcher is icon-only
+
+The fixed switcher at the top-right used to show the two words `barbuz` and
+`leo` beside their moon/sun glyphs. The words are gone; the two icons remain, on
+the same sliding thumb.
+
+The reasoning is voice, not just layout: the toggle is a **cross-face** control
+that reveals the site has two faces, and the author wants it to read as an
+Easter egg rather than an explained control. Labelling it in words hands the
+reader the trick. The glyphs alone are the hint.
+
+What keeps it usable without visible text:
+
+- The `<button>` keeps `role="switch"`, `aria-checked`, and a live
+  `aria-label` (`Switch to Leo` / `Switch to barbuz`), so screen readers still
+  get the words the eye no longer sees. Removing the label from the DOM is a
+  visual choice, not an accessibility one.
+- The `press F to flip` hint below it stays — that is the discoverable path for
+  anyone who does not read the glyphs.
+
+The now-unused `gap` / `white-space` on `.switch__opt` were dropped, and the
+glyphs were sized up (0.85rem → 1rem) and given symmetric padding, since an
+icon-only control has no text to set its height.
+
+### 10d. What did not change
+
+- **The stylus tag** (`for 3CB gurus`) — still accurate and in register.
+- **Card bodies** — the GitHub link is an affordance, not copy; no body text
+  changed. §2's byom body and §5's the-stylus body stand.
+- **The footer** already carries `github.com/barbuz`; the per-card buttons are
+  the deep links, the footer stays the profile link.
 
 ---
 

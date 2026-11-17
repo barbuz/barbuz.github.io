@@ -261,3 +261,38 @@ build the layout around them. Do not finalise a layout against placeholder text.
 - `JourneyMap.svelte` is imported in the browser only — MapLibre touches
   `window` at import time.
 - Text and logos are still draft; Phase 2 and Phase 3 settle them.
+
+## The barbuz cards
+
+The app and tool cards on the barbuz face (`BarbuzFace.svelte`, rendered by one
+`{#snippet card}`) each carry **two destinations**: the app itself, and its
+source on GitHub.
+
+Because two anchors cannot nest, the card is an `<article>`, not one big `<a>`.
+The "open ↗" link is stretched over the whole card by `.card__go::after`, so a
+click anywhere opens the app; the GitHub button sits above it (`.card__repo`,
+`z-index: 1`) so it stays its own click. The decorative `.card::after` glow is
+`pointer-events: none` so it cannot swallow either.
+
+The GitHub button is **icon only** (`lucide-svelte`'s `Github`), so it adds no
+words to the card. It therefore needs an explicit accessible name —
+`aria-label="Source for <app> on GitHub"` — since there is no visible text to
+borrow one from. Card data lives in the `apps` / `tools` arrays: `tag`, `name`,
+`href`, `repo`, `body`. Adding a card means adding a row, not markup.
+
+The tags name **what each app is**, not the technology behind it
+(`real world maps`, `music pad`, `MTG daily game`, `for 3CB gurus`), and are
+lowercase labels per `docs/VOICE-NOTES.md`.
+
+## The persona switcher
+
+`PersonaToggle.svelte` is **icon only** — a moon and a sun on a sliding thumb,
+with no words. It is meant to read as an Easter egg: the glyphs hint that the
+site has two faces without explaining the trick. `press F to flip` (the `.hint`)
+is the discoverable path.
+
+The visible words are gone but the **accessible** ones are not: the `<button>`
+keeps `role="switch"`, `aria-checked`, and a live `aria-label`
+(`Switch to Leo` / `Switch to barbuz`). Do not add a `title` or visible text
+back — that undoes the intent. Styling for it is in `src/app.css` under
+`.switch*`.

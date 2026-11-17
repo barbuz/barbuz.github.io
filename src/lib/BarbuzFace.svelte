@@ -1,28 +1,75 @@
 <script lang="ts">
+  import { Github } from 'lucide-svelte';
   import { setPersona } from '$lib/persona.svelte';
   import Wordmark from '$lib/Wordmark.svelte';
 
-  const apps = [
+  type Card = {
+    tag: string;
+    name: string;
+    href: string;
+    repo: string;
+    body: string;
+  };
+
+  const apps: Card[] = [
     {
-      tag: 'PWA · offline',
+      tag: 'real world maps',
       name: 'byom',
       href: 'https://barbuz.github.io/byom/',
+      repo: 'https://github.com/barbuz/byom',
       body: 'Bring Your Own Map. Take a photo of any map, add some reference points, then see your live GPS position on it. Even with no signal.'
     },
     {
-      tag: 'Web Audio',
+      tag: 'music pad',
       name: 'digitofono',
       href: 'https://barbuz.github.io/digitofono/',
+      repo: 'https://github.com/barbuz/digitofono',
       body: 'A touchscreen instrument. Tap or drag anywhere on a near-blank surface and it sings.'
     },
     {
-      tag: 'daily game',
+      tag: 'MTG daily game',
       name: 'match the gatherer',
       href: 'https://barbuz.github.io/match-the-gatherer/',
+      repo: 'https://github.com/barbuz/match-the-gatherer',
       body: 'A Wordle-style daily guessing game for Magic: The Gathering cards, with worldwide stats.'
     }
   ];
+
+  const tools: Card[] = [
+    {
+      tag: 'for 3CB gurus',
+      name: 'the stylus',
+      href: 'https://barbuz.github.io/the-stylus/',
+      repo: 'https://github.com/barbuz/the-stylus',
+      body: 'A browser tool for editing 3 Card Blind MTG result sheets. Small, specific, and sharp at its one job.'
+    }
+  ];
 </script>
+
+{#snippet card(item: Card, i: number)}
+  <article class="card reveal" style="animation-delay: {0.1 + i * 0.08}s">
+    <span class="card__tag">{item.tag}</span>
+    <h3>{item.name}</h3>
+    <p>{item.body}</p>
+    <div class="card__foot">
+      <!-- The stretched link: its ::after covers the whole card, so a click
+           anywhere but the GitHub button opens the app. -->
+      <a class="card__go" href={item.href} aria-label="Open {item.name}">
+        <span aria-hidden="true">open ↗</span>
+      </a>
+      <a
+        class="card__repo"
+        href={item.repo}
+        target="_blank"
+        rel="noopener"
+        title="Source on GitHub"
+        aria-label="Source for {item.name} on GitHub"
+      >
+        <Github size={15} strokeWidth={2} aria-hidden="true" />
+      </a>
+    </div>
+  </article>
+{/snippet}
 
 <div class="wrap">
   <nav class="bar-nav">
@@ -53,12 +100,7 @@
     </div>
     <div class="cards">
       {#each apps as app, i (app.name)}
-        <a class="card reveal" style="animation-delay: {0.1 + i * 0.08}s" href={app.href}>
-          <span class="card__tag">{app.tag}</span>
-          <h3>{app.name}</h3>
-          <p>{app.body}</p>
-          <span class="card__go">open ↗</span>
-        </a>
+        {@render card(app, i)}
       {/each}
     </div>
   </section>
@@ -69,15 +111,9 @@
       <span class="eyebrow">niche by design</span>
     </div>
     <div class="cards">
-      <a class="card reveal" href="https://barbuz.github.io/the-stylus/">
-        <span class="card__tag">for 3CB gurus</span>
-        <h3>the stylus</h3>
-        <p>
-          A browser tool for editing 3 Card Blind MTG result sheets. Small, specific, and sharp at
-          its one job.
-        </p>
-        <span class="card__go">open ↗</span>
-      </a>
+      {#each tools as tool, i (tool.name)}
+        {@render card(tool, i)}
+      {/each}
     </div>
   </section>
 
