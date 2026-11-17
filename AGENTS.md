@@ -308,5 +308,17 @@ face's name and mirrors the bar. The inactive face is `inert`, so the
 duplicate is not reachable. If you add a face, put a toggle in its nav too, or
 the switch will vanish on that face.
 
-The `--c-*` chrome tokens it reads are emitted on `html[data-persona]`, i.e.
-globally, so they resolve from inside a face without change.
+The `--c-*` chrome tokens it reads are emitted on `.face--*`, alongside the
+face's colours, **not** on `html[data-persona]`. That is load-bearing: keyed on
+the global persona, both switches would recolour the instant a flip began, and
+the outgoing one would pop bright mid-turn. The switch must keep its own face's
+colours for the whole rotation, so it stays a still picture of its face.
+
+The barbuz switch is also **mirrored** (`.face--barbuz .switch`,
+`transform: scaleX(-1)`), so a flip turns it over rather than showing the same
+arrangement twice — moon and sun trade sides. The glyphs are counter-mirrored
+so they stay upright.
+
+After this, the only `html[data-persona]` rule in `src/app.css` is the
+`.flipper` rotation itself. Keep it that way: nothing the switch draws should
+depend on the global persona.

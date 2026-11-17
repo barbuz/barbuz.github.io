@@ -68,7 +68,14 @@ html[data-persona='leo'] .flipper {
    That is what makes the flip read as one page turning over: the switch is
    part of the page, so it turns with it, instead of sitting still while the
    content rotates underneath. barbuz puts it on the left of the bar and Leo on
-   the right, so a flip mirrors the two faces across the bar. */
+   the right, so a flip mirrors the two faces across the bar.
+
+   Every rule below keys on the face (--c-*, .face--*), never on the global
+   persona. A switch belongs to its face: the barbuz one stays dark and the Leo
+   one stays bright for the whole rotation, and the knob holds its place while
+   the page turns. Keyed on html[data-persona] instead, both switches recolour
+   and re-mark the instant the attribute flips, and the outgoing one pops
+   bright mid-turn. */
 .toggle {
   position: relative;
   display: inline-flex;
@@ -111,8 +118,8 @@ html[data-persona='leo'] .flipper {
   justify-content: center;
 }
 
-html[data-persona='barbuz'] .switch__opt[data-opt='barbuz'],
-html[data-persona='leo'] .switch__opt[data-opt='leo'] {
+.face--barbuz .switch__opt[data-opt='barbuz'],
+.face--leo .switch__opt[data-opt='leo'] {
   opacity: 1;
   color: var(--c-accent-ink);
 }
@@ -129,12 +136,26 @@ html[data-persona='leo'] .switch__opt[data-opt='leo'] {
   z-index: 0;
 }
 
-html[data-persona='barbuz'] .switch__thumb {
+/* The thumb sits under the face's own option: the switch is only ever seen on
+   the face that owns it, so "active" is always the face itself. */
+.face--barbuz .switch__thumb {
   transform: translateX(0);
 }
 
-html[data-persona='leo'] .switch__thumb {
+.face--leo .switch__thumb {
   transform: translateX(100%);
+}
+
+/* Mirror the barbuz switch, so a flip turns it over rather than showing the
+   same arrangement twice: the moon and sun trade sides. The whole switch
+   mirrors (thumb included, which is why it still sits under the lit glyph),
+   and the glyphs are counter-mirrored so they stay upright. */
+.face--barbuz .switch {
+  transform: scaleX(-1);
+}
+
+.face--barbuz .switch__opt svg {
+  transform: scaleX(-1);
 }
 
 .switch__opt svg {

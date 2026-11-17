@@ -182,7 +182,7 @@ tools."). Harmless, and not worth a change on its own.
 
 ## 10. Follow-up pass — tags, GitHub buttons, switcher
 
-Four changes made directly by the author, on the barbuz face only. Recorded
+Five changes made directly by the author, on the barbuz face only. Recorded
 here so the decisions are not re-derived later.
 
 ### 10a. App tags
@@ -288,11 +288,40 @@ Consequences:
 - Both faces now render the toggle, so both faces contain a switch button. The
   inactive face is `inert` (`PersonaFlip.svelte`), so only the visible one is
   reachable — there is no hidden second control to tab to.
-- The chrome tokens (`--c-*`) the switcher reads are still emitted on
-  `html[data-persona]`, i.e. globally, so they resolve correctly from inside a
-  face without change.
+- The chrome tokens (`--c-*`) the switcher reads are emitted on the face
+  (`.face--*`), not on `html[data-persona]`. That is what keeps the switcher's
+  colours attached to its own face; see §10e.
 
-### 10e. What did not change
+### 10e. The switcher belongs to its face
+
+Two refinements that share one root cause. The switcher's colours **and** its
+lit/knob state were keyed on `html[data-persona='…']` — the *global* persona —
+and the `--c-*` colours were emitted there too. So the instant a flip began,
+the attribute changed and **both** switchers recoloured and re-marked at once:
+the outgoing barbuz switch visibly popped bright while it was still rotating
+away. That reads as a look-alike control being swapped in, not as one object
+turning over.
+
+The fix is to make the switch belong to its face:
+
+- The chrome tokens moved from `html[data-persona='…']` onto `.face--*`, in
+  `brand/generate.mjs` (edit the generator, not the output). Each switch now
+  inherits the colours of the face it sits in, so **barbuz is always dark and
+  Leo always bright**, for the whole rotation.
+- The state rules (lit option, thumb position) moved from
+  `html[data-persona='…']` onto `.face--*`. A switch is only ever seen on the
+  face that owns it, so "active" is always the face itself.
+- The barbuz switch is **mirrored** (`.face--barbuz .switch {
+  transform: scaleX(-1) }`), so a flip turns it over rather than showing the
+  same arrangement twice: moon and sun trade sides. The whole switch mirrors,
+  thumb included, so the knob still sits under the lit glyph; the glyphs are
+  counter-mirrored (`.switch__opt svg`) so they stay upright and readable.
+
+After this the only `html[data-persona]` rule left in `src/app.css` is the
+`.flipper` rotation itself. Nothing the switch draws depends on the global
+persona, which is the point: the switch is part of the page it sits on.
+
+### 10f. What did not change
 
 - **The stylus tag** (`for 3CB gurus`) — still accurate and in register.
 - **Card bodies** — the GitHub link is an affordance, not copy; no body text
