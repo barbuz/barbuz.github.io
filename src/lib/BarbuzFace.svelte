@@ -113,7 +113,7 @@
   <section class="section" id="tools">
     <div class="section__head">
       <h2>Tools</h2>
-      <span class="eyebrow">special tools for special needs</span>
+      <span class="eyebrow">niche by design</span>
     </div>
     <div class="cards">
       {#each tools as tool, i (tool.name)}

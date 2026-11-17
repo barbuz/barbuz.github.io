@@ -138,11 +138,18 @@ is why the mismatch went unnoticed.
 Expertise. The count is already visible in the grid, and it was the only thing
 in the slot that could silently go stale.
 
-**Applied (author): the remaining barbuz section heads got eyebrows.** Apps now
-carries `give them a try` and Tools carries `special tools for special needs`,
-replacing `niche by design`. So on the barbuz face every section head has an
-eyebrow, and the slot is consistent across the face rather than a one-off on
-Tools.
+**Applied (author): barbuz Apps got an eyebrow.** Apps now carries
+`give them a try`, so the slot is consistent across the barbuz face rather than
+a one-off on Tools.
+
+**Applied, then reverted (author): the Tools eyebrow.** Tools was briefly
+`special tools for special needs`, replacing `niche by design`. It was reverted:
+the eyebrow restated its own heading — "Tools / special tools for special
+needs" says *tools* twice, and it was the only head on the face that did. Since
+`Tools` is load-bearing (it is the nav label, the `#tools` anchor, and the
+umbrella word the hero already uses — "I build small, sharp tools"), the
+heading stays and the eyebrow is the slot that yields. `niche by design` is
+back, and the repeat is gone.
 
 **What remains:**
 
@@ -150,7 +157,7 @@ Tools.
 |---|---|---|---|
 | barbuz | hero | `// maker · small sharp tools` | a role line |
 | barbuz | Apps | `give them a try` | an invitation |
-| barbuz | Tools | `special tools for special needs` | a phrase |
+| barbuz | Tools | `niche by design` | a phrase |
 | barbuz | About | *(none)* | — |
 | Leo | hero | `Software Engineer` | a role line |
 
@@ -369,8 +376,9 @@ barbuz Apps and Leo Expertise. A card count in the section head duplicates what
 the grid already shows, and it was the one part of the slot that could go stale
 without anyone noticing. See §7.
 
-**3. `niche by design` on Tools — settled: replaced, and the slot filled out.**
-It was the only section head on either face carrying an eyebrow. The author's
-answer was to keep the eyebrow and give the rest of the barbuz face one too,
-rather than drop it: Apps is now `give them a try`, Tools is `special tools for
-special needs`. Consistency by filling the slot, not emptying it. See §7.
+**3. The Tools eyebrow — settled: `niche by design` kept.** The slot is now
+consistent by filling it, not emptying it: Apps is `give them a try`, Tools is
+`niche by design`, so every barbuz section head carries an eyebrow. An earlier
+pass made Tools `special tools for special needs`, but that restated the `h2`
+("Tools / special tools…") and was reverted — `Tools` is the nav label and the
+anchor, so the heading is the fixed part and the eyebrow yields. See §7.

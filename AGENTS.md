@@ -326,15 +326,18 @@ depend on the global persona.
 ## Section heads: one eyebrow each
 
 On the barbuz face every section head carries an eyebrow, so the slot is a rule
-rather than a one-off. Apps is `give them a try`, Tools is `special tools for
-special needs`. Both are lowercase labels — the CSS uppercases them, per the
-label register in `docs/VOICE-NOTES.md`.
+rather than a one-off. Apps is `give them a try`, Tools is `niche by design`.
+Both are lowercase labels — the CSS uppercases them, per the label register in
+`docs/VOICE-NOTES.md`.
+
+The eyebrow must not restate its own `h2`. "Tools / special tools for special
+needs" said *tools* twice and was reverted. The heading is the load-bearing part
+(it is the nav label and the section anchor), so when the two collide, rewrite
+the eyebrow.
 
 `.section__head` is `space-between` with baseline alignment, so the eyebrow sits
-opposite the `h2`. A longer eyebrow wraps under itself at phone widths (the
-Tools one is two lines at ≤375px) and that is fine — it stays left-aligned under
-the heading with the rule below. Do not shorten an eyebrow just to keep it on
-one line.
+opposite the `h2`. A longer eyebrow wraps under itself at phone widths and that
+is fine — it stays left-aligned under the heading with the rule below.
 
 ## Spelling is Australian English
 
