@@ -138,19 +138,26 @@ is why the mismatch went unnoticed.
 Expertise. The count is already visible in the grid, and it was the only thing
 in the slot that could silently go stale.
 
+**Applied (author): the remaining barbuz section heads got eyebrows.** Apps now
+carries `give them a try` and Tools carries `special tools for special needs`,
+replacing `niche by design`. So on the barbuz face every section head has an
+eyebrow, and the slot is consistent across the face rather than a one-off on
+Tools.
+
 **What remains:**
 
 | Face | Section | Eyebrow | What it is |
 |---|---|---|---|
 | barbuz | hero | `// maker · small sharp tools` | a role line |
-| barbuz | Tools | `niche by design` | a phrase |
+| barbuz | Apps | `give them a try` | an invitation |
+| barbuz | Tools | `special tools for special needs` | a phrase |
+| barbuz | About | *(none)* | — |
 | Leo | hero | `Software Engineer` | a role line |
 
 The hero labels do real work — they name the role, which the `h1` does not — so
-they are not in question. `niche by design` on Tools is now the **only section
-head on either face with an eyebrow**, which is the leftover to settle: either
-it goes too, or the other section heads get one. Not changed here, since the
-request was specifically the numbers.
+they are not in question. `About` on barbuz keeps no eyebrow, which is fine:
+it is prose, not a grid, so there is nothing to label. The Leo face still has
+eyebrows only on its hero, which is part of the open Leo pass (§ decision 4).
 
 ## 8. Footer, nav, buttons
 
@@ -362,7 +369,8 @@ barbuz Apps and Leo Expertise. A card count in the section head duplicates what
 the grid already shows, and it was the one part of the slot that could go stale
 without anyone noticing. See §7.
 
-**3. `niche by design` on Tools — open, small.** It is now the only section head
-on either face carrying an eyebrow. Two options: drop it for consistency with
-the other section heads, or accept it as a deliberate one-off on the section
-that most needs explaining. Left as-is here, since the request was the numbers.
+**3. `niche by design` on Tools — settled: replaced, and the slot filled out.**
+It was the only section head on either face carrying an eyebrow. The author's
+answer was to keep the eyebrow and give the rest of the barbuz face one too,
+rather than drop it: Apps is now `give them a try`, Tools is `special tools for
+special needs`. Consistency by filling the slot, not emptying it. See §7.

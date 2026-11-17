@@ -14,6 +14,26 @@ the source for this column.
 
 ---
 
+## Status
+
+**Spelling only.** The Australian-English pass is applied on the Leo face
+(`cloud-optimised` in the About prose and the Geospatial card). Every wording
+question below is still open — this doc is the list of them, not a record of
+decisions.
+
+The two that most need a call:
+
+- **§ 4–5, the About prose.** It still opens "I'm a passionate software engineer"
+  and still builds "robust, scalable solutions". `VOICE-NOTES.md` uses this
+  exact paragraph as its worked example of what to cut, so the guide and the
+  page currently disagree. The fix is to cut the filler, not reword it.
+- **Featured Projects (last section).** Open decision 4 in `BRAND-PLAN.md`. The
+  three draft cards are not real, linkable projects; the choice is to delete
+  them, replace them with the four real apps, or reword them into a
+  "Professional work" list.
+
+---
+
 ## 1. Hero headline
 
 | | Text |
@@ -50,7 +70,7 @@ The page moved the name to the nav and promoted a headline. Revert or keep.
 | | Text |
 |---|---|
 | **draft** | "As a full-stack developer and open-source advocate, I specialize in building robust, scalable solutions using cutting-edge technologies. My expertise spans geospatial data analysis with cloud-optimized formats like GeoParquet and Zarr, advanced machine learning algorithms, and practical applications of large language models using tools like Ollama for local model deployment." |
-| **page** | "As a full-stack developer and open-source advocate, I build robust, scalable solutions — geospatial analysis with cloud-optimized formats like GeoParquet and Zarr, advanced ML, and practical LLM deployment with local models." |
+| **page** | "As a full-stack developer and open-source advocate, I build robust, scalable solutions — geospatial analysis with cloud-optimised formats like GeoParquet and Zarr, advanced ML, and practical LLM deployment with local models." |
 
 ## 6. About — paragraph 3
 
@@ -70,7 +90,7 @@ The page moved the name to the nav and promoted a headline. Revert or keep.
 
 | Card | draft | page |
 |---|---|---|
-| Geospatial | "Expert in cloud-optimized formats (GeoParquet, Zarr), spatial analysis, and GIS systems for extracting meaningful insights from location-based data at scale." | "Cloud-optimized formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale." |
+| Geospatial | "Expert in cloud-optimized formats (GeoParquet, Zarr), spatial analysis, and GIS systems for extracting meaningful insights from location-based data at scale." | "Cloud-optimised formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale." |
 | ML | "PhD-level expertise in Reinforcement Learning for Swarm systems, predictive modeling, and advanced ML algorithms for intelligent data-driven solutions." | "PhD-level work in RL for swarm systems, predictive modelling, and applied ML." |
 | LLM | "Local model deployment with Ollama, prompt engineering, and full-stack development using open-source technologies for scalable, maintainable solutions." | "Deployment with Ollama, prompt engineering, and full-stack open-source systems." |
 

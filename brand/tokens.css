@@ -34,7 +34,6 @@
 
 /* ---- barbuz ---- */
 .face--barbuz {
-  --page-bg: #0a0e17;
   --bg: #0a0e17;
   --surface: #111726;
   --surface-2: #161d2e;
@@ -61,7 +60,6 @@
 
 /* ---- leo ---- */
 .face--leo {
-  --page-bg: #faf8f3;
   --bg: #faf8f3;
   --surface: #ffffff;
   --surface-2: #f5f2ea;

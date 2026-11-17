@@ -137,11 +137,18 @@ Two carve-outs, both deliberate:
   `brand/tokens.js` come from `brand/tokens.json`; fix the JSON and run
   `npm run tokens`.
 
-**Current state — not yet applied.** `src/lib/LeoFace.svelte` mixes standards:
-it has `cloud-optimized` twice and `modelling` once. `README.md` has
-`Optimized`, `SEO Optimized` and `Customizing`. `JourneyMap.svelte` has
-`Normalize` and `Initialize` in comments. These are prose, so they are in
-scope; the fix lands with the copy pass.
+**Current state — spelling applied.** The spelling half of the copy pass is
+done: `src/lib/LeoFace.svelte` no longer has `cloud-optimized` (it was in the
+About prose and the Geospatial card; both are now `-ised`), `README.md` has
+`Optimised` and `Customising`, and `JourneyMap.svelte` has `Normalise` and
+`Initialise` in its comments. Identifiers were left alone.
+
+**Still open.** The Leo face's wording has not had its copy pass: the About
+prose still opens "I'm a passionate software engineer" and still builds
+"robust, scalable solutions" — the exact filler the worked example above
+deletes — and the hero keeps "Full-stack engineer with a PhD". The Leo face's
+dropped **Featured Projects** (open decision 4 in BRAND-PLAN) is the other
+unfinished piece. Both are creative calls for the author, not spelling.
 
 ---
 

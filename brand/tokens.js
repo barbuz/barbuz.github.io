@@ -3,8 +3,8 @@
 export const persona = ["barbuz","leo"];
 
 export const color = {
-  barbuz: { "page-bg": "#0a0e17", "bg": "#0a0e17", "surface": "#111726", "surface-2": "#161d2e", "text": "#e7eaf2", "muted": "#8a94aa", "line": "#232c40", "accent": "#3d7bff", "accent-ink": "#06090f", "accent-soft": "rgba(61, 123, 255, 0.28)", "success": "#22c55e", "warning": "#f0b429", "danger": "#f87171" },
-  leo: { "page-bg": "#faf8f3", "bg": "#faf8f3", "surface": "#ffffff", "surface-2": "#f5f2ea", "text": "#1b1a17", "muted": "#6e6a5f", "line": "#e6dfd1", "accent": "#1d4ed8", "accent-ink": "#ffffff", "accent-soft": "rgba(29, 78, 216, 0.28)", "success": "#15803d", "warning": "#8a5a00", "danger": "#b91c1c" },
+  barbuz: { "bg": "#0a0e17", "surface": "#111726", "surface-2": "#161d2e", "text": "#e7eaf2", "muted": "#8a94aa", "line": "#232c40", "accent": "#3d7bff", "accent-ink": "#06090f", "accent-soft": "rgba(61, 123, 255, 0.28)", "success": "#22c55e", "warning": "#f0b429", "danger": "#f87171" },
+  leo: { "bg": "#faf8f3", "surface": "#ffffff", "surface-2": "#f5f2ea", "text": "#1b1a17", "muted": "#6e6a5f", "line": "#e6dfd1", "accent": "#1d4ed8", "accent-ink": "#ffffff", "accent-soft": "rgba(29, 78, 216, 0.28)", "success": "#15803d", "warning": "#8a5a00", "danger": "#b91c1c" },
 };
 
 export const font = {

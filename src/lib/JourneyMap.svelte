@@ -156,7 +156,7 @@
 			
 			// Convert back to degrees
 			path.push([
-				((lon * 180 / Math.PI) + 540) % 360 - 180, // Normalize longitude
+				((lon * 180 / Math.PI) + 540) % 360 - 180, // Normalise longitude
 				lat * 180 / Math.PI
 			]);
 		}
@@ -195,11 +195,11 @@
 	}
 
 	onMount(async () => {
-		// Initialize PMTiles protocol
+		// Initialise PMTiles protocol
 		const protocol = new Protocol();
 		maplibregl.addProtocol('pmtiles', protocol.tile);
 
-		// Initialize MapLibre with custom style
+		// Initialise MapLibre with custom style
 		map = new maplibregl.Map({
 			container: mapContainer,
 			style: '/mapstyle.json',

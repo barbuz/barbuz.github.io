@@ -101,6 +101,7 @@
   <section class="section" id="apps">
     <div class="section__head">
       <h2>Apps</h2>
+      <span class="eyebrow">give them a try</span>
     </div>
     <div class="cards">
       {#each apps as app, i (app.name)}
@@ -112,7 +113,7 @@
   <section class="section" id="tools">
     <div class="section__head">
       <h2>Tools</h2>
-      <span class="eyebrow">niche by design</span>
+      <span class="eyebrow">special tools for special needs</span>
     </div>
     <div class="cards">
       {#each tools as tool, i (tool.name)}

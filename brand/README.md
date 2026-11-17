@@ -129,7 +129,7 @@ const accent = color.barbuz.accent;
 
 ## What is in here
 
-- **Colour**, per persona: `page-bg`, `bg`, `surface`, `surface-2`, `text`,
+- **Colour**, per persona: `bg`, `surface`, `surface-2`, `text`,
   `muted`, `line`, `accent`, `accent-ink`, `accent-soft`, `success`, `warning`,
   `danger`.
 - **Chrome**, per persona: the `--c-*` set used by UI that belongs to a face
