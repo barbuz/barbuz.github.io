@@ -322,3 +322,32 @@ so they stay upright.
 After this, the only `html[data-persona]` rule in `src/app.css` is the
 `.flipper` rotation itself. Keep it that way: nothing the switch draws should
 depend on the global persona.
+
+## Section heads: one eyebrow each
+
+On the barbuz face every section head carries an eyebrow, so the slot is a rule
+rather than a one-off. Apps is `give them a try`, Tools is `special tools for
+special needs`. Both are lowercase labels — the CSS uppercases them, per the
+label register in `docs/VOICE-NOTES.md`.
+
+`.section__head` is `space-between` with baseline alignment, so the eyebrow sits
+opposite the `h2`. A longer eyebrow wraps under itself at phone widths (the
+Tools one is two lines at ≤375px) and that is fine — it stays left-aligned under
+the heading with the rule below. Do not shorten an eyebrow just to keep it on
+one line.
+
+## Spelling is Australian English
+
+Decided in `docs/VOICE-NOTES.md` and applied across the prose: `-ise` / `-yse` /
+`-our` / `-re`. So `optimised`, `normalise`, `analyse`, `colour`, `centre`.
+
+Two carve-outs, and they matter when editing:
+
+- **Identifiers keep their spelling.** CSS `color`, `backgroundColor`,
+  `theme-color`, DOM APIs and JSON keys are not prose. Do not "fix" them.
+- **Generated files are not hand-edited.** `brand/tokens.css` and
+  `brand/tokens.js` come from `brand/tokens.json`; edit the JSON and run
+  `npm run tokens`.
+
+The voice guide's "Current state" note tracks which files still need the pass;
+keep it honest when you apply one.
