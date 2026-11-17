@@ -129,11 +129,13 @@ const accent = color.barbuz.accent;
 
 ## What is in here
 
-- **Colour**, per persona: `page-bg`, `bg`, `surface`, `surface-2`, `text`,
+- **Colour**, per persona: `bg`, `surface`, `surface-2`, `text`,
   `muted`, `line`, `accent`, `accent-ink`, `accent-soft`, `success`, `warning`,
   `danger`.
-- **Chrome**, per persona: the `--c-*` set used by fixed UI that follows the
-  active persona (the flip switch).
+- **Chrome**, per persona: the `--c-*` set used by UI that belongs to a face
+  (the flip switch). Emitted on `.face--*`, alongside the colour set, so a
+  face's chrome keeps that face's colours even while the other face is on
+  screen — which is what holds the switch still through a flip.
 - **Shadow**, per persona: `base` and `accent`.
 - **Font**, per persona: `display`, `body`, `display-weight`; plus a shared
   `mono`.

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { setPersona } from '$lib/persona.svelte';
+  import PersonaToggle from '$lib/PersonaToggle.svelte';
 
   let journey: any = $state(null);
   let journeyHost: HTMLDivElement;
@@ -22,11 +23,14 @@
 <div class="wrap">
   <nav class="leo-nav">
     <div class="leo-name">Leo Ghignone</div>
-    <div class="leo-links">
-      <a href="#about-leo">About</a>
-      <a href="#expertise">Expertise</a>
-      <a href="#journey">Journey</a>
-      <a href="#contact">Contact</a>
+    <div class="leo-right">
+      <div class="leo-links">
+        <a href="#about-leo">About</a>
+        <a href="#expertise">Expertise</a>
+        <a href="#journey">Journey</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <PersonaToggle />
     </div>
   </nav>
 
@@ -62,7 +66,7 @@
       </p>
       <p>
         As a full-stack developer and open-source advocate, I build robust, scalable solutions —
-        geospatial analysis with cloud-optimized formats like GeoParquet and Zarr, advanced ML, and
+        geospatial analysis with cloud-optimised formats like GeoParquet and Zarr, advanced ML, and
         practical LLM deployment with local models.
       </p>
     </div>
@@ -76,7 +80,7 @@
       <div class="leo-card reveal" style="animation-delay: 0.08s">
         <div class="leo-card__k">Geospatial</div>
         <h3>Geospatial Data</h3>
-        <p>Cloud-optimized formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale.</p>
+        <p>Cloud-optimised formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale.</p>
       </div>
       <div class="leo-card reveal" style="animation-delay: 0.16s">
         <div class="leo-card__k">Machine Learning</div>

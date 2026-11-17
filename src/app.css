@@ -63,12 +63,23 @@ html[data-persona='leo'] .flipper {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ---------- fixed chrome: the flip switch ---------- */
-.chrome {
-  position: fixed;
-  top: 1.1rem;
-  right: 1.1rem;
-  z-index: 70;
+/* ---------- the flip switch ----------
+   It lives inside each face's own nav, not in fixed chrome above the page.
+   That is what makes the flip read as one page turning over: the switch is
+   part of the page, so it turns with it, instead of sitting still while the
+   content rotates underneath. barbuz puts it on the left of the bar and Leo on
+   the right, so a flip mirrors the two faces across the bar.
+
+   Every rule below keys on the face (--c-*, .face--*), never on the global
+   persona. A switch belongs to its face: the barbuz one stays dark and the Leo
+   one stays bright for the whole rotation, and the knob holds its place while
+   the page turns. Keyed on html[data-persona] instead, both switches recolour
+   and re-mark the instant the attribute flips, and the outgoing one pops
+   bright mid-turn. */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
 }
 
 .switch {
@@ -98,19 +109,17 @@ html[data-persona='leo'] .flipper {
 .switch__opt {
   position: relative;
   z-index: 1;
-  padding: 0.34rem 0.7rem;
+  padding: 0.42rem 0.82rem;
   border-radius: 999px;
   opacity: 0.55;
   transition: opacity 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  white-space: nowrap;
 }
 
-html[data-persona='barbuz'] .switch__opt[data-opt='barbuz'],
-html[data-persona='leo'] .switch__opt[data-opt='leo'] {
+.face--barbuz .switch__opt[data-opt='barbuz'],
+.face--leo .switch__opt[data-opt='leo'] {
   opacity: 1;
   color: var(--c-accent-ink);
 }
@@ -127,22 +136,40 @@ html[data-persona='leo'] .switch__opt[data-opt='leo'] {
   z-index: 0;
 }
 
-html[data-persona='barbuz'] .switch__thumb {
+/* The thumb sits under the face's own option: the switch is only ever seen on
+   the face that owns it, so "active" is always the face itself. */
+.face--barbuz .switch__thumb {
   transform: translateX(0);
 }
 
-html[data-persona='leo'] .switch__thumb {
+.face--leo .switch__thumb {
   transform: translateX(100%);
 }
 
+/* Mirror the barbuz switch, so a flip turns it over rather than showing the
+   same arrangement twice: the moon and sun trade sides. The whole switch
+   mirrors (thumb included, which is why it still sits under the lit glyph),
+   and the glyphs are counter-mirrored so they stay upright. */
+.face--barbuz .switch {
+  transform: scaleX(-1);
+}
+
+.face--barbuz .switch__opt svg {
+  transform: scaleX(-1);
+}
+
 .switch__opt svg {
-  width: 0.85rem;
-  height: 0.85rem;
+  width: 1rem;
+  height: 1rem;
+  display: block;
 }
 
 .hint {
-  margin-top: 0.5rem;
-  text-align: right;
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.16em;
@@ -200,11 +227,20 @@ html[data-persona='leo'] .switch__thumb {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
   padding: 1.6rem 0 0;
 }
 
 /* The nav lockup: the mark stands in for the first `b`, so it reads [b]arbuz.
-   Sized by the Wordmark component; this is just the placement box. */
+   The switch leads the bar; the links and the lockup trail it, so a flip swaps
+   the two ends with the Leo face. Sized by the Wordmark component; this is just
+   the placement box. */
+.bar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+}
+
 .bar-mark {
   display: flex;
   align-items: center;
@@ -321,8 +357,6 @@ html[data-persona='leo'] .switch__thumb {
   border: 1px solid var(--line);
   border-radius: 1rem;
   padding: 1.6rem;
-  text-decoration: none;
-  color: inherit;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
@@ -344,6 +378,8 @@ html[data-persona='leo'] .switch__thumb {
   background: radial-gradient(circle, rgba(61, 123, 255, 0.2), transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
+  /* Decoration only: it must not swallow clicks meant for the stretched link. */
+  pointer-events: none;
 }
 
 .card:hover {
@@ -378,14 +414,68 @@ html[data-persona='leo'] .switch__thumb {
   font-size: 0.96rem;
 }
 
-.card__go {
+.card__foot {
   margin-top: auto;
+  padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+/* The whole-card target. The ::after stretches over the card, so a click
+   anywhere but the GitHub button opens the app. */
+.card__go {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text);
+  text-decoration: none;
   opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.card__go::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.card:hover .card__go {
+  opacity: 1;
+}
+
+/* Sits above the stretched link so it stays clickable on its own. */
+.card__repo {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  color: var(--muted);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.card__repo:hover,
+.card__repo:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.card__repo:focus-visible,
+.card__go:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .foot {
@@ -423,7 +513,16 @@ html[data-persona='leo'] .switch__thumb {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
   padding: 1.6rem 0 0;
+}
+
+/* Mirror of the barbuz bar: the name leads here and trails there, the switch
+   trails here and leads there, so a flip swaps the two ends. */
+.leo-right {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
 }
 
 .leo-name {

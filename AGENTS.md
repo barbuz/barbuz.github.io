@@ -261,3 +261,96 @@ build the layout around them. Do not finalise a layout against placeholder text.
 - `JourneyMap.svelte` is imported in the browser only — MapLibre touches
   `window` at import time.
 - Text and logos are still draft; Phase 2 and Phase 3 settle them.
+
+## The barbuz cards
+
+The app and tool cards on the barbuz face (`BarbuzFace.svelte`, rendered by one
+`{#snippet card}`) each carry **two destinations**: the app itself, and its
+source on GitHub.
+
+Because two anchors cannot nest, the card is an `<article>`, not one big `<a>`.
+The "open ↗" link is stretched over the whole card by `.card__go::after`, so a
+click anywhere opens the app; the GitHub button sits above it (`.card__repo`,
+`z-index: 1`) so it stays its own click. The decorative `.card::after` glow is
+`pointer-events: none` so it cannot swallow either.
+
+The GitHub button is **icon only** (`lucide-svelte`'s `Github`), so it adds no
+words to the card. It therefore needs an explicit accessible name —
+`aria-label="Source for <app> on GitHub"` — since there is no visible text to
+borrow one from. Card data lives in the `apps` / `tools` arrays: `tag`, `name`,
+`href`, `repo`, `body`. Adding a card means adding a row, not markup.
+
+The tags name **what each app is**, not the technology behind it
+(`real world maps`, `music pad`, `MTG daily game`, `for 3CB gurus`), and are
+lowercase labels per `docs/VOICE-NOTES.md`.
+
+## The persona switcher
+
+`PersonaToggle.svelte` is **icon only** — a moon and a sun on a sliding thumb,
+with no words. It is meant to read as an Easter egg: the glyphs hint that the
+site has two faces without explaining the trick. `press F to flip` (the `.hint`)
+is the discoverable path.
+
+The visible words are gone but the **accessible** ones are not: the `<button>`
+keeps `role="switch"`, `aria-checked`, and a live `aria-label`
+(`Switch to Leo` / `Switch to barbuz`). Do not add a `title` or visible text
+back — that undoes the intent. Styling for it is in `src/app.css` under
+`.switch*`.
+
+It lives **inside each face's nav**, not in fixed chrome over the page. That is
+deliberate: the switch is part of the page, so the flip rotates it along with
+everything else and the whole thing reads as one sheet turning over. A fixed
+switch would hang still while the page turned under it.
+
+Each face renders its own copy, on the **opposite end of the bar** — barbuz
+leads with it, Leo trails with it — so a flip swaps the switch with the other
+face's name and mirrors the bar. The inactive face is `inert`, so the
+duplicate is not reachable. If you add a face, put a toggle in its nav too, or
+the switch will vanish on that face.
+
+The `--c-*` chrome tokens it reads are emitted on `.face--*`, alongside the
+face's colours, **not** on `html[data-persona]`. That is load-bearing: keyed on
+the global persona, both switches would recolour the instant a flip began, and
+the outgoing one would pop bright mid-turn. The switch must keep its own face's
+colours for the whole rotation, so it stays a still picture of its face.
+
+The barbuz switch is also **mirrored** (`.face--barbuz .switch`,
+`transform: scaleX(-1)`), so a flip turns it over rather than showing the same
+arrangement twice — moon and sun trade sides. The glyphs are counter-mirrored
+so they stay upright.
+
+After this, the only `html[data-persona]` rule in `src/app.css` is the
+`.flipper` rotation itself. Keep it that way: nothing the switch draws should
+depend on the global persona.
+
+## Section heads: one eyebrow each
+
+On the barbuz face every section head carries an eyebrow, so the slot is a rule
+rather than a one-off. Apps is `give them a try`, Tools is `niche by design`.
+Both are lowercase labels — the CSS uppercases them, per the label register in
+`docs/VOICE-NOTES.md`.
+
+The eyebrow must not restate its own `h2`. "Tools / special tools for special
+needs" said *tools* twice and was reverted. The heading is the load-bearing part
+(it is the nav label and the section anchor), so when the two collide, rewrite
+the eyebrow.
+
+`.section__head` is `space-between` with baseline alignment, so the eyebrow sits
+opposite the `h2`. A longer eyebrow wraps under itself at phone widths and that
+is fine — it stays left-aligned under the heading with the rule below.
+
+## Spelling is Australian English
+
+Decided in `docs/VOICE-NOTES.md` and applied across the prose: `-ise` / `-yse` /
+`-our` / `-re`. So `optimised`, `normalise`, `analyse`, `colour`, `centre`.
+
+Two carve-outs, and they matter when editing:
+
+- **Identifiers keep their spelling.** CSS `color`, `backgroundColor`,
+  `theme-color`, DOM APIs and JSON keys are not prose. Do not "fix" them.
+- **Generated files are not hand-edited.** `brand/tokens.css` and
+  `brand/tokens.js` come from `brand/tokens.json`; edit the JSON and run
+  `npm run tokens`.
+
+The voice guide's "Current state" note tracks which files still need the pass;
+keep it honest when you apply one.

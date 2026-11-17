@@ -34,7 +34,6 @@
 
 /* ---- barbuz ---- */
 .face--barbuz {
-  --page-bg: #0a0e17;
   --bg: #0a0e17;
   --surface: #111726;
   --surface-2: #161d2e;
@@ -52,19 +51,15 @@
   --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-body: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-display-weight: 800;
-}
-html[data-persona='barbuz'] {
   --c-text: #e7eaf2;
   --c-line: #232c40;
   --c-accent: #3d7bff;
   --c-accent-ink: #06090f;
   --c-surface: rgba(17, 23, 38, 0.72);
-  --page-bg: #0a0e17;
 }
 
 /* ---- leo ---- */
 .face--leo {
-  --page-bg: #faf8f3;
   --bg: #faf8f3;
   --surface: #ffffff;
   --surface-2: #f5f2ea;
@@ -82,12 +77,9 @@ html[data-persona='barbuz'] {
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'Instrument Sans', system-ui, sans-serif;
   --font-display-weight: 400;
-}
-html[data-persona='leo'] {
   --c-text: #1b1a17;
   --c-line: #e6dfd1;
   --c-accent: #1d4ed8;
   --c-accent-ink: #ffffff;
   --c-surface: rgba(255, 255, 255, 0.72);
-  --page-bg: #faf8f3;
 }

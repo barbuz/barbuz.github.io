@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { persona, initPersona, togglePersona, personaLabel } from '$lib/persona.svelte';
   import PersonaFlip from '$lib/PersonaFlip.svelte';
-  import PersonaToggle from '$lib/PersonaToggle.svelte';
   import BarbuzFace from '$lib/BarbuzFace.svelte';
   import LeoFace from '$lib/LeoFace.svelte';
 
@@ -29,8 +28,6 @@
 <div class="grain"></div>
 
 <div aria-live="polite" class="sr-only">{personaLabel()}</div>
-
-<PersonaToggle />
 
 <PersonaFlip>
   {#snippet barbuz()}

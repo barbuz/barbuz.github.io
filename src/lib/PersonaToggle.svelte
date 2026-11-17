@@ -4,7 +4,10 @@
   const isLeo = $derived(persona.current === 'leo');
 </script>
 
-<div class="chrome">
+<!-- Lives inside the face's own nav, so it turns with the page instead of
+     floating above it. The barbuz face puts it on the left, the Leo face on
+     the right, so a flip mirrors the two across the bar. -->
+<div class="toggle">
   <button
     class="switch"
     type="button"
@@ -18,14 +21,12 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
       </svg>
-      barbuz
     </span>
     <span class="switch__opt" data-opt="leo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <circle cx="12" cy="12" r="4" />
         <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19" />
       </svg>
-      leo
     </span>
   </button>
   <div class="hint" hidden={persona.hasFlipped}>press F to flip</div>

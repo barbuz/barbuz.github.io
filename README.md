@@ -7,9 +7,9 @@ A beautiful, modern personal website built with Svelte and TailwindCSS, showcasi
 - **Modern UI Design**: Clean, responsive design with smooth animations
 - **TailwindCSS**: Utility-first CSS framework for rapid styling
 - **Lucide Icons**: Beautiful, consistent iconography
-- **Mobile Responsive**: Optimized for all device sizes
+- **Mobile Responsive**: Optimised for all device sizes
 - **GitHub Pages Ready**: Configured for automatic deployment
-- **SEO Optimized**: Meta tags and semantic HTML for better search visibility
+- **SEO Optimised**: Meta tags and semantic HTML for better search visibility
 
 ## 🛠️ Tech Stack
 
@@ -121,19 +121,19 @@ paths: {
 }
 ```
 
-### Customizing Content
+### Customising Content
 
 Edit `src/routes/+page.svelte` to:
 - Update personal information
 - Modify project descriptions
 - Change contact links
-- Adjust styling and colors
+- Adjust styling and colours
 
-## 🎨 Customization
+## 🎨 Customisation
 
-### Colors
+### Colours
 
-The primary color scheme uses Tailwind's blue palette. Modify colors in the Svelte components:
+The primary colour scheme uses Tailwind's blue palette. Modify colours in the Svelte components:
 - Primary: `blue-600`, `blue-700`
 - Background: `slate-50`, `blue-50`
 - Text: `slate-900`, `slate-600`

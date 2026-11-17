@@ -49,13 +49,7 @@ function faceDecls(face) {
   decls.push(['--shadow', p.shadow.base]);
   decls.push(['--shadow-accent', p.shadow.accent]);
   for (const [k, v] of entries(p.font)) decls.push([`--font-${k}`, v]);
-  return decls;
-}
-
-function chromeDecls(face) {
-  const p = tokens.personas[face];
-  const decls = entries(p.chrome).map(([k, v]) => [`--c-${k}`, v]);
-  decls.push(['--page-bg', p.color['page-bg']]);
+  for (const [k, v] of entries(p.chrome)) decls.push([`--c-${k}`, v]);
   return decls;
 }
 
@@ -67,7 +61,6 @@ function buildCss() {
     parts.push('');
     parts.push(`/* ---- ${face} ---- */`);
     parts.push(block(`.face--${face}`, faceDecls(face)));
-    parts.push(block(`html[data-persona='${face}']`, chromeDecls(face)));
   }
   return `${parts.join('\n')}\n`;
 }
