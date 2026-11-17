@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Github } from 'lucide-svelte';
   import { setPersona } from '$lib/persona.svelte';
+  import PersonaToggle from '$lib/PersonaToggle.svelte';
   import Wordmark from '$lib/Wordmark.svelte';
 
   type Card = {
@@ -73,11 +74,14 @@
 
 <div class="wrap">
   <nav class="bar-nav">
-    <div class="bar-mark"><Wordmark /></div>
-    <div class="bar-links">
-      <a href="#apps">Apps</a>
-      <a href="#tools">Tools</a>
-      <a href="#about-bar">About</a>
+    <PersonaToggle />
+    <div class="bar-right">
+      <div class="bar-links">
+        <a href="#apps">Apps</a>
+        <a href="#tools">Tools</a>
+        <a href="#about-bar">About</a>
+      </div>
+      <div class="bar-mark"><Wordmark /></div>
     </div>
   </nav>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { setPersona } from '$lib/persona.svelte';
+  import PersonaToggle from '$lib/PersonaToggle.svelte';
 
   let journey: any = $state(null);
   let journeyHost: HTMLDivElement;
@@ -22,11 +23,14 @@
 <div class="wrap">
   <nav class="leo-nav">
     <div class="leo-name">Leo Ghignone</div>
-    <div class="leo-links">
-      <a href="#about-leo">About</a>
-      <a href="#expertise">Expertise</a>
-      <a href="#journey">Journey</a>
-      <a href="#contact">Contact</a>
+    <div class="leo-right">
+      <div class="leo-links">
+        <a href="#about-leo">About</a>
+        <a href="#expertise">Expertise</a>
+        <a href="#journey">Journey</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <PersonaToggle />
     </div>
   </nav>
 

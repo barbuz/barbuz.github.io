@@ -296,3 +296,17 @@ keeps `role="switch"`, `aria-checked`, and a live `aria-label`
 (`Switch to Leo` / `Switch to barbuz`). Do not add a `title` or visible text
 back — that undoes the intent. Styling for it is in `src/app.css` under
 `.switch*`.
+
+It lives **inside each face's nav**, not in fixed chrome over the page. That is
+deliberate: the switch is part of the page, so the flip rotates it along with
+everything else and the whole thing reads as one sheet turning over. A fixed
+switch would hang still while the page turned under it.
+
+Each face renders its own copy, on the **opposite end of the bar** — barbuz
+leads with it, Leo trails with it — so a flip swaps the switch with the other
+face's name and mirrors the bar. The inactive face is `inert`, so the
+duplicate is not reachable. If you add a face, put a toggle in its nav too, or
+the switch will vanish on that face.
+
+The `--c-*` chrome tokens it reads are emitted on `html[data-persona]`, i.e.
+globally, so they resolve from inside a face without change.

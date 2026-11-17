@@ -180,9 +180,9 @@ tools."). Harmless, and not worth a change on its own.
 
 ---
 
-## 10. Follow-up pass — tags, GitHub buttons, icon-only switcher
+## 10. Follow-up pass — tags, GitHub buttons, switcher
 
-Three changes made directly by the author, on the barbuz face only. Recorded
+Four changes made directly by the author, on the barbuz face only. Recorded
 here so the decisions are not re-derived later.
 
 ### 10a. App tags
@@ -235,9 +235,9 @@ says "open ↗".
 
 ### 10c. The persona switcher is icon-only
 
-The fixed switcher at the top-right used to show the two words `barbuz` and
-`leo` beside their moon/sun glyphs. The words are gone; the two icons remain, on
-the same sliding thumb.
+The switcher used to show the two words `barbuz` and `leo` beside their
+moon/sun glyphs. The words are gone; the two icons remain, on the same sliding
+thumb.
 
 The reasoning is voice, not just layout: the toggle is a **cross-face** control
 that reveals the site has two faces, and the author wants it to read as an
@@ -257,7 +257,42 @@ The now-unused `gap` / `white-space` on `.switch__opt` were dropped, and the
 glyphs were sized up (0.85rem → 1rem) and given symmetric padding, since an
 icon-only control has no text to set its height.
 
-### 10d. What did not change
+### 10d. The switcher moves into the nav and turns with the page
+
+The switcher was fixed chrome pinned to the viewport's top-right
+(`position: fixed`, `z-index: 70`), so it hung above the page while everything
+else rotated under it during a flip. It is now a normal element **inside each
+face's own nav**, one instance per face, so it is part of the page and rotates
+with it. The flip reads as one sheet turning over rather than a control
+floating over a turning sheet.
+
+The two faces place it on **opposite ends of the bar**, so a flip mirrors the
+bar:
+
+| | Leading end | Trailing end |
+|---|---|---|
+| barbuz | switcher | links, then the lockup |
+| Leo | the name | links, then the switcher |
+
+That mirroring is the second half of the effect: the switcher does not merely
+rotate in place, it swaps sides with the name, so the whole bar reads as
+having turned over.
+
+Consequences:
+
+- `PersonaToggle.svelte` renders a plain `.toggle` wrapper, not `.chrome`. The
+  fixed-chrome rule in `src/app.css` is gone.
+- The `press F to flip` hint is now absolutely positioned just under the
+  switcher (it was a sibling in a fixed box), so it stays with the control
+  wherever the bar puts it. It is still hidden after the first flip.
+- Both faces now render the toggle, so both faces contain a switch button. The
+  inactive face is `inert` (`PersonaFlip.svelte`), so only the visible one is
+  reachable — there is no hidden second control to tab to.
+- The chrome tokens (`--c-*`) the switcher reads are still emitted on
+  `html[data-persona]`, i.e. globally, so they resolve correctly from inside a
+  face without change.
+
+### 10e. What did not change
 
 - **The stylus tag** (`for 3CB gurus`) — still accurate and in register.
 - **Card bodies** — the GitHub link is an affordance, not copy; no body text

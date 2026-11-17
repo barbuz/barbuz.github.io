@@ -4,7 +4,10 @@
   const isLeo = $derived(persona.current === 'leo');
 </script>
 
-<div class="chrome">
+<!-- Lives inside the face's own nav, so it turns with the page instead of
+     floating above it. The barbuz face puts it on the left, the Leo face on
+     the right, so a flip mirrors the two across the bar. -->
+<div class="toggle">
   <button
     class="switch"
     type="button"
