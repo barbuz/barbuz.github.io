@@ -62,7 +62,7 @@
       <p>
         As a full-stack developer and open-source advocate, I build geospatial tooling on
         cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its
-        place, and run LLMs locally — usually with Ollama — when a project calls for it.
+        place, and run LLMs locally or in the cloud, whichever fits the project.
       </p>
     </div>
   </section>
@@ -90,8 +90,8 @@
       </div>
       <div class="leo-card reveal" style="animation-delay: 0.24s">
         <div class="leo-card__k">LLM &amp; Open Source</div>
-        <h3>Local LLMs</h3>
-        <p>Running local models with Ollama, prompt engineering, and full-stack open-source systems.</p>
+        <h3>Local or Cloud LLMs</h3>
+        <p>Running models with Ollama and OpenHands, prompt engineering, and full-stack open-source systems.</p>
       </div>
     </div>
   </section>

@@ -24,10 +24,12 @@ wording question is listed here rather than settled.
 Settled so far:
 
 - **§ 4–5, the About prose — rewritten.** The two paragraphs were cut down to
-  the register: the filler is gone, the thesis clause now says what the research
-  was actually about (making RL cheap to run on simple hardware), and Ollama is
-  restored. This resolves the contradiction with `VOICE-NOTES.md`, whose worked
-  example quoted this paragraph — that example now uses the applied text.
+  the register: the filler is gone, and the thesis clause now says what the
+  research was actually about (making RL cheap to run on simple hardware). The
+  LLM clause says "locally or in the cloud, whichever fits the project" — no tool
+  named, because the author works both ways. This resolves the contradiction with
+  `VOICE-NOTES.md`, whose worked example quoted this paragraph — that example now
+  uses the applied text.
 - **§ 3 / § 7, the thesis link — moved.** The hero no longer carries a
   "Read the thesis ↗" button. The link now sits on the **Reinforcement Learning**
   card in Core Expertise, where the thesis is the concrete proof of the claim.
@@ -90,17 +92,19 @@ idea said warmly, in the Leo register.
 |---|---|
 | **draft** | "As a full-stack developer and open-source advocate, I specialize in building robust, scalable solutions using cutting-edge technologies. My expertise spans geospatial data analysis with cloud-optimized formats like GeoParquet and Zarr, advanced machine learning algorithms, and practical applications of large language models using tools like Ollama for local model deployment." |
 | **page (before)** | "As a full-stack developer and open-source advocate, I build robust, scalable solutions — geospatial analysis with cloud-optimised formats like GeoParquet and Zarr, advanced ML, and practical LLM deployment with local models." |
-| **applied (author)** | "As a full-stack developer and open-source advocate, I build geospatial tooling on cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its place, and run LLMs locally — usually with Ollama — when a project calls for it." |
+| **applied (author)** | "As a full-stack developer and open-source advocate, I build geospatial tooling on cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its place, and run LLMs locally or in the cloud, whichever fits the project." |
 
 This is the paragraph `VOICE-NOTES.md` quotes as its worked example of what to
 cut. **"robust, scalable solutions"** is two banned things at once — stacked
 adjectives *and* "solutions" as a noun for software — and **advanced** is filler
 by spine rule 1. Cutting "solutions" also fixes the grammar: the list was
 appositive to it, so the verb becomes "I build geospatial tooling on…".
-**Ollama** is restored from the draft — "local models" had made a concrete noun
-vague — but kept as **one example**, not the tool: "usually with Ollama". The
-prose and the Local LLMs card each mention it once, and neither leads with it,
-so the page does not read as though Ollama is the whole of the LLM work.
+
+The LLM clause names no tool: it says **local or in the cloud**, which is the
+author's actual position — both, chosen per project. Naming a tool here would
+pick a side the author does not hold, and the named technologies belong on the
+card (§ 8) rather than in the prose. So the prose carries the stance and the card
+carries the examples.
 
 ## 6. About — paragraph 3
 
@@ -126,9 +130,15 @@ endpoint. Same URL, same `↗` (it is external).
 |---|---|---|
 | Geospatial | "Expert in cloud-optimized formats (GeoParquet, Zarr), spatial analysis, and GIS systems for extracting meaningful insights from location-based data at scale." | "Cloud-optimised formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale." |
 | ML | "PhD-level expertise in Reinforcement Learning for Swarm systems, predictive modeling, and advanced ML algorithms for intelligent data-driven solutions." | "PhD-level work in RL for swarm systems, predictive modelling, and applied ML." |
-| LLM | "Local model deployment with Ollama, prompt engineering, and full-stack development using open-source technologies for scalable, maintainable solutions." | "Running local models with Ollama, prompt engineering, and full-stack open-source systems." |
+| LLM | "Local model deployment with Ollama, prompt engineering, and full-stack development using open-source technologies for scalable, maintainable solutions." | "Running models with Ollama and OpenHands, prompt engineering, and full-stack open-source systems." |
 
-Card headings: the draft used "Geospatial Data" / "Machine Learning" / "LLM & Open Source" as the card titles. The page adds a short eyebrow label above each card ("Geospatial" / "Machine Learning" / "LLM & Open Source"), keeps the first draft title as the `h3`, and replaces the other two with "Reinforcement Learning" and "Local LLMs".
+The LLM card's `h3` is **"Local or Cloud LLMs"** — the page's draft title was
+"LLM & Open Source", and an intermediate version narrowed it to "Local LLMs".
+Narrowing was wrong: the author works both ways, so the heading now names the
+range and the body lists the technologies (**Ollama**, **OpenHands**) as
+examples.
+
+Card headings: the draft used "Geospatial Data" / "Machine Learning" / "LLM & Open Source" as the card titles. The page adds a short eyebrow label above each card ("Geospatial" / "Machine Learning" / "LLM & Open Source"), keeps the first draft title as the `h3`, and replaces the other two with "Reinforcement Learning" and "Local or Cloud LLMs".
 
 ## 9. Journey section
 
