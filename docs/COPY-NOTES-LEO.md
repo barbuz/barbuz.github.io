@@ -90,14 +90,17 @@ idea said warmly, in the Leo register.
 |---|---|
 | **draft** | "As a full-stack developer and open-source advocate, I specialize in building robust, scalable solutions using cutting-edge technologies. My expertise spans geospatial data analysis with cloud-optimized formats like GeoParquet and Zarr, advanced machine learning algorithms, and practical applications of large language models using tools like Ollama for local model deployment." |
 | **page (before)** | "As a full-stack developer and open-source advocate, I build robust, scalable solutions — geospatial analysis with cloud-optimised formats like GeoParquet and Zarr, advanced ML, and practical LLM deployment with local models." |
-| **applied (author)** | "As a full-stack developer and open-source advocate, I build geospatial tooling on cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its place, and deploy LLMs locally with Ollama when a project calls for it." |
+| **applied (author)** | "As a full-stack developer and open-source advocate, I build geospatial tooling on cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its place, and run LLMs locally — usually with Ollama — when a project calls for it." |
 
 This is the paragraph `VOICE-NOTES.md` quotes as its worked example of what to
 cut. **"robust, scalable solutions"** is two banned things at once — stacked
 adjectives *and* "solutions" as a noun for software — and **advanced** is filler
 by spine rule 1. Cutting "solutions" also fixes the grammar: the list was
-appositive to it, so the verb becomes "I build geospatial tooling on…". **Ollama**
-is restored from the draft — "local models" had made a concrete noun vague.
+appositive to it, so the verb becomes "I build geospatial tooling on…".
+**Ollama** is restored from the draft — "local models" had made a concrete noun
+vague — but kept as **one example**, not the tool: "usually with Ollama". The
+prose and the Local LLMs card each mention it once, and neither leads with it,
+so the page does not read as though Ollama is the whole of the LLM work.
 
 ## 6. About — paragraph 3
 
@@ -123,7 +126,7 @@ endpoint. Same URL, same `↗` (it is external).
 |---|---|---|
 | Geospatial | "Expert in cloud-optimized formats (GeoParquet, Zarr), spatial analysis, and GIS systems for extracting meaningful insights from location-based data at scale." | "Cloud-optimised formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale." |
 | ML | "PhD-level expertise in Reinforcement Learning for Swarm systems, predictive modeling, and advanced ML algorithms for intelligent data-driven solutions." | "PhD-level work in RL for swarm systems, predictive modelling, and applied ML." |
-| LLM | "Local model deployment with Ollama, prompt engineering, and full-stack development using open-source technologies for scalable, maintainable solutions." | "Deployment with Ollama, prompt engineering, and full-stack open-source systems." |
+| LLM | "Local model deployment with Ollama, prompt engineering, and full-stack development using open-source technologies for scalable, maintainable solutions." | "Running local models with Ollama, prompt engineering, and full-stack open-source systems." |
 
 Card headings: the draft used "Geospatial Data" / "Machine Learning" / "LLM & Open Source" as the card titles. The page adds a short eyebrow label above each card ("Geospatial" / "Machine Learning" / "LLM & Open Source"), keeps the first draft title as the `h3`, and replaces the other two with "Reinforcement Learning" and "Local LLMs".
 
