@@ -137,7 +137,7 @@
       <li class="pub-item">
         <div class="pub-year">2026</div>
         <div class="pub-body">
-          <a class="pub-title" href="https://biss.pensoft.net/article/185022/download/pdf/" target="_blank" rel="noopener"
+          <a class="pub-title" href="/papers/2026-gbr-data-management-system.pdf" target="_blank" rel="noopener"
             >GBR Data Management System: A One-Stop Shop to Great Barrier Reef Data ↗</a
           >
           <div class="pub-meta">Biodiversity Information Science and Standards</div>
@@ -167,13 +167,16 @@
       <li class="pub-item">
         <div class="pub-year">2022</div>
         <div class="pub-body">
-          <a class="pub-title" href="https://www.frontiersin.org/articles/10.3389/frobt.2022.745958/pdf" target="_blank" rel="noopener"
+          <a class="pub-title" href="/papers/2022-characterisation-human-swarm-teaming.pdf" target="_blank" rel="noopener"
             >Characterisation of Indicators for Adaptive Human-Swarm Teaming ↗</a
           >
           <div class="pub-meta">Frontiers in Robotics and AI</div>
         </div>
       </li>
     </ul>
+    <p class="pub-note">
+      Open-access papers, hosted here under CC BY 4.0. Copyright remains with the authors.
+    </p>
   </section>
 
   <section class="section" id="journey">
