@@ -26,11 +26,11 @@
     <div class="leo-right">
       <div class="leo-links">
         <a href="#about-leo">About</a>
-        <a href="#experience">Experience</a>
         <a href="#expertise">Expertise</a>
+        <a href="#experience">Experience</a>
         <a href="#publications">Publications</a>
-        <a href="#journey">Journey</a>
         <a href="#community">Community</a>
+        <a href="#journey">Journey</a>
         <a href="#contact">Contact</a>
       </div>
       <PersonaToggle />
@@ -70,6 +70,26 @@
     </div>
   </section>
 
+  <section class="section" id="expertise">
+    <div class="section__head">
+      <h2>Core Expertise</h2>
+    </div>
+    <div class="leo-grid">
+      <div class="leo-card reveal" style="animation-delay: 0.08s">
+        <h3>Geospatial Data</h3>
+        <p>Cloud-optimised formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale.</p>
+      </div>
+      <div class="leo-card reveal" style="animation-delay: 0.16s">
+        <h3>Reinforcement Learning</h3>
+        <p>PhD-level work in RL for swarm systems, predictive modelling, and applied ML.</p>
+      </div>
+      <div class="leo-card reveal" style="animation-delay: 0.24s">
+        <h3>Local or Cloud LLMs</h3>
+        <p>Running models with Ollama and OpenHands, prompt engineering, and full-stack open-source systems.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="experience">
     <div class="section__head">
       <h2>Experience</h2>
@@ -106,26 +126,6 @@
         </div>
       </li>
     </ul>
-  </section>
-
-  <section class="section" id="expertise">
-    <div class="section__head">
-      <h2>Core Expertise</h2>
-    </div>
-    <div class="leo-grid">
-      <div class="leo-card reveal" style="animation-delay: 0.08s">
-        <h3>Geospatial Data</h3>
-        <p>Cloud-optimised formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale.</p>
-      </div>
-      <div class="leo-card reveal" style="animation-delay: 0.16s">
-        <h3>Reinforcement Learning</h3>
-        <p>PhD-level work in RL for swarm systems, predictive modelling, and applied ML.</p>
-      </div>
-      <div class="leo-card reveal" style="animation-delay: 0.24s">
-        <h3>Local or Cloud LLMs</h3>
-        <p>Running models with Ollama and OpenHands, prompt engineering, and full-stack open-source systems.</p>
-      </div>
-    </div>
   </section>
 
   <section class="section" id="publications">
@@ -176,30 +176,6 @@
     </ul>
   </section>
 
-  <section class="section" id="journey">
-    <div class="section__head">
-      <h2>My Journey</h2>
-    </div>
-    <p class="journey__note">
-      From my roots in
-      <button
-        type="button"
-        class="journey__link"
-        onclick={() => focus('italy')}
-        onmouseenter={() => showFill('italy')}
-        onmouseleave={hideFill}>Italy</button
-      > to my study and work in
-      <button
-        type="button"
-        class="journey__link"
-        onclick={() => focus('australia')}
-        onmouseenter={() => showFill('australia')}
-        onmouseleave={hideFill}>Australia</button
-      > — a journey that shaped my global perspective.
-    </p>
-    <div class="journey-map" bind:this={journeyHost} class:ready={mapReady}></div>
-  </section>
-
   <section class="section" id="community">
     <div class="section__head">
       <h2>Community</h2>
@@ -228,6 +204,30 @@
         </div>
       </li>
     </ul>
+  </section>
+
+  <section class="section" id="journey">
+    <div class="section__head">
+      <h2>My Journey</h2>
+    </div>
+    <p class="journey__note">
+      From my roots in
+      <button
+        type="button"
+        class="journey__link"
+        onclick={() => focus('italy')}
+        onmouseenter={() => showFill('italy')}
+        onmouseleave={hideFill}>Italy</button
+      > to my study and work in
+      <button
+        type="button"
+        class="journey__link"
+        onclick={() => focus('australia')}
+        onmouseenter={() => showFill('australia')}
+        onmouseleave={hideFill}>Australia</button
+      > — a journey that shaped my global perspective.
+    </p>
+    <div class="journey-map" bind:this={journeyHost} class:ready={mapReady}></div>
   </section>
 
   <section class="section" id="contact">

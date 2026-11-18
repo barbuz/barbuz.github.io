@@ -234,7 +234,7 @@ Community (§ 10b) as the ON Prime project instead.
 
 ## 10b. Community — new section
 
-Placed after Journey. Same CV list styling as Experience.
+Placed after Publications (§ 10d). Same CV list styling as Experience.
 
 | Years | Item | Line |
 |---|---|---|
@@ -247,7 +247,7 @@ things the section stands on — the same role the links played in Publications.
 
 ## 10c. Publications — new section
 
-Placed after Core Expertise. A `pub-list` with a year rail, each entry a title
+Placed after Experience (§ 10d). A `pub-list` with a year rail, each entry a title
 link plus venue. **The section head carries a `Google Scholar ↗` link** (the
 author's profile).
 
@@ -294,6 +294,39 @@ Learning card** (§ 7) and lives here now.
 Two spelling calls: the Frontiers title uses **Characterisation** (AU spelling)
 and the body text uses **cloud-optimised**, while the DOI/venue strings keep
 their published spelling (US, `Characterization`) — titles are not prose.
+
+## 10d. Section order — settled
+
+The order was **accreted, not designed**: each new section landed where it was
+built (Publications "after Core Expertise", Community "after Journey"). Read as
+a sequence it did not hold up, so it was reordered to:
+
+```
+About          who I am
+Core Expertise what I do        ← elaborates the hero's claim
+Experience     where I did it   ─┐
+Publications   what I published │ three lists, now contiguous
+Community      beyond the job   ─┘
+Journey        who I am, personally
+Contact        the invitation
+```
+
+Claim → evidence → person → invitation. Two problems it fixes:
+
+- **Experience and Community are twins** — both `cv-list` sections answering
+  *what have you done* — but sat at opposite ends with three sections between
+  them. They are now adjacent.
+- **Journey interrupted the credential run.** It is also the most personal
+  section, so placing it mid-CV mixed registers. It now closes the narrative.
+
+Core Expertise moved up because it **elaborates the hero**: the hero names
+geospatial data, RL and LLM systems, and the cards expand exactly those three.
+The nav mirrors the new order.
+
+The counter-argument considered and rejected: the map is the signature
+interactive, and placing it late means some readers never reach it. Lifting it
+directly after About was the alternative, but keeping it late reads better as a
+narrative close. Revisit if the map turns out to be the thing people come for.
 
 ## Draft sections with no home on the page yet
 

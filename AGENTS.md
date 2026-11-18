@@ -342,21 +342,25 @@ the eyebrow.
 opposite the `h2`. A longer eyebrow wraps under itself at phone widths and that
 is fine — it stays left-aligned under the heading with the rule below.
 
-## The Leo CV sections: Experience, Community, Publications
+## The Leo CV sections: Experience, Publications, Community
 
 The Leo face's old "Featured Projects" is gone. It was three cards for work from
 previous employment with **no public link to give**, and a card with a hover glow
 promises a click the page cannot honour. In its place are three CV-style sections,
-all built from `cv_ghignone.tex` in the repo root (the author's real CV):
+all built from `cv_ghignone.tex` in the repo root (the author's real CV).
 
-- **Experience** — `#experience`, after About. Three roles. Because there is no
+**Order: About · Core Expertise · Experience · Publications · Community ·
+Journey · Contact.** The sections were accreted rather than designed, and read
+as a sequence they did not hold up, so they were reordered to claim → evidence →
+person → invitation. Core Expertise elaborates the hero's claim; the three
+`cv-list` sections then run contiguously; Journey closes the narrative. The nav
+mirrors this. Rationale in `docs/COPY-NOTES-LEO.md` § 10d.
+
+- **Experience** — `#experience`, after Core Expertise. Three roles. Because there is no
   link, the words carry the credibility: each entry names the domain and one
   concrete thing. Publidok (2016) is deliberately left off; the CV holds the full
   history.
-- **Community** — `#community`, after Journey. FOSS4G organising (2024, 2025, both
-  linked) and ON Prime / CSIRO (the ForeSight project, linked). ForeSight lives
-  here, not in Experience.
-- **Publications** — `#publications`, after Core Expertise. Newest first. All
+- **Publications** — `#publications`, after Experience. Newest first. All
   four full texts are **self-hosted** under `static/papers/` (served at
   `/papers/…`), not linked to the publisher — publisher PDF URLs rot, as the
   Protomaps tileset taught us. The author is an author on all four. **Licences
@@ -364,6 +368,9 @@ all built from `cv_ghignone.tex` in the repo root (the author's real CV):
   own version (IEEE copyright, not CC BY), flagged by *"· author's version"* on
   that entry's meta line. Never host a publisher's typeset PDF that is not open
   access. The section head links to the author's Google Scholar profile.
+- **Community** — `#community`, after Publications. FOSS4G organising (2024, 2025, both
+  linked) and ON Prime / CSIRO (the ForeSight project, linked). ForeSight lives
+  here, not in Experience.
 
 Each publication title carries a **`PDF` tag**, not the `↗` external-link
 suffix: the files are ours, served from `/papers/`, so `↗` would say "you are
