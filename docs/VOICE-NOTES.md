@@ -104,6 +104,7 @@ Shared across both registers.
 |---|---|
 | External links | `↗` suffix (`GitHub ↗`, `Read the thesis ↗`) |
 | Internal links | No suffix — they are not leaving |
+| Self-hosted files | `PDF` tag, not `↗` — the file is ours, so an arrow would claim the reader is leaving the site when they are not. The tag names the file (`… Great Barrier Reef Data PDF`) |
 | Buttons | Sentence case, no full stop (`Get in touch`) |
 | Headings | **Title Case on the Leo face** (`Core Expertise`, `Get in Touch`). barbuz headings are single words, so the split rarely shows — where it does, the label rule above applies |
 | App names | Always lowercase, even mid-sentence (`byom`, `match the gatherer`) |

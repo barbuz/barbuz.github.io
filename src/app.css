@@ -715,16 +715,18 @@ html[data-persona='leo'] .flipper {
   line-height: 1.45;
 }
 
+.pub-file {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 .pub-meta {
   margin-top: 0.3rem;
   color: var(--muted);
   font-size: 0.85rem;
-}
-
-.pub-note {
-  margin: 1.8rem 0 0;
-  color: var(--muted);
-  font-size: 0.82rem;
 }
 
 .section__link {

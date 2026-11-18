@@ -271,9 +271,16 @@ describe them all as CC BY:**
 | 2023 | Wind-speed Forecasting based on Smoothing Ensemble Empirical Mode Decomposition and LSTM | `2023-wind-speed-forecasting.pdf` | **author version** — IEEE copyright |
 | 2022 | Characterisation of Indicators for Adaptive Human-Swarm Teaming | `2022-characterisation-human-swarm-teaming.pdf` | CC BY 4.0 |
 
-The `.pub-note` under the list states this split: *"I'm an author on all four.
-Three are open access under CC BY 4.0; the 2023 conference paper is an author
-version."* The 2023 entry's `.pub-meta` also carries *"· author's version"*.
+The `.pub-note` under the list was **removed**. It first read "Open-access
+papers, hosted here under CC BY 4.0", then briefly named the authorship; both
+were cut. The authorship is what a Publications section already means, each PDF
+carries its own author line and licence, and the licence split is carried by the
+2023 entry's *"· author's version"* label. The note was over-explaining.
+
+The **indicator is a `PDF` tag**, not `↗`. By the site's own rule the arrow means
+"external link", but these files are ours, served from `/papers/` — an arrow
+would claim the reader is leaving the site when they are not. The tag says what
+the file is instead. See `docs/VOICE-NOTES.md` → Mechanics.
 
 **Never host a publisher's typeset PDF that is not open access.** The 2023 file
 is the author's own pdfTeX build (no IEEE branding, no "Authorized licensed"

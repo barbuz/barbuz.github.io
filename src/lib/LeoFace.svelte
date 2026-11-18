@@ -138,7 +138,7 @@
         <div class="pub-year">2026</div>
         <div class="pub-body">
           <a class="pub-title" href="/papers/2026-gbr-data-management-system.pdf" target="_blank" rel="noopener"
-            >GBR Data Management System: A One-Stop Shop to Great Barrier Reef Data ↗</a
+            >GBR Data Management System: A One-Stop Shop to Great Barrier Reef Data <span class="pub-file">PDF</span></a
           >
           <div class="pub-meta">Biodiversity Information Science and Standards</div>
         </div>
@@ -147,7 +147,7 @@
         <div class="pub-year">2024</div>
         <div class="pub-body">
           <a class="pub-title" href="/papers/2024-rl-swarm-systems-thesis.pdf" target="_blank" rel="noopener"
-            >Reinforcement Learning for Swarm Systems ↗</a
+            >Reinforcement Learning for Swarm Systems <span class="pub-file">PDF</span></a
           >
           <div class="pub-meta">PhD thesis · UNSW Canberra</div>
         </div>
@@ -159,7 +159,7 @@
             class="pub-title"
             href="/papers/2023-wind-speed-forecasting.pdf"
             target="_blank"
-            rel="noopener">Wind-speed Forecasting based on Smoothing Ensemble Empirical Mode Decomposition and LSTM ↗</a
+            rel="noopener">Wind-speed Forecasting based on Smoothing Ensemble Empirical Mode Decomposition and LSTM <span class="pub-file">PDF</span></a
           >
           <div class="pub-meta">International Conference on Power and Renewable Energy Engineering · author's version</div>
         </div>
@@ -168,15 +168,12 @@
         <div class="pub-year">2022</div>
         <div class="pub-body">
           <a class="pub-title" href="/papers/2022-characterisation-human-swarm-teaming.pdf" target="_blank" rel="noopener"
-            >Characterisation of Indicators for Adaptive Human-Swarm Teaming ↗</a
+            >Characterisation of Indicators for Adaptive Human-Swarm Teaming <span class="pub-file">PDF</span></a
           >
           <div class="pub-meta">Frontiers in Robotics and AI</div>
         </div>
       </li>
     </ul>
-    <p class="pub-note">
-      I'm an author on all four. Three are open access under CC BY 4.0; the 2023 conference paper is an author version.
-    </p>
   </section>
 
   <section class="section" id="journey">

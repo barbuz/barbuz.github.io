@@ -361,10 +361,14 @@ all built from `cv_ghignone.tex` in the repo root (the author's real CV):
   `/papers/…`), not linked to the publisher — publisher PDF URLs rot, as the
   Protomaps tileset taught us. The author is an author on all four. **Licences
   differ:** three are CC BY 4.0, and the 2023 conference paper is the author's
-  own version (IEEE copyright, not CC BY), so the `.pub-note` says "three are
-  open access" rather than claiming all four. Never host a publisher's typeset
-  PDF that is not open access. The section head links to the author's Google
-  Scholar profile.
+  own version (IEEE copyright, not CC BY), flagged by *"· author's version"* on
+  that entry's meta line. Never host a publisher's typeset PDF that is not open
+  access. The section head links to the author's Google Scholar profile.
+
+Each publication title carries a **`PDF` tag**, not the `↗` external-link
+suffix: the files are ours, served from `/papers/`, so `↗` would say "you are
+leaving the site" when you are not. The tag names the file instead. See
+`docs/VOICE-NOTES.md` → Mechanics.
 
 Experience and Community share the `cv-list` / `cv-item` / `cv-when` / `cv-body`
 classes and a 6rem year rail; Publications reuses the same shape via `pub-list`.
