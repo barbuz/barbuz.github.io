@@ -358,8 +358,7 @@ mirrors this. Rationale in `docs/COPY-NOTES-LEO.md` § 10d.
 
 - **Experience** — `#experience`, after Core Expertise. Three roles. Because there is no
   link, the words carry the credibility: each entry names the domain and one
-  concrete thing. Publidok (2016) is deliberately left off; the CV holds the full
-  history.
+  concrete thing. The CV holds the full history.
 - **Publications** — `#publications`, after Experience. Newest first. All
   four full texts are **self-hosted** under `static/papers/` (served at
   `/papers/…`), not linked to the publisher — publisher PDF URLs rot, as the

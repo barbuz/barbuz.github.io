@@ -236,18 +236,20 @@
     </div>
     <div class="prose">
       <p>Open to collaboration, freelance, and interesting problems.</p>
+      <p>
+        You can also check the
+        <a
+          href="?barbuz"
+          onclick={(e) => {
+            e.preventDefault();
+            setPersona('barbuz');
+          }}>apps and tools I build for fun as barbuz</a
+        >.
+      </p>
     </div>
     <div class="leo-cta">
       <a class="btn btn--leo btn--leo-solid" href="mailto:leo.ghignone@gmail.com">Email</a>
       <a class="btn btn--leo" href="https://github.com/barbuz" target="_blank" rel="noopener">GitHub ↗</a>
-      <a
-        class="btn btn--leo"
-        href="?barbuz"
-        onclick={(e) => {
-          e.preventDefault();
-          setPersona('barbuz');
-        }}>← Back to barbuz</a
-      >
     </div>
   </section>
 
