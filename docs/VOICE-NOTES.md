@@ -152,7 +152,8 @@ hero's "Full-stack engineer with a PhD" line stands. The Leo face's dropped
 **Featured Projects** (open decision 4 in BRAND-PLAN) is now **resolved**: it
 became the **Experience** list, with a **Community** and a **Publications**
 section beside it, all built from the author's CV. See `COPY-NOTES-LEO.md`
-§ 10a–10c. Nothing remains open on the Leo face.
+§ 10a–10c. The Leo nav was also trimmed from seven section links to four
+landmarks (§ 10e). Nothing remains open on the Leo face.
 
 ---
 

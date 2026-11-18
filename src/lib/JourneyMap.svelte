@@ -83,32 +83,44 @@
 	let observer: IntersectionObserver;
 	let scrollHandler: (() => void) | null = null;
 
+	// The country outlines and the journey line are added only once the map has
+	// been scrolled to. The base tiles load as soon as the page opens, since they
+	// take the longest to arrive.
+	let journeyRevealed = false;
+	let mapLoaded = false;
+	let destroyed = false;
+	// The world boundaries are fetched once and shared by both countries rather
+	// than re-fetched per lookup; the file is ~15 MB.
+	let countriesPromise: Promise<any> | null = null;
+
 	// Coordinates: Center of Italy and Australia
 	const italyCoords: [number, number] = [12.5674, 41.8719]; // Center of Italy
 	const australiaCoords: [number, number] = [134.4911, -25.2744]; // Center of Australia
 
-	// Function to get country boundary from public API
-	async function getCountryBoundary(countryName: string) {
+	// Function to get a country boundary from the world dataset. The dataset is
+	// ~15 MB, so it is fetched once and shared; `names` lists the spellings to try.
+	async function getCountryBoundary(names: string[]) {
 		try {
-			// Try to get country boundary from Natural Earth data via GitHub
-			const response = await fetch(`https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson`);
-			const geoJsonData = await response.json();
-			
+			countriesPromise ??= fetch(
+				'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
+			).then((response) => response.json());
+			const geoJsonData = await countriesPromise;
+
 			// Find the country by name
-			const countryFeature = geoJsonData.features.find((feature: { properties: { ADMIN: string; NAME: string; name: string; }; }) => 
-				feature.properties.ADMIN === countryName || 
-				feature.properties.NAME === countryName ||
-				feature.properties.name === countryName
+			const countryFeature = geoJsonData.features.find((feature: { properties: { ADMIN: string; NAME: string; name: string; }; }) =>
+				names.includes(feature.properties.ADMIN) ||
+				names.includes(feature.properties.NAME) ||
+				names.includes(feature.properties.name)
 			);
 
 			if (countryFeature) {
 				return countryFeature;
 			}
-			
-			console.warn(`Country ${countryName} not found in Natural Earth data`);
+
+			console.warn(`Country ${names[0]} not found in Natural Earth data`);
 			return null;
 		} catch (error) {
-			console.warn(`Could not fetch boundary for ${countryName}:`, error);
+			console.warn(`Could not fetch boundary for ${names[0]}:`, error);
 			return null;
 		}
 	}
@@ -217,119 +229,149 @@
 		// Add home button control using standard MapLibre pattern
 		map.addControl(new HomeControl(), 'top-right');
 
-		// Add polygons for both locations
-		map.on('load', async () => {
-			// Get exact country boundaries from public API
-			const italyBoundary = await getCountryBoundary('Italy');
-			const australiaBoundary = await getCountryBoundary('Australia');
-
-			// Italy polygon (outline only)
-			if (italyBoundary) {
-				map.addLayer({
-					id: 'italy-marker',
-					type: 'line',
-					source: {
-						type: 'geojson',
-						data: italyBoundary
-					},
-					paint: {
-						'line-color': '#1d4ed8',
-						'line-width': 2,
-						'line-opacity': 0.8
-					}
-				});
-
-				// Add fill layer (initially hidden)
-				map.addLayer({
-					id: 'italy-marker-fill',
-					type: 'fill',
-					source: {
-						type: 'geojson',
-						data: italyBoundary
-					},
-					paint: {
-						'fill-color': '#1d4ed8',
-						'fill-opacity': 0
-					},
-					layout: {
-						visibility: 'none'
-					}
-				});
-			}
-
-			// Australia polygon (outline only)
-			if (australiaBoundary) {
-				map.addLayer({
-					id: 'australia-marker',
-					type: 'line',
-					source: {
-						type: 'geojson',
-						data: australiaBoundary
-					},
-					paint: {
-						'line-color': '#3d7bff',
-						'line-width': 2,
-						'line-opacity': 0.8
-					}
-				});
-
-				// Add fill layer (initially hidden)
-				map.addLayer({
-					id: 'australia-marker-fill',
-					type: 'fill',
-					source: {
-						type: 'geojson',
-						data: australiaBoundary
-					},
-					paint: {
-						'fill-color': '#3d7bff',
-						'fill-opacity': 0
-					},
-					layout: {
-						visibility: 'none'
-					}
-				});
-			}
-
-			// Add line connecting the two points with geodetic path and gradient
-			const { italyPoint, australiaPoint } = getBorderPoints(italyBoundary, australiaBoundary);
-			const geodeticPath = createGeodeticPath(italyPoint, australiaPoint);
-			
-			// Create gradient line by adding multiple segments with different colors
-			for (let i = 0; i < geodeticPath.length - 1; i++) {
-				const progress = i / (geodeticPath.length - 1);
-				
-				// Interpolate between the two accent tones (same hue, different lightness)
-				const r = Math.round(29 + (61 - 29) * progress); // 29 -> 61
-				const g = Math.round(78 + (123 - 78) * progress); // 78 -> 123
-				const b = Math.round(216 + (255 - 216) * progress); // 216 -> 255
-				const color = `rgb(${r}, ${g}, ${b})`;
-				
-				map.addLayer({
-					id: `journey-line-${i}`,
-					type: 'line',
-					source: {
-						type: 'geojson',
-						data: {
-							type: 'Feature',
-							geometry: {
-								type: 'LineString',
-								coordinates: [geodeticPath[i], geodeticPath[i + 1]]
-							}
-						}
-					},
-					paint: {
-						'line-color': color,
-						'line-width': 3,
-						'line-opacity': 0.8
-					}
-				});
-			}
+		// The base tiles load now, on page open, since they take the longest to
+		// arrive. The outlines and the line wait until the map is scrolled to.
+		map.on('load', () => {
+			mapLoaded = true;
+			maybeReveal();
 		});
 
 		// Disable scroll zoom
 		map.scrollZoom.disable();
+
+		// Reveal the outlines and the line once the map has been scrolled into view.
+		const onViewCheck = () => maybeReveal();
+		scrollHandler = onViewCheck;
+		document.addEventListener('scroll', onViewCheck, { capture: true, passive: true });
+		window.addEventListener('resize', onViewCheck);
+		maybeReveal();
 	});
+
+	function mapInView() {
+		if (!mapContainer) return false;
+		const r = mapContainer.getBoundingClientRect();
+		return r.top < window.innerHeight * 0.9 && r.bottom > 0;
+	}
+
+	function maybeReveal() {
+		if (journeyRevealed || destroyed || !mapLoaded || !mapInView()) return;
+		revealJourney();
+	}
+
+	// Add the country outlines and the journey line, once. Called on map load if
+	// the map is already in view, or on scroll otherwise — whichever comes first.
+	async function revealJourney() {
+		if (journeyRevealed || destroyed || !map) return;
+		journeyRevealed = true;
+
+		const italyBoundary = await getCountryBoundary(['Italy', 'Italian Republic']);
+		const australiaBoundary = await getCountryBoundary(['Australia', 'Commonwealth of Australia']);
+
+		if (destroyed) return;
+
+		// Italy polygon (outline only)
+		if (italyBoundary) {
+			map.addLayer({
+				id: 'italy-marker',
+				type: 'line',
+				source: {
+					type: 'geojson',
+					data: italyBoundary
+				},
+				paint: {
+					'line-color': '#1d4ed8',
+					'line-width': 2,
+					'line-opacity': 0.8
+				}
+			});
+
+			// Add fill layer (initially hidden)
+			map.addLayer({
+				id: 'italy-marker-fill',
+				type: 'fill',
+				source: {
+					type: 'geojson',
+					data: italyBoundary
+				},
+				paint: {
+					'fill-color': '#1d4ed8',
+					'fill-opacity': 0
+				},
+				layout: {
+					visibility: 'none'
+				}
+			});
+		}
+
+		// Australia polygon (outline only)
+		if (australiaBoundary) {
+			map.addLayer({
+				id: 'australia-marker',
+				type: 'line',
+				source: {
+					type: 'geojson',
+					data: australiaBoundary
+				},
+				paint: {
+					'line-color': '#3d7bff',
+					'line-width': 2,
+					'line-opacity': 0.8
+				}
+			});
+
+			// Add fill layer (initially hidden)
+			map.addLayer({
+				id: 'australia-marker-fill',
+				type: 'fill',
+				source: {
+					type: 'geojson',
+					data: australiaBoundary
+				},
+				paint: {
+					'fill-color': '#3d7bff',
+					'fill-opacity': 0
+				},
+				layout: {
+					visibility: 'none'
+				}
+			});
+		}
+
+		// Add line connecting the two points with geodetic path and gradient
+		const { italyPoint, australiaPoint } = getBorderPoints(italyBoundary, australiaBoundary);
+		const geodeticPath = createGeodeticPath(italyPoint, australiaPoint);
+
+		// Create gradient line by adding multiple segments with different colors
+		for (let i = 0; i < geodeticPath.length - 1; i++) {
+			const progress = i / (geodeticPath.length - 1);
+
+			// Interpolate between the two accent tones (same hue, different lightness)
+			const r = Math.round(29 + (61 - 29) * progress); // 29 -> 61
+			const g = Math.round(78 + (123 - 78) * progress); // 78 -> 123
+			const b = Math.round(216 + (255 - 216) * progress); // 216 -> 255
+			const color = `rgb(${r}, ${g}, ${b})`;
+
+			map.addLayer({
+				id: `journey-line-${i}`,
+				type: 'line',
+				source: {
+					type: 'geojson',
+					data: {
+						type: 'Feature',
+						geometry: {
+							type: 'LineString',
+							coordinates: [geodeticPath[i], geodeticPath[i + 1]]
+						}
+					}
+				},
+				paint: {
+					'line-color': color,
+					'line-width': 3,
+					'line-opacity': 0.8
+				}
+			});
+		}
+	}
 
 	// Scroll sync functionality removed - map remains static
 	function setupScrollSync() {
@@ -415,11 +457,15 @@
 	export { goToLocation, showCountryFill, hideAllFills };
 
 	onDestroy(() => {
+		destroyed = true;
 		if (scrollHandler) {
-			window.removeEventListener('scroll', scrollHandler);
+			document.removeEventListener('scroll', scrollHandler, { capture: true });
+			window.removeEventListener('resize', scrollHandler);
+			scrollHandler = null;
 		}
 		if (map) {
 			map.remove();
+			map = null;
 		}
 	});
 </script>

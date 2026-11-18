@@ -222,6 +222,25 @@ If a fully self-hosted basemap is ever wanted, `pmtiles extract` cuts a small
 global or regional archive — a world z0–5 extract is ~15 MB, which removes the
 external dependency entirely. Not done yet because it adds a build step.
 
+### Loading order
+
+The base layer is the slow part, so it starts on **page open**, not on scroll.
+The country outlines and the journey line are the fast part, and they wait until
+the map is scrolled into view, so the reader sees the outlines snap in rather
+than find them already there when they arrive.
+
+The split is in `JourneyMap.svelte`: `map.on('load')` sets `mapLoaded`, and
+`maybeReveal()` adds the outlines and the line once both `mapLoaded` and the
+map's own `getBoundingClientRect()` says it is in view. It runs on load, on
+`scroll` (captured, so it catches the `.face` scroll container) and on `resize`.
+`journeyRevealed` makes it idempotent.
+
+The two countries come from `datasets/geo-countries` — a **~15 MB** world
+boundaries file. It is fetched **once** (`countriesPromise` memoises it) and both
+lookups share it; fetching per country pulled the whole file twice. Two names are
+tried per country because the dataset's `ADMIN` and `NAME` fields can differ
+(`Italy` / `Italian Republic`).
+
 ## Phase 2 scratch — the mark
 
 The **settled** geometry is in the repo: `brand/mark.mjs`, with the assets in
@@ -283,8 +302,14 @@ build the layout around them. Do not finalise a layout against placeholder text.
   considered risky and rejected.
 - Cross-face links are `?leo` / `?barbuz` with `preventDefault` and
   `setPersona(...)`, so they flip without a reload. **They carry no `↗`** — a
-  flip stays on the site, and the arrow means leaving it. Both faces keep their
-  cross-face link in their **About** section, so the pair is reciprocal.
+  flip stays on the site, and the arrow means leaving it. Both faces put their
+  cross-face link **at the foot of the page**, so the pair is symmetric by
+  position: barbuz's closes its About (its last section), Leo's sits in a
+  headless `.section--aside` above Contact. Matching the *slot* (About) was the
+  old rule; matching the *place* is what reads as symmetric.
+- **A flip drops the URL hash.** `setPersona` writes `/?leo` / `/` with no
+  `#anchor`: a flip is not a jump to a section, and the anchor belongs to the
+  face being left, so it must not survive the turn.
 - The two footers share one shape: name · `github.com/barbuz` · year.
 - State lives in `src/lib/persona.svelte.ts` (`$state` runes), shared by the
   toggle and the flip shell.
@@ -316,15 +341,28 @@ lowercase labels per `docs/VOICE-NOTES.md`.
 
 ## The persona switcher
 
-`PersonaToggle.svelte` is **icon only** — a moon and a sun on a sliding thumb,
-with no words. It is meant to read as an Easter egg: the glyphs hint that the
-site has two faces without explaining the trick. `press F to flip` (the `.hint`)
-is the discoverable path.
+`PersonaToggle.svelte` starts **icon only** — a moon and a sun on a sliding
+thumb, with no words. It is meant to read as an Easter egg: the glyphs hint that
+the site has two faces without explaining the trick. `press F to flip` (the
+`.hint`) is the discoverable path.
 
-The visible words are gone but the **accessible** ones are not: the `<button>`
-keeps `role="switch"`, `aria-checked`, and a live `aria-label`
-(`Switch to Leo` / `Switch to barbuz`). Do not add a `title` or visible text
-back — that undoes the intent. Styling for it is in `src/app.css` under
+**After the first flip the words come in.** `persona.hasFlipped` puts a
+`.flipped` class on the toggle, and the `barbuz` / `Leo` labels expand beside
+the glyphs (`max-width` 0 → 6rem, so the width eases open). A visitor who has
+crossed over can then see which face they are on and which one they came from —
+the Easter egg is spent, and finding the way back matters more than the trick.
+The labels are `aria-hidden`; the accessible name is unchanged.
+
+The switch widens from ~95px to ~212px when the labels appear, and the Leo bar
+carries four links plus the name, so on a middling screen they no longer fit on
+one row. `.leo-right` therefore wraps: the links drop to a second line rather
+than overflowing (measured clean from 320px to 1440px). The links keep their
+place in the reading order, so no markup changes with it.
+
+The **accessible** words were never gone: the `<button>` keeps `role="switch"`,
+`aria-checked`, and a live `aria-label` (`Switch to Leo` / `Switch to barbuz`).
+Do not add a `title` — the visible labels are the discoverable path now, and a
+tooltip would only repeat them. Styling for it is in `src/app.css` under
 `.switch*`.
 
 It lives **inside each face's nav**, not in fixed chrome over the page. That is
@@ -346,12 +384,31 @@ colours for the whole rotation, so it stays a still picture of its face.
 
 The barbuz switch is also **mirrored** (`.face--barbuz .switch`,
 `transform: scaleX(-1)`), so a flip turns it over rather than showing the same
-arrangement twice — moon and sun trade sides. The glyphs are counter-mirrored
-so they stay upright.
+arrangement twice — moon and sun trade sides. The glyphs and the labels are
+counter-mirrored so they stay upright.
 
 After this, the only `html[data-persona]` rule in `src/app.css` is the
 `.flipper` rotation itself. Keep it that way: nothing the switch draws should
 depend on the global persona.
+
+## The Leo nav carries four links, not seven
+
+The Leo bar is the tight one: a name on the left and, on the right, the switch
+plus the links. It carries **About · Experience · Publications · Contact** —
+four landmarks, not one link per section. A nav that mirrors every `h2` is a
+table of contents, and a label must not restate its own heading (the rule that
+reverted "Tools / special tools for special needs"). The dropped sections
+(Core Expertise, Community, Journey) sit beside a kept one, so they are cheap to
+reach.
+
+Four links is also what fits. With the switch's labels showing (§ the persona
+switcher) seven links overflow the bar below ~1010px; four fit, and `.leo-right`
+wraps the links to a second line in the ~565–740px band rather than overflowing.
+Keep the links in the markup's reading order if you edit them — the wrap is CSS
+only, so the order is what the wrap follows.
+
+Rationale and the rejected alternative (moving Community above Publications):
+`docs/COPY-NOTES-LEO.md` § 10e.
 
 ## Section heads: one eyebrow each
 

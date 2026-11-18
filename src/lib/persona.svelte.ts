@@ -41,7 +41,9 @@ export function setPersona(next: Persona, updateUrl = true) {
   if (updateUrl && browser) {
     const url = new URL(location.href);
     // barbuz is the default, so it needs no parameter at all: clean "/".
-    history.replaceState(null, '', url.pathname + (next === 'leo' ? '?leo' : '') + url.hash);
+    // The hash is dropped on purpose: a flip is not a jump to a section, and
+    // the anchor belongs to the face being left, so it must not survive the turn.
+    history.replaceState(null, '', url.pathname + (next === 'leo' ? '?leo' : ''));
   }
   apply(next);
   persona.hasFlipped = true;

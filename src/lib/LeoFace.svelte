@@ -26,11 +26,8 @@
     <div class="leo-right">
       <div class="leo-links">
         <a href="#about-leo">About</a>
-        <a href="#expertise">Expertise</a>
         <a href="#experience">Experience</a>
         <a href="#publications">Publications</a>
-        <a href="#community">Community</a>
-        <a href="#journey">Journey</a>
         <a href="#contact">Contact</a>
       </div>
       <PersonaToggle />
@@ -66,16 +63,6 @@
         As a full-stack developer and open-source advocate, I build geospatial tooling on
         cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its
         place, and run LLMs locally or in the cloud, whichever fits the project.
-      </p>
-      <p>
-        You can also check the
-        <a
-          href="?barbuz"
-          onclick={(e) => {
-            e.preventDefault();
-            setPersona('barbuz');
-          }}>apps and tools I build for fun as barbuz</a
-        >.
       </p>
     </div>
   </section>
@@ -238,6 +225,21 @@
       > — a journey that shaped my global perspective.
     </p>
     <div class="journey-map reveal" style="animation-delay: 0.1s" bind:this={journeyHost} class:ready={mapReady}></div>
+  </section>
+
+  <section class="section section--aside">
+    <div class="prose reveal">
+      <p>
+        You can also check the apps and tools I build for fun as
+        <a
+          href="?barbuz"
+          onclick={(e) => {
+            e.preventDefault();
+            setPersona('barbuz');
+          }}>barbuz</a
+        >.
+      </p>
+    </div>
   </section>
 
   <section class="section" id="contact">

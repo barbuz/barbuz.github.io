@@ -120,6 +120,28 @@ html[data-persona='leo'] .flipper {
   justify-content: center;
 }
 
+/* The words are held back until the first flip: before that the switch is the
+   icon-only Easter egg. Collapsed rather than `display: none` so the width can
+   ease open. The switch's two columns are `1fr 1fr`, so the two options stay
+   the same width and the thumb still lands under the lit one. */
+.switch__label {
+  max-width: 0;
+  margin-left: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    max-width var(--dur) var(--ease),
+    margin-left var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+}
+
+.flipped .switch__label {
+  max-width: 6rem;
+  margin-left: 0.45rem;
+  opacity: 1;
+}
+
 .face--barbuz .switch__opt[data-opt='barbuz'],
 .face--leo .switch__opt[data-opt='leo'] {
   opacity: 1;
@@ -156,7 +178,8 @@ html[data-persona='leo'] .flipper {
   transform: scaleX(-1);
 }
 
-.face--barbuz .switch__opt svg {
+.face--barbuz .switch__opt svg,
+.face--barbuz .switch__label {
   transform: scaleX(-1);
 }
 
@@ -335,6 +358,13 @@ html[data-persona='leo'] .flipper {
 
 .section {
   padding: 4.5rem 0;
+}
+
+/* The barbuz aside: a single line with no head, sitting between the map and
+   Contact. Pulled up so it reads as a footnote between the two rather than a
+   stop of its own. */
+.section--aside {
+  padding: 0 0 4.5rem;
 }
 
 .section__head {
@@ -526,11 +556,17 @@ html[data-persona='leo'] .flipper {
 }
 
 /* Mirror of the barbuz bar: the name leads here and trails there, the switch
-   trails here and leads there, so a flip swaps the two ends. */
+   trails here and leads there, so a flip swaps the two ends. It wraps because
+   the switch gains its words after the first flip, and on a middling screen the
+   four links and the wider switch no longer fit beside the name; the links drop
+   to a second line instead of overflowing. */
 .leo-right {
   display: flex;
   align-items: center;
   gap: 1.8rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 0.6rem;
 }
 
 .leo-name {
@@ -846,6 +882,9 @@ html[data-persona='leo'] .flipper {
 
 @media (prefers-reduced-motion: reduce) {
   .flipper {
+    transition: none !important;
+  }
+  .switch__label {
     transition: none !important;
   }
   .js .reveal {

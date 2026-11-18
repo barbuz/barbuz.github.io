@@ -247,29 +247,32 @@ lives in the mark and the accessible name, not in a visible `GitHub ↗` label;
 the visible-text version would have crowded a card whose `card__go` already
 says "open ↗".
 
-### 10c. The persona switcher is icon-only
+### 10c. The persona switcher: icon-only, then words after the first flip
 
-The switcher used to show the two words `barbuz` and `leo` beside their
-moon/sun glyphs. The words are gone; the two icons remain, on the same sliding
-thumb.
+The switcher shows the two words `barbuz` and `leo` beside their moon/sun
+glyphs — but **only after the visitor has flipped once**. Before that it is
+icon-only.
 
-The reasoning is voice, not just layout: the toggle is a **cross-face** control
-that reveals the site has two faces, and the author wants it to read as an
-Easter egg rather than an explained control. Labelling it in words hands the
+The reasoning for hiding them first is voice: the toggle is a **cross-face**
+control that reveals the site has two faces, and the author wants it to read as
+an Easter egg rather than an explained control. Labelling it in words hands the
 reader the trick. The glyphs alone are the hint.
 
-What keeps it usable without visible text:
+Once the visitor has crossed over, the trick is spent and a different need
+takes over: knowing which face you are on and how to get back. So
+`persona.hasFlipped` reveals the words (`barbuz` / `Leo`) beside the glyphs.
+The switch widens from ~95px to ~212px as they expand.
+
+What keeps it usable before the words appear:
 
 - The `<button>` keeps `role="switch"`, `aria-checked`, and a live
-  `aria-label` (`Switch to Leo` / `Switch to barbuz`), so screen readers still
-  get the words the eye no longer sees. Removing the label from the DOM is a
-  visual choice, not an accessibility one.
-- The `press F to flip` hint below it stays — that is the discoverable path for
-  anyone who does not read the glyphs.
+  `aria-label` (`Switch to Leo` / `Switch to barbuz`), so screen readers get the
+  words the eye does not see. The visible labels are `aria-hidden` — the
+  accessible name was never the labels.
+- The `press F to flip` hint below it stays until the first flip, as the
+  discoverable path for anyone who does not read the glyphs.
 
-The now-unused `gap` / `white-space` on `.switch__opt` were dropped, and the
-glyphs were sized up (0.85rem → 1rem) and given symmetric padding, since an
-icon-only control has no text to set its height.
+The wider switch is what forced the Leo nav down to four links (§ 10e).
 
 ### 10d. The switcher moves into the nav and turns with the page
 
