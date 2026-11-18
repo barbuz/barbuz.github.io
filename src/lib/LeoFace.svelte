@@ -55,7 +55,7 @@
     <div class="section__head">
       <h2>About</h2>
     </div>
-    <div class="prose">
+    <div class="prose reveal">
       <p>
         I'm a software engineer with a PhD in Artificial Intelligence, where my research was about efficient
         reinforcement learning for swarm systems — many small agents learning to cooperate, cheap
@@ -66,6 +66,16 @@
         As a full-stack developer and open-source advocate, I build geospatial tooling on
         cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its
         place, and run LLMs locally or in the cloud, whichever fits the project.
+      </p>
+      <p>
+        You can also check the
+        <a
+          href="?barbuz"
+          onclick={(e) => {
+            e.preventDefault();
+            setPersona('barbuz');
+          }}>apps and tools I build for fun as barbuz</a
+        >.
       </p>
     </div>
   </section>
@@ -134,7 +144,7 @@
       <a class="section__link" href="https://scholar.google.com/citations?user=kpNTZ3IAAAAJ" target="_blank" rel="noopener">Google Scholar ↗</a>
     </div>
     <ul class="pub-list">
-      <li class="pub-item">
+      <li class="pub-item reveal" style="animation-delay: 0.08s">
         <div class="pub-year">2026</div>
         <div class="pub-body">
           <a class="pub-title" href="/papers/2026-gbr-data-management-system.pdf" target="_blank" rel="noopener"
@@ -143,7 +153,7 @@
           <div class="pub-meta">Biodiversity Information Science and Standards</div>
         </div>
       </li>
-      <li class="pub-item">
+      <li class="pub-item reveal" style="animation-delay: 0.14s">
         <div class="pub-year">2024</div>
         <div class="pub-body">
           <a class="pub-title" href="/papers/2024-rl-swarm-systems-thesis.pdf" target="_blank" rel="noopener"
@@ -152,7 +162,7 @@
           <div class="pub-meta">PhD thesis · UNSW Canberra</div>
         </div>
       </li>
-      <li class="pub-item">
+      <li class="pub-item reveal" style="animation-delay: 0.2s">
         <div class="pub-year">2023</div>
         <div class="pub-body">
           <a
@@ -164,7 +174,7 @@
           <div class="pub-meta">International Conference on Power and Renewable Energy Engineering · author's version</div>
         </div>
       </li>
-      <li class="pub-item">
+      <li class="pub-item reveal" style="animation-delay: 0.26s">
         <div class="pub-year">2022</div>
         <div class="pub-body">
           <a class="pub-title" href="/papers/2022-characterisation-human-swarm-teaming.pdf" target="_blank" rel="noopener"
@@ -210,7 +220,7 @@
     <div class="section__head">
       <h2>My Journey</h2>
     </div>
-    <p class="journey__note">
+    <p class="journey__note reveal">
       From my roots in
       <button
         type="button"
@@ -227,42 +237,25 @@
         onmouseleave={hideFill}>Australia</button
       > — a journey that shaped my global perspective.
     </p>
-    <div class="journey-map" bind:this={journeyHost} class:ready={mapReady}></div>
+    <div class="journey-map reveal" style="animation-delay: 0.1s" bind:this={journeyHost} class:ready={mapReady}></div>
   </section>
 
   <section class="section" id="contact">
     <div class="section__head">
       <h2>Get in Touch</h2>
     </div>
-    <div class="prose">
+    <div class="prose reveal">
       <p>Open to collaboration, freelance, and interesting problems.</p>
-      <p>
-        You can also check the
-        <a
-          href="?barbuz"
-          onclick={(e) => {
-            e.preventDefault();
-            setPersona('barbuz');
-          }}>apps and tools I build for fun as barbuz</a
-        >.
-      </p>
     </div>
-    <div class="leo-cta">
+    <div class="leo-cta reveal" style="animation-delay: 0.1s">
       <a class="btn btn--leo btn--leo-solid" href="mailto:leo.ghignone@gmail.com">Email</a>
       <a class="btn btn--leo" href="https://github.com/barbuz" target="_blank" rel="noopener">GitHub ↗</a>
     </div>
   </section>
 
   <footer class="leo-foot">
-    <span>© 2026 Leo Ghignone</span>
-    <span
-      ><a
-        href="?barbuz"
-        onclick={(e) => {
-          e.preventDefault();
-          setPersona('barbuz');
-        }}>barbuz ↗</a
-      ></span
-    >
+    <span>Leo Ghignone</span>
+    <span><a href="https://github.com/barbuz" target="_blank" rel="noopener">github.com/barbuz</a></span>
+    <span>© 2026</span>
   </footer>
 </div>

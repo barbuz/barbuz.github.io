@@ -198,9 +198,15 @@ html[data-persona='leo'] .flipper {
   color: var(--muted);
 }
 
-.reveal {
+/* Scroll-triggered reveal. The hidden state is gated on `html.js`, which
+   app.html sets pre-paint, so content is never hidden without the JS that
+   reveals it. The class change is applied by initReveal() in reveal.ts. */
+.js .reveal {
   opacity: 0;
   transform: translateY(14px);
+}
+
+.reveal--in {
   animation: rise 0.8s var(--ease) forwards;
 }
 
@@ -842,11 +848,13 @@ html[data-persona='leo'] .flipper {
   .flipper {
     transition: none !important;
   }
-  .reveal,
-  .journey__line::after {
-    animation: none !important;
+  .js .reveal {
     opacity: 1;
     transform: none;
+  }
+  .reveal--in,
+  .journey__line::after {
+    animation: none !important;
   }
 }
 

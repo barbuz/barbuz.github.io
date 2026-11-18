@@ -34,6 +34,7 @@
         var q = new URLSearchParams(location.search);
         var persona = q.has('leo') && !q.has('barbuz') ? 'leo' : 'barbuz';
         document.documentElement.dataset.persona = persona;
+        document.documentElement.classList.add('js');
         var meta = document.querySelector('meta[name="theme-color"]');
         if (meta) meta.setAttribute('content', persona === 'leo' ? '#FAF8F3' : '#0A0E17');
         document.title = persona === 'leo' ? 'Leo Ghignone' : 'barbuz';

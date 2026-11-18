@@ -57,7 +57,31 @@ the generated files, and run `npm run tokens`. CI runs `npm run tokens:check`
 and fails on drift. Details: `brand/README.md`.
 
 The active persona is the `data-persona` attribute on `<html>`, set before first
-paint by the script in `src/app.html` so there is no flash.
+paint by the script in `src/app.html` so there is no flash. That script also sets
+`html.js` pre-paint, which is the gate for the scroll reveal below.
+
+## Scroll reveal
+
+Elements marked `.reveal` fade up as they come into view. `src/lib/reveal.ts`
+runs it, called from `+page.svelte` on mount; the animation is `rise` in
+`src/app.css`.
+
+**The hidden state is gated on `html.js`**, set pre-paint in `app.html`, so
+content is never hidden without the JS that reveals it — with JS off, or under
+`prefers-reduced-motion`, everything is visible and static.
+
+It is a **scroll-driven check, not an `IntersectionObserver`**, and that is
+load-bearing. An observer only fires when an element's intersection ratio
+changes; jumping to a nav anchor moves an element from below the viewport to
+above it with the ratio pinned at 0 the whole way, so the callback never runs
+and the element stays invisible for good. The check instead reveals an element
+once it enters from below **or** has been scrolled past, which survives a jump.
+It listens on `document` with `capture: true` because `scroll` does not bubble
+and the faces are the scroll containers, not the window.
+
+Every section animates; the per-list `animation-delay` stagger is set inline on
+the elements themselves. If you add a section, mark its blocks `.reveal` or it
+will arrive without the rest of the page.
 
 ## The mark
 
@@ -258,7 +282,10 @@ build the layout around them. Do not finalise a layout against placeholder text.
 - The persona is resolved from the URL query (`?leo`), not the route. `/leo` was
   considered risky and rejected.
 - Cross-face links are `?leo` / `?barbuz` with `preventDefault` and
-  `setPersona(...)`, so they flip without a reload.
+  `setPersona(...)`, so they flip without a reload. **They carry no `↗`** — a
+  flip stays on the site, and the arrow means leaving it. Both faces keep their
+  cross-face link in their **About** section, so the pair is reciprocal.
+- The two footers share one shape: name · `github.com/barbuz` · year.
 - State lives in `src/lib/persona.svelte.ts` (`$state` runes), shared by the
   toggle and the flip shell.
 - `JourneyMap.svelte` is imported in the browser only — MapLibre touches
