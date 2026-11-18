@@ -45,12 +45,6 @@
     </p>
     <div class="leo-cta reveal" style="animation-delay: 0.28s">
       <a class="btn btn--leo btn--leo-solid" href="mailto:leo.ghignone@gmail.com">Get in touch</a>
-      <a
-        class="btn btn--leo"
-        href="https://unsworks.unsw.edu.au/bitstreams/29367c76-5c06-475f-823a-68abe57dd763/download"
-        target="_blank"
-        rel="noopener">Read the thesis ↗</a
-      >
     </div>
   </header>
 
@@ -60,14 +54,15 @@
     </div>
     <div class="prose">
       <p>
-        I'm a passionate software engineer with a PhD in Machine Learning, where my research focused
-        on efficient Reinforcement Learning for Swarm systems. My interdisciplinary skills let me
-        move from complex data problems to shipped applications.
+        I'm a software engineer with a PhD in Machine Learning, where my research was about efficient
+        reinforcement learning for swarm systems — many small agents learning to cooperate, cheap
+        enough to run on simple hardware. I build across the stack, and I like a project that ends in
+        something people actually use.
       </p>
       <p>
-        As a full-stack developer and open-source advocate, I build robust, scalable solutions —
-        geospatial analysis with cloud-optimised formats like GeoParquet and Zarr, advanced ML, and
-        practical LLM deployment with local models.
+        As a full-stack developer and open-source advocate, I build geospatial tooling on
+        cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its
+        place, and deploy LLMs locally with Ollama when a project calls for it.
       </p>
     </div>
   </section>
@@ -86,6 +81,12 @@
         <div class="leo-card__k">Machine Learning</div>
         <h3>Reinforcement Learning</h3>
         <p>PhD-level work in RL for swarm systems, predictive modelling, and applied ML.</p>
+        <a
+          class="leo-card__link"
+          href="https://unsworks.unsw.edu.au/bitstreams/29367c76-5c06-475f-823a-68abe57dd763/download"
+          target="_blank"
+          rel="noopener">Read the thesis ↗</a
+        >
       </div>
       <div class="leo-card reveal" style="animation-delay: 0.24s">
         <div class="leo-card__k">LLM &amp; Open Source</div>

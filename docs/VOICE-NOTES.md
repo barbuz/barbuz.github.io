@@ -85,13 +85,14 @@ be long and to think out loud.
 
 Worked example:
 
-> As a full-stack developer and open-source advocate, I build robust, scalable
-> solutions — geospatial analysis with cloud-optimized formats like GeoParquet
-> and Zarr, advanced ML, and practical LLM deployment with local models.
+> As a full-stack developer and open-source advocate, I build geospatial tooling
+> on cloud-optimised formats like GeoParquet and Zarr, apply machine learning
+> where it earns its place, and deploy LLMs locally with Ollama when a project
+> calls for it.
 
-The second half is good — it names the formats. The first half is the problem:
-"passionate", "robust, scalable solutions" and "advanced" are all filler by
-rule 1. The fix is to cut them, not to reword them.
+The concrete half is good — it names the formats and the tool. An earlier version
+of the first half was the problem: "passionate", "robust, scalable solutions" and
+"advanced" are all filler by rule 1. The fix was to cut them, not to reword them.
 
 ---
 
@@ -143,12 +144,12 @@ About prose and the Geospatial card; both are now `-ised`), `README.md` has
 `Optimised` and `Customising`, and `JourneyMap.svelte` has `Normalise` and
 `Initialise` in its comments. Identifiers were left alone.
 
-**Still open.** The Leo face's wording has not had its copy pass: the About
-prose still opens "I'm a passionate software engineer" and still builds
-"robust, scalable solutions" — the exact filler the worked example above
-deletes — and the hero keeps "Full-stack engineer with a PhD". The Leo face's
-dropped **Featured Projects** (open decision 4 in BRAND-PLAN) is the other
-unfinished piece. Both are creative calls for the author, not spelling.
+**Still open.** The Leo face's wording has had its About pass: the prose no
+longer opens "I'm a passionate software engineer" and no longer builds "robust,
+scalable solutions" — the exact filler the worked example above deletes — and the
+hero's "Full-stack engineer with a PhD" line stands. The Leo face's dropped
+**Featured Projects** (open decision 4 in BRAND-PLAN) is the remaining unfinished
+piece. That is a creative call for the author, not spelling.
 
 ---
 

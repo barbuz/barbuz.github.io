@@ -653,6 +653,19 @@ html[data-persona='leo'] .flipper {
   font-size: 0.96rem;
 }
 
+.leo-card__link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.leo-card__link:hover {
+  text-decoration: underline;
+}
+
 .journey {
   display: flex;
   align-items: center;
