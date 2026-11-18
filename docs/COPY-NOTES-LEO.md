@@ -33,6 +33,9 @@ Settled so far:
 - **§ 3 / § 7, the thesis link — moved.** The hero no longer carries a
   "Read the thesis ↗" button. The link now sits on the **Reinforcement Learning**
   card in Core Expertise, where the thesis is the concrete proof of the claim.
+- **§ 8a, the card eyebrows — dropped.** The three uppercase kickers above the
+  Core Expertise card headings are gone, and so is their CSS rule. They had no
+  consistent job and restated their own headings; see §8a.
 
 The one still open:
 
@@ -138,7 +141,36 @@ Narrowing was wrong: the author works both ways, so the heading now names the
 range and the body lists the technologies (**Ollama**, **OpenHands**) as
 examples.
 
-Card headings: the draft used "Geospatial Data" / "Machine Learning" / "LLM & Open Source" as the card titles. The page adds a short eyebrow label above each card ("Geospatial" / "Machine Learning" / "LLM & Open Source"), keeps the first draft title as the `h3`, and replaces the other two with "Reinforcement Learning" and "Local or Cloud LLMs".
+Card headings: the draft used "Geospatial Data" / "Machine Learning" / "LLM & Open Source" as the card titles. The page keeps the first draft title as the `h3` and replaces the other two with "Reinforcement Learning" and "Local or Cloud LLMs". An intermediate version added a short uppercase eyebrow above each card ("Geospatial" / "Machine Learning" / "LLM & Open Source"); **those eyebrows were dropped** — see §8a.
+
+## 8a. Core expertise card eyebrows — settled: dropped
+
+The three cards each carried a short uppercase mono label above the `h3`
+(`Geospatial` / `Machine Learning` / `LLM & Open Source`), styled by
+`.leo-card__k`. They are gone, along with the rule.
+
+They failed on two counts:
+
+1. **No consistent job.** Each eyebrow had a *different* relationship to its
+   heading. `Geospatial` over `Geospatial Data` was pure duplication; `Machine
+   Learning` over `Reinforcement Learning` named the parent field (a real
+   addition); `LLM & Open Source` over `Local or Cloud LLMs` was part-repeat,
+   part-new. A slot that means something different in each of three cases has no
+   rule to test against, so nothing could be called redundant or useful — the
+   slot itself was the problem.
+2. **It restated its own heading**, which is the rule `AGENTS.md` already sets
+   for section heads ("Tools / special tools for special needs" was reverted for
+   exactly this). Card 1 said it twice outright.
+
+The deeper reason is that the device was borrowed from the wrong place. On the
+barbuz face the equivalent slot is the card **tag** (`real world maps`, `music
+pad`), and it earns its place because the `h3` there is a bare name — `byom`
+tells you nothing on its own. On the Leo face the `h3` *is* the description, so a
+kicker over it is the tag's job done over a heading that already did it.
+
+Dropping the eyebrows is a copy decision, not a layout one: the headings and
+bodies carry the content, and the draft never had the slot. The `h3`'s top
+margin (`0.6rem`) existed only to clear the eyebrow and is now `0`.
 
 ## 9. Journey section
 

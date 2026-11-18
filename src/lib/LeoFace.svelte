@@ -73,12 +73,10 @@
     </div>
     <div class="leo-grid">
       <div class="leo-card reveal" style="animation-delay: 0.08s">
-        <div class="leo-card__k">Geospatial</div>
         <h3>Geospatial Data</h3>
         <p>Cloud-optimised formats (GeoParquet, Zarr), spatial analysis, and GIS for insight at scale.</p>
       </div>
       <div class="leo-card reveal" style="animation-delay: 0.16s">
-        <div class="leo-card__k">Machine Learning</div>
         <h3>Reinforcement Learning</h3>
         <p>PhD-level work in RL for swarm systems, predictive modelling, and applied ML.</p>
         <a
@@ -89,7 +87,6 @@
         >
       </div>
       <div class="leo-card reveal" style="animation-delay: 0.24s">
-        <div class="leo-card__k">LLM &amp; Open Source</div>
         <h3>Local or Cloud LLMs</h3>
         <p>Running models with Ollama and OpenHands, prompt engineering, and full-stack open-source systems.</p>
       </div>
