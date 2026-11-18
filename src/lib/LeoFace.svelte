@@ -137,7 +137,7 @@
       <li class="pub-item">
         <div class="pub-year">2026</div>
         <div class="pub-body">
-          <a class="pub-title" href="https://doi.org/10.3897/biss.10.185022" target="_blank" rel="noopener"
+          <a class="pub-title" href="https://biss.pensoft.net/article/185022/download/pdf/" target="_blank" rel="noopener"
             >GBR Data Management System: A One-Stop Shop to Great Barrier Reef Data ↗</a
           >
           <div class="pub-meta">Biodiversity Information Science and Standards</div>
@@ -146,7 +146,7 @@
       <li class="pub-item">
         <div class="pub-year">2024</div>
         <div class="pub-body">
-          <a class="pub-title" href="https://hdl.handle.net/1959.4/103033" target="_blank" rel="noopener"
+          <a class="pub-title" href="https://doi.org/10.26190/unsworks/30505" target="_blank" rel="noopener"
             >Reinforcement Learning for Swarm Systems ↗</a
           >
           <div class="pub-meta">PhD thesis · UNSW Canberra</div>
@@ -167,7 +167,7 @@
       <li class="pub-item">
         <div class="pub-year">2022</div>
         <div class="pub-body">
-          <a class="pub-title" href="https://doi.org/10.3389/frobt.2022.745958" target="_blank" rel="noopener"
+          <a class="pub-title" href="https://www.frontiersin.org/articles/10.3389/frobt.2022.745958/pdf" target="_blank" rel="noopener"
             >Characterisation of Indicators for Adaptive Human-Swarm Teaming ↗</a
           >
           <div class="pub-meta">Frontiers in Robotics and AI</div>
@@ -188,7 +188,7 @@
         onclick={() => focus('italy')}
         onmouseenter={() => showFill('italy')}
         onmouseleave={hideFill}>Italy</button
-      > to my current life in
+      > to my study and work in
       <button
         type="button"
         class="journey__link"

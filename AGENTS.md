@@ -357,9 +357,10 @@ all built from `cv_ghignone.tex` in the repo root (the author's real CV):
   linked) and ON Prime / CSIRO (the ForeSight project, linked). ForeSight lives
   here, not in Experience.
 - **Publications** — `#publications`, after Core Expertise. Newest first. Each
-  entry links to its **DOI**; the section head links to the author's Google
-  Scholar profile. The thesis has **no DOI** (UNSW theses use a handle), so it
-  links to `hdl.handle.net/1959.4/103033`.
+  entry links to the best available full text: a **free PDF** where one exists
+  (Pensoft, Frontiers), otherwise the **DOI** (the IEEE paper is paywalled, and
+  the thesis DOI is `10.26190/unsworks/30505`). The section head links to the
+  author's Google Scholar profile.
 
 Experience and Community share the `cv-list` / `cv-item` / `cv-when` / `cv-body`
 classes and a 6rem year rail; Publications reuses the same shape via `pub-list`.
