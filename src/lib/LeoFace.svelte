@@ -146,7 +146,7 @@
       <li class="pub-item">
         <div class="pub-year">2024</div>
         <div class="pub-body">
-          <a class="pub-title" href="https://doi.org/10.26190/unsworks/30505" target="_blank" rel="noopener"
+          <a class="pub-title" href="/papers/2024-rl-swarm-systems-thesis.pdf" target="_blank" rel="noopener"
             >Reinforcement Learning for Swarm Systems ↗</a
           >
           <div class="pub-meta">PhD thesis · UNSW Canberra</div>
@@ -157,11 +157,11 @@
         <div class="pub-body">
           <a
             class="pub-title"
-            href="https://doi.org/10.1109/pree57903.2023.10370420"
+            href="/papers/2023-wind-speed-forecasting.pdf"
             target="_blank"
             rel="noopener">Wind-speed Forecasting based on Smoothing Ensemble Empirical Mode Decomposition and LSTM ↗</a
           >
-          <div class="pub-meta">International Conference on Power and Renewable Energy Engineering</div>
+          <div class="pub-meta">International Conference on Power and Renewable Energy Engineering · author's version</div>
         </div>
       </li>
       <li class="pub-item">
@@ -175,7 +175,7 @@
       </li>
     </ul>
     <p class="pub-note">
-      Open-access papers, hosted here under CC BY 4.0. Copyright remains with the authors.
+      I'm an author on all four. Three are open access under CC BY 4.0; the 2023 conference paper is an author version.
     </p>
   </section>
 

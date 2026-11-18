@@ -356,13 +356,15 @@ all built from `cv_ghignone.tex` in the repo root (the author's real CV):
 - **Community** — `#community`, after Journey. FOSS4G organising (2024, 2025, both
   linked) and ON Prime / CSIRO (the ForeSight project, linked). ForeSight lives
   here, not in Experience.
-- **Publications** — `#publications`, after Core Expertise. Newest first. Full
-  text is **self-hosted** under `static/papers/` (served at `/papers/…`), not
-  linked to the publisher — publisher PDF URLs rot, as the Protomaps tileset
-  taught us. Only **CC BY 4.0** papers are hosted (all so far are); the venue line
-  plus a `.pub-note` carry the required attribution. A paper with no open-access
-  copy keeps its **DOI** instead (the IEEE wind-speed paper). The section head
-  links to the author's Google Scholar profile.
+- **Publications** — `#publications`, after Core Expertise. Newest first. All
+  four full texts are **self-hosted** under `static/papers/` (served at
+  `/papers/…`), not linked to the publisher — publisher PDF URLs rot, as the
+  Protomaps tileset taught us. The author is an author on all four. **Licences
+  differ:** three are CC BY 4.0, and the 2023 conference paper is the author's
+  own version (IEEE copyright, not CC BY), so the `.pub-note` says "three are
+  open access" rather than claiming all four. Never host a publisher's typeset
+  PDF that is not open access. The section head links to the author's Google
+  Scholar profile.
 
 Experience and Community share the `cv-list` / `cv-item` / `cv-when` / `cv-body`
 classes and a 6rem year rail; Publications reuses the same shape via `pub-list`.

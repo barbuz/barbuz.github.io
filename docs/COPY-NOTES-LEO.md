@@ -252,35 +252,34 @@ link plus venue. **The section head carries a `Google Scholar ↗` link** (the
 author's profile).
 
 **Links: self-hosted PDFs.** The author's call was to host the papers rather
-than point at publisher URLs, so the full text lives in `static/papers/` and the
-title links to `/papers/…`. The reason is the same one that broke the Protomaps
-tileset: **publisher URLs rot.** Pensoft's download already redirects through a
-token URL, and Frontiers reshuffles its paths — a dead link here would fail
-silently. A copy in `static/` cannot be taken away by a publisher reorganisation.
+than point at publisher URLs, so all four full texts live in `static/papers/` and
+each title links to `/papers/…`. The reason is the same one that broke the
+Protomaps tileset: **publisher URLs rot.** Pensoft's download already redirects
+through a token URL, and Frontiers reshuffles its paths — a dead link here would
+fail silently. A copy in `static/` cannot be taken away by a publisher
+reorganisation.
 
-Every hosted paper is **CC BY 4.0**, which permits redistribution, so hosting is
-legitimate as long as attribution is kept — the venue line credits the authors,
-and a `.pub-note` under the list states the licence and that copyright stays with
-the authors. **Do not host a paper that is not openly licensed** (see the IEEE
-one below).
+**The author is an author on all four**, which is what makes hosting clean: the
+CC BY attribution requirement is satisfied by the papers' own author lines, and
+the one non-CC-BY paper is the author's own version. **Licences differ — do not
+describe them all as CC BY:**
 
-| Year | Title | Link | Venue |
+| Year | Title | File | Licence |
 |---|---|---|---|
-| 2026 | GBR Data Management System: A One-Stop Shop to Great Barrier Reef Data | hosted `/papers/2026-gbr-data-management-system.pdf` | Biodiversity Information Science and Standards |
-| 2024 | Reinforcement Learning for Swarm Systems | DOI `10.26190/unsworks/30505` *(hosting pending — see below)* | PhD thesis · UNSW Canberra |
-| 2023 | Wind-speed Forecasting based on Smoothing Ensemble Empirical Mode Decomposition and LSTM | DOI `10.1109/pree57903.2023.10370420` *(no OA copy)* | International Conference on Power and Renewable Energy Engineering |
-| 2022 | Characterisation of Indicators for Adaptive Human-Swarm Teaming | hosted `/papers/2022-characterisation-human-swarm-teaming.pdf` | Frontiers in Robotics and AI |
+| 2026 | GBR Data Management System: A One-Stop Shop to Great Barrier Reef Data | `2026-gbr-data-management-system.pdf` | CC BY 4.0 |
+| 2024 | Reinforcement Learning for Swarm Systems (thesis) | `2024-rl-swarm-systems-thesis.pdf` | CC BY 4.0 |
+| 2023 | Wind-speed Forecasting based on Smoothing Ensemble Empirical Mode Decomposition and LSTM | `2023-wind-speed-forecasting.pdf` | **author version** — IEEE copyright |
+| 2022 | Characterisation of Indicators for Adaptive Human-Swarm Teaming | `2022-characterisation-human-swarm-teaming.pdf` | CC BY 4.0 |
 
-Two of the four are hosted so far. The remaining two are still DOI links:
+The `.pub-note` under the list states this split: *"I'm an author on all four.
+Three are open access under CC BY 4.0; the 2023 conference paper is an author
+version."* The 2023 entry's `.pub-meta` also carries *"· author's version"*.
 
-- **The thesis** is **CC BY 4.0**, so it may be hosted, but UNSWorks refuses
-  automated downloads (403 from this environment and from the proxies tried), so
-  the file has to be supplied by hand. When it is, drop it in as
-  `static/papers/2024-rl-swarm-systems-thesis.pdf` and swap the link.
-- **The wind-speed paper has no open-access copy.** Unpaywall reports
-  `is_oa: false`, and the published version is IEEE copyright, so it must **not**
-  be hosted — the DOI stays. (An author-accepted manuscript may be postable under
-  IEEE's author policy, but that is a separate decision, not a free copy.)
+**Never host a publisher's typeset PDF that is not open access.** The 2023 file
+is the author's own pdfTeX build (no IEEE branding, no "Authorized licensed"
+footer), which IEEE's author policy permits on a personal site. The published
+IEEE PDF is a different artefact and must not be hosted. If the file is ever
+swapped, check it is still the author version.
 
 Ordered newest first. The thesis link was **removed from the Reinforcement
 Learning card** (§ 7) and lives here now.
