@@ -28,8 +28,10 @@ html.no-anim .flipper {
   transition: none !important;
 }
 
+/* Negative angle: the turn leads with the right edge, so the page turns
+   anticlockwise from the reader's view. Positive would turn it the other way. */
 html[data-persona='leo'] .flipper {
-  transform: rotateY(180deg);
+  transform: rotateY(-180deg);
 }
 
 .face {
