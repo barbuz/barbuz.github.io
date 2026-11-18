@@ -162,7 +162,7 @@ palette swap.
 | 1 | npm package vs vendored `tokens.css` for the apps | Phase 4 |
 | 2 | ~~logo direction~~ — **settled**: the mark is the `b`, and the wordmark is built from the same strokes | done |
 | 3 | does any app need a dark mode of its own, or is barbuz-night the only dark? | Phase 4 |
-| 4 | the draft's three fake "Featured Projects" — delete, replace with the four real apps, or reword into a "Professional work" list. **A Leo-face question only**: barbuz already shows the four real apps. Still open. | Phase 3 (Leo) |
+| 4 | the draft's three fake "Featured Projects" — **resolved**: replaced on the Leo face by an **Experience** list built from the author's CV, plus new **Community** and **Publications** sections. See `COPY-NOTES-LEO.md` § 10a–10c. | Phase 3 (Leo) — done |
 
 ## Order of work
 

@@ -148,8 +148,10 @@ About prose and the Geospatial card; both are now `-ised`), `README.md` has
 longer opens "I'm a passionate software engineer" and no longer builds "robust,
 scalable solutions" — the exact filler the worked example above deletes — and the
 hero's "Full-stack engineer with a PhD" line stands. The Leo face's dropped
-**Featured Projects** (open decision 4 in BRAND-PLAN) is the remaining unfinished
-piece. That is a creative call for the author, not spelling.
+**Featured Projects** (open decision 4 in BRAND-PLAN) is now **resolved**: it
+became the **Experience** list, with a **Community** and a **Publications**
+section beside it, all built from the author's CV. See `COPY-NOTES-LEO.md`
+§ 10a–10c. Nothing remains open on the Leo face.
 
 ---
 

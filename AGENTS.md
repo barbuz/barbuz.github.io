@@ -243,8 +243,11 @@ this is the short version:
 
 1. **Tokens** — extract to `brand/tokens.json` / `brand/tokens.css` (Phase 1). ✅ done
 2. **The mark** — settle the logo and favicon (Phase 2). ✅ done
-3. **Voice and copy** — fix what the page says (Phase 3). ← next. The voice
-   guide is done (`docs/VOICE-NOTES.md`); the copy pass itself is not.
+3. **Voice and copy** — fix what the page says (Phase 3). The voice guide is
+   done (`docs/VOICE-NOTES.md`), and the **Leo face's copy pass is now complete**
+   — including the old "Featured Projects", rebuilt as **Experience** with new
+   **Community** and **Publications** sections. barbuz's copy pass is the
+   remaining piece.
 4. **Then** apply to `match-the-gatherer`, `byom`, `digitofono`, `the stylus`.
 
 The governing rule is **content before layout**: settle the words first, then
@@ -338,6 +341,33 @@ the eyebrow.
 `.section__head` is `space-between` with baseline alignment, so the eyebrow sits
 opposite the `h2`. A longer eyebrow wraps under itself at phone widths and that
 is fine — it stays left-aligned under the heading with the rule below.
+
+## The Leo CV sections: Experience, Community, Publications
+
+The Leo face's old "Featured Projects" is gone. It was three cards for work from
+previous employment with **no public link to give**, and a card with a hover glow
+promises a click the page cannot honour. In its place are three CV-style sections,
+all built from `cv_ghignone.tex` in the repo root (the author's real CV):
+
+- **Experience** — `#experience`, after About. Three roles. Because there is no
+  link, the words carry the credibility: each entry names the domain and one
+  concrete thing. Publidok (2016) is deliberately left off; the CV holds the full
+  history.
+- **Community** — `#community`, after Journey. FOSS4G organising (2024, 2025, both
+  linked) and ON Prime / CSIRO (the ForeSight project, linked). ForeSight lives
+  here, not in Experience.
+- **Publications** — `#publications`, after Core Expertise. Newest first. Each
+  entry links to its **DOI**; the section head links to the author's Google
+  Scholar profile. The thesis has **no DOI** (UNSW theses use a handle), so it
+  links to `hdl.handle.net/1959.4/103033`.
+
+Experience and Community share the `cv-list` / `cv-item` / `cv-when` / `cv-body`
+classes and a 6rem year rail; Publications reuses the same shape via `pub-list`.
+The rail collapses to one column under 640px. **No `↗` on an entry that is not a
+link** — the only `↗` in these sections are on the real external links.
+
+The thesis link used to sit on the Reinforcement Learning card; it now lives in
+Publications, and the card carries only its claim.
 
 ## Spelling is Australian English
 

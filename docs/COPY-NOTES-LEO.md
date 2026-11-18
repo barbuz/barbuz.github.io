@@ -31,18 +31,18 @@ Settled so far:
   `VOICE-NOTES.md`, whose worked example quoted this paragraph — that example now
   uses the applied text.
 - **§ 3 / § 7, the thesis link — moved.** The hero no longer carries a
-  "Read the thesis ↗" button. The link now sits on the **Reinforcement Learning**
-  card in Core Expertise, where the thesis is the concrete proof of the claim.
+  "Read the thesis ↗" button. The link has since moved on from the
+  **Reinforcement Learning** card to a new **Publications** section (§ 10c),
+  where it sits beside the papers. The card now carries only its claim.
 - **§ 8a, the card eyebrows — dropped.** The three uppercase kickers above the
   Core Expertise card headings are gone, and so is their CSS rule. They had no
   consistent job and restated their own headings; see §8a.
+- **§ 10a, Featured Projects — resolved.** The last open decision (4 in
+  `BRAND-PLAN.md`) is settled: the three fake cards are replaced by an
+  **Experience** list built from the author's real CV. Two new sections join it —
+  **Community** (§ 10b) and **Publications** (§ 10c).
 
-The one still open:
-
-- **Featured Projects (last section).** Open decision 4 in `BRAND-PLAN.md`. The
-  three draft cards are not real, linkable projects; the choice is to delete
-  them, replace them with the four real apps, or reword them into a
-  "Professional work" list.
+Nothing remains open on the Leo face.
 
 ---
 
@@ -121,11 +121,12 @@ carries the examples.
 | | Text |
 |---|---|
 | **draft** | "Read my PhD thesis on Reinforcement Learning for Swarm systems" |
-| **page** | "Read the thesis ↗" — on the **Reinforcement Learning** card in Core Expertise |
+| **page** | moved again — the thesis is now an entry in **Publications** (§ 10c), not a link on a card |
 
-The link was in the hero buttons, then moved to the Reinforcement Learning card,
-where the thesis is the evidence for the card's claim rather than a loose
-endpoint. Same URL, same `↗` (it is external).
+The link has moved twice: it was in the hero buttons, then on the Reinforcement
+Learning card in Core Expertise. It now lives in **Publications**, where the
+thesis sits beside the papers it belongs with, and the card keeps only its claim.
+The card's `leo-card__link` anchor and CSS rule were removed with it.
 
 ## 8. Core expertise cards
 
@@ -195,13 +196,69 @@ margin (`0.6rem`) existed only to clear the eyebrow and is now `0`.
 
 ---
 
+## 10a. Experience — the old Featured Projects, rebuilt
+
+The draft's **Featured Projects** (three generic cards: Cloud-Optimized GIS
+Platform, Reinforcement Learning for Swarm Systems, Open-Source LLM Deployment
+Framework) was the last open item. It was dropped from the page because the
+cards were not real, linkable projects, and a card layout with a hover glow
+promises a click the author cannot honour — the work is from previous
+employment and there is nothing public to link.
+
+**Settled: replace it with an Experience list, not cards.** The section is a
+CV-style list (`cv-list` / `cv-item` / `cv-when` / `cv-body`), one entry per
+role, no hover affordance and no `↗` on the entry titles, so nothing implies it
+is clickable. Because there is no link to carry the credibility, the **words**
+do: each entry names the domain and one concrete thing.
+
+| Years | Role · Employer | Line |
+|---|---|---|
+| 2025–2026 | Senior Software Engineer · UNSW Canberra | Led a small team building tools for under-resourced organisations, and designed AI systems that make sense of unstructured input. |
+| 2023–2025 | Data Engineer · IMOS | Built the ingestion pipelines that turn heterogeneous ocean datasets into cloud-optimised formats, for the Great Barrier Reef Data Management System. |
+| 2017–2024 | PhD, Deep Reinforcement Learning for Swarm Systems · UNSW Canberra | Designed deep reinforcement learning algorithms for swarms of small agents, and measured the memory and time each approach costs to run. |
+
+Source: the author's CV. **Employer names are used as-is** (author's call).
+**Publidok srl (2016) is left off** — a decade old, and the CV is the place for
+full history. The **ForeSight** role is deliberately *not* here; it appears in
+Community (§ 10b) as the ON Prime project instead.
+
+## 10b. Community — new section
+
+Placed after Journey. Same CV list styling as Experience.
+
+| Years | Item | Line |
+|---|---|---|
+| 2024–2025 | Organiser · FOSS4G | Part of the team behind the global conference for open-source geospatial software — FOSS4G SotM Oceania 2024 and FOSS4G 2025. |
+| 2024 | ON Prime · CSIRO | Took the ForeSight wind-forecasting project through CSIRO's research-to-product program, where the team won best in cohort. |
+
+Both FOSS4G years link out (`2024.foss4g-oceania.org`, `2025.foss4g.org`), and
+ForeSight links to its CSIRO ON alumni page. These are the real, checkable
+things the section stands on — the same role the links played in Publications.
+
+## 10c. Publications — new section
+
+Placed after Core Expertise. A `pub-list` with a year rail, each entry a title
+link plus venue. **The section head carries a `Google Scholar ↗` link** (the
+author's profile), and **each paper links to its DOI**, not to Scholar.
+
+| Year | Title | Link | Venue |
+|---|---|---|---|
+| 2026 | GBR Data Management System: A One-Stop Shop to Great Barrier Reef Data | `10.3897/biss.10.185022` | Biodiversity Information Science and Standards |
+| 2024 | Reinforcement Learning for Swarm Systems | `hdl.handle.net/1959.4/103033` | PhD thesis · UNSW Canberra |
+| 2023 | Wind-speed Forecasting based on Smoothing Ensemble Empirical Mode Decomposition and LSTM | `10.1109/pree57903.2023.10370420` | International Conference on Power and Renewable Energy Engineering |
+| 2022 | Characterisation of Indicators for Adaptive Human-Swarm Teaming | `10.3389/frobt.2022.745958` | Frontiers in Robotics and AI |
+
+Ordered newest first. Note the **thesis has no DOI** — UNSW theses use a handle,
+so it links to the repository handle instead. The thesis link was **removed from
+the Reinforcement Learning card** (§ 7) and lives here now.
+
+Two spelling calls: the Frontiers title uses **Characterisation** (AU spelling)
+and the body text uses **cloud-optimised**, while the DOI/venue strings keep
+their published spelling (US, `Characterization`) — titles are not prose.
+
 ## Draft sections with no home on the page yet
 
-- **Featured Projects** (the three generic cards: Cloud-Optimized GIS Platform,
-  Reinforcement Learning for Swarm Systems, Open-Source LLM Deployment Framework).
-  Deliberately dropped from the page because they are not real, linkable
-  projects. **Decision needed:** delete, replace with the four real apps, or
-  reword into a "Professional work" list on the Leo face.
+- **Featured Projects** — resolved into the Experience section above (§ 10a).
 - **Skills section title** "Core Expertise" — kept.
 - The draft's fixed nav with smooth-scroll buttons — reworked into the
   page's nav links.
