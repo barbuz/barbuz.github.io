@@ -395,6 +395,38 @@ build the layout around them. Do not finalise a layout against placeholder text.
   `window` at import time.
 - Text and logos are still draft; Phase 2 and Phase 3 settle them.
 
+## The Leo portrait
+
+`static/leo-ghignone.{webp,jpg}` is the portrait in the About section — the only
+photograph on the site, and only on the Leo face. A photo belongs to the warm
+face: barbuz's identity is the **mark**, and a portrait there would compete with
+it. Leo's identity is a person, and the face was missing the human.
+
+It sits **beside the prose, on the right**, uncropped (0.96 aspect). The other
+options — square, circular, full-width band, photo-left — were rendered and
+rejected: a square crop killed the background's strongest horizontal line but
+lost the as-is framing, and the circle was the one layout that could have been
+any team page anywhere.
+
+The source was 898×934 / 217 KB, which is 3× what a 320px slot needs. It is
+downsampled to 704px (2× display) and served through `<picture>` — WebP at 69 KB,
+JPEG fallback at 92 KB. Framing is untouched; only the resolution changed.
+
+`loading="eager"` is deliberate: it is above the fold, so lazy would hurt LCP.
+Explicit `width`/`height` come from the **resized** file (704×732), not the
+original, or the aspect-ratio hint would be wrong.
+
+The photo column is `clamp(14rem, 24vw, 20rem)`, not a fixed 20rem. A fixed
+column squeezed the prose to ~45 characters just above the 60rem breakpoint;
+clamping lets the photo yield first, so the text holds ~71ch at 960px while
+desktop still gets the full 320px.
+
+Below 60rem the two stack, photo **under** the prose, so the words lead.
+
+The 0.0186 CLS on the page is **pre-existing** and unrelated: it comes from
+`div.leo-right` in the nav at ~340ms, before the photo loads. Verified identical
+with the photo changes stashed.
+
 ## The barbuz cards
 
 The app and tool cards on the barbuz face (`BarbuzFace.svelte`, rendered by one

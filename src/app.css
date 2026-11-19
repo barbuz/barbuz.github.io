@@ -650,6 +650,46 @@ html[data-persona='leo'] .flipper {
   color: var(--text);
 }
 
+/* About: portrait beside the prose on wide screens, stacked under it on narrow
+   ones. The image is uncropped (704x732), so the column is sized from its own
+   aspect ratio rather than forced square. */
+.about {
+  display: grid;
+  gap: 2.4rem;
+  align-items: start;
+}
+
+.portrait {
+  margin: 0;
+  max-width: 22rem;
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1.1rem;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+@media (min-width: 60rem) {
+  .about {
+    /* The photo column narrows before the prose measure does, so the text keeps
+       its 60ch target down to the breakpoint instead of being squeezed to ~45ch
+       just above it. */
+    grid-template-columns: minmax(0, 1fr) clamp(14rem, 24vw, 20rem);
+    gap: 3.4rem;
+  }
+
+  .portrait {
+    max-width: none;
+    /* Nudge down so the photo's top edge sits on the first line of prose
+       rather than above it, which reads as a caption-less float. */
+    margin-top: 0.35rem;
+  }
+}
+
 .prose p + p {
   margin-top: 1rem;
 }

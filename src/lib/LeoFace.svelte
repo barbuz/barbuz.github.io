@@ -61,18 +61,33 @@
     <div class="section__head">
       <h2>About</h2>
     </div>
-    <div class="prose reveal">
-      <p>
-        I'm a software engineer with a PhD in Artificial Intelligence, where my research was about efficient
-        reinforcement learning for swarm systems — many small agents learning to cooperate, cheap
-        enough to run on simple hardware. I build across the stack, and I like a project that ends in
-        something people actually use.
-      </p>
-      <p>
-        As a full-stack developer and open-source advocate, I build geospatial tooling on
-        cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its
-        place, and run LLMs locally or in the cloud, whichever fits the project.
-      </p>
+    <div class="about">
+      <div class="prose reveal">
+        <p>
+          I'm a software engineer with a PhD in Artificial Intelligence, where my research was about efficient
+          reinforcement learning for swarm systems — many small agents learning to cooperate, cheap
+          enough to run on simple hardware. I build across the stack, and I like a project that ends in
+          something people actually use.
+        </p>
+        <p>
+          As a full-stack developer and open-source advocate, I build geospatial tooling on
+          cloud-optimised formats like GeoParquet and Zarr, apply machine learning where it earns its
+          place, and run LLMs locally or in the cloud, whichever fits the project.
+        </p>
+      </div>
+      <figure class="portrait reveal" style="animation-delay: 0.08s">
+        <picture>
+          <source srcset="/leo-ghignone.webp" type="image/webp" />
+          <img
+            src="/leo-ghignone.jpg"
+            alt="Leo Ghignone"
+            width="704"
+            height="732"
+            loading="eager"
+            decoding="async"
+          />
+        </picture>
+      </figure>
     </div>
   </section>
 
