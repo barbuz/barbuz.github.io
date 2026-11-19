@@ -269,6 +269,20 @@ Measured on a local threaded server, from scroll to fully drawn:
 The remaining floor is the basemap's own tile loading, which is a separate
 dependency.
 
+### The country fill is hover-only
+
+Hovering the country *name* in the prose fills that country on the map; leaving
+clears it. The fill is a hover affordance, not a selection state — clicking a
+name flies the map there and deliberately does **not** fill, or the country
+stayed painted after the pointer left.
+
+The handlers are on `pointerenter` / `pointerleave`, not `mouseenter` /
+`mouseleave`, and they bail unless `pointerType === 'mouse'`. Touch fires an
+emulated `mouseenter` on tap and no `mouseleave` until something else is tapped,
+so on a phone the fill used to stick until you tapped elsewhere. A real mouse is
+the only input with a meaningful "still hovering" state, so it is the only one
+allowed to set the fill.
+
 ### The country outlines are vendored
 
 `static/geo/italy-australia.geojson` holds exactly the two outlines the map

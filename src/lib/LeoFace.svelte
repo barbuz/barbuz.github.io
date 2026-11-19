@@ -16,8 +16,17 @@
   });
 
   const focus = (place: 'italy' | 'australia') => journey?.goToLocation(place);
-  const showFill = (place: 'italy' | 'australia') => journey?.showCountryFill(place);
-  const hideFill = () => journey?.hideAllFills();
+
+  // The fill is a hover affordance only. Touch fires an emulated `mouseenter` on
+  // tap and no `mouseleave` until something else is tapped, which left the country
+  // filled indefinitely on a phone; filtering on pointerType keeps it to real
+  // pointers with a hover.
+  const hoverFill = (place: 'italy' | 'australia') => (e: PointerEvent) => {
+    if (e.pointerType === 'mouse') journey?.showCountryFill(place);
+  };
+  const hoverClear = (e: PointerEvent) => {
+    if (e.pointerType === 'mouse') journey?.hideAllFills();
+  };
 </script>
 
 <div class="wrap">
@@ -213,15 +222,15 @@
         type="button"
         class="journey__link"
         onclick={() => focus('italy')}
-        onmouseenter={() => showFill('italy')}
-        onmouseleave={hideFill}>Italy</button
+        onpointerenter={hoverFill('italy')}
+        onpointerleave={hoverClear}>Italy</button
       > to my study and work in
       <button
         type="button"
         class="journey__link"
         onclick={() => focus('australia')}
-        onmouseenter={() => showFill('australia')}
-        onmouseleave={hideFill}>Australia</button
+        onpointerenter={hoverFill('australia')}
+        onpointerleave={hoverClear}>Australia</button
       > — a journey that shaped my global perspective.
     </p>
     <div class="journey-map reveal" style="animation-delay: 0.1s" bind:this={journeyHost} class:ready={mapReady}></div>

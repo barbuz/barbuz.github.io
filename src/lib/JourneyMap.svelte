@@ -452,8 +452,10 @@
 		
 		const targetCoords = location === 'italy' ? italyCoords : australiaCoords;
 		const zoomLevel = location === 'italy' ? 4 : 2;
-		showCountryFill(location);
-		
+		// Deliberately no showCountryFill here: the fill is a hover affordance on
+		// the country name, not a selection state. Setting it on click left it
+		// painted after the pointer moved away, which on touch meant "until you
+		// tap somewhere else".
 		map.flyTo({
 			center: targetCoords,
 			zoom: zoomLevel,
