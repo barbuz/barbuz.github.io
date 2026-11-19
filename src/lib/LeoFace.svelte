@@ -62,7 +62,7 @@
       <h2>About</h2>
     </div>
     <div class="about">
-      <div class="prose reveal">
+      <div class="prose reveal" style="animation-delay: 0.08s">
         <p>
           I'm a software engineer with a PhD in Artificial Intelligence, where my research was about efficient
           reinforcement learning for swarm systems — many small agents learning to cooperate, cheap
@@ -75,7 +75,7 @@
           place, and run LLMs locally or in the cloud, whichever fits the project.
         </p>
       </div>
-      <figure class="portrait reveal" style="animation-delay: 0.08s">
+      <figure class="portrait reveal">
         <picture>
           <source srcset="/leo-ghignone.webp" type="image/webp" />
           <img
