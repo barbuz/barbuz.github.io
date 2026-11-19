@@ -222,18 +222,52 @@ If a fully self-hosted basemap is ever wanted, `pmtiles extract` cuts a small
 global or regional archive — a world z0–5 extract is ~15 MB, which removes the
 external dependency entirely. Not done yet because it adds a build step.
 
-### Loading order
+### Loading order and the reveal
 
 The base layer is the slow part, so it starts on **page open**, not on scroll.
 The country outlines and the journey line are the fast part, and they wait until
-the map is scrolled into view, so the reader sees the outlines snap in rather
-than find them already there when they arrive.
+the map is scrolled into view, so the reader sees the reveal rather than finding
+it already finished when they arrive.
 
-The split is in `JourneyMap.svelte`: `map.on('load')` sets `mapLoaded`, and
-`maybeReveal()` adds the outlines and the line once both `mapLoaded` and the
-map's own `getBoundingClientRect()` says it is in view. It runs on load, on
-`scroll` (captured, so it catches the `.face` scroll container) and on `resize`.
+The split is in `JourneyMap.svelte`: `map.on('style.load')` sets `styleLoaded`,
+and `maybeReveal()` runs the reveal once both `styleLoaded` and the map's own
+`getBoundingClientRect()` says it is in view. It runs on style load, on `scroll`
+(captured, so it catches the `.face` scroll container) and on `resize`.
 `journeyRevealed` makes it idempotent.
+
+**It is gated on the style, not on `map.on('load')`.** `load` also waits for the
+first base tiles to *render*, and the outlines need no tile at all — gating on it
+put the outlines behind the slowest thing on the page. That single change took
+the "scrolled to the map immediately" case from ~3.3 s to ~0.4 s.
+
+The outlines are also **prefetched** on `requestIdleCallback` (falling back to a
+timer where that is unsupported), so the network round trip is already spent by
+the time the reader scrolls down.
+
+The reveal is choreographed in three beats, because the order carries the story:
+**Italy, then the route drawing west to east, then Australia.** The timings are
+`ITALY_HOLD_MS`, `LINE_DRAW_MS` and `LINE_SEGMENTS` at the top of the component.
+
+The route is **one layer**, not one per segment. It used to be ~100 layers with
+an inline source each, faking a gradient; that was ~800 ms of paint — twice the
+cost of everything else in the reveal — and it never actually animated, because
+every `addLayer` in the loop landed in the same frame, so the "movement" was a
+single pop. It is now a single `line` layer with `line-gradient` over
+`line-progress`, and the animation grows the source's coordinates one step per
+frame. Truncating the geometry (rather than using `line-trim-offset`, which this
+MapLibre does not have) keeps `line-progress` relative to what is drawn, so the
+gradient stretches smoothly and lands exactly on the final ramp.
+
+Measured on a local threaded server, from scroll to fully drawn:
+
+| Scrolled to the map | Outlines complete |
+|---|---|
+| immediately | ~1.6 s |
+| ~0.4 s in | ~1.1 s |
+| after the map settles | ~0.7 s |
+
+The remaining floor is the basemap's own tile loading, which is a separate
+dependency.
 
 ### The country outlines are vendored
 
