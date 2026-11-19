@@ -4,9 +4,11 @@
   import PersonaFlip from '$lib/PersonaFlip.svelte';
   import BarbuzFace from '$lib/BarbuzFace.svelte';
   import LeoFace from '$lib/LeoFace.svelte';
+  import { initReveal } from '$lib/reveal';
 
   onMount(() => {
     initPersona();
+    initReveal();
 
     const onKeydown = (e: KeyboardEvent) => {
       if ((e.key === 'f' || e.key === 'F') && !e.metaKey && !e.ctrlKey && !e.altKey) {

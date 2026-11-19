@@ -56,8 +56,48 @@ The palette is generated from `brand/tokens.json` into `brand/tokens.css`
 the generated files, and run `npm run tokens`. CI runs `npm run tokens:check`
 and fails on drift. Details: `brand/README.md`.
 
+**Type does the split the palette cannot.** barbuz is Bricolage Grotesque at 800;
+Leo is Instrument Serif over Instrument Sans, with `--font-display-weight: 400`
+because that serif ships one weight only. JetBrains Mono is shared across both
+faces and is what makes them read as one site. Do not add a second serif or a
+bold Leo display — the single weight is the constraint that keeps the serif a
+display face only. Reasoning and measurements: `docs/DESIGN-NOTES.md` →
+"Why this pairing".
+
+The fonts load from Google Fonts with `display=swap`, so the fallback→real swap
+reflows the heroes and **that reflow is the entire CLS** (0.0186 desktop,
+0.0222 mobile). It passes comfortably; it is recorded, not fixed. One trap if you
+ever measure it: both faces stay in the layout tree (`.face` is
+`position: absolute; inset: 0`), so the hidden face's reflow counts toward the
+visible page — scope measurements to `.face--leo` / `.face--barbuz` and hide one
+face to attribute a shift. Details: `docs/DESIGN-NOTES.md` → "The cost".
+
 The active persona is the `data-persona` attribute on `<html>`, set before first
-paint by the script in `src/app.html` so there is no flash.
+paint by the script in `src/app.html` so there is no flash. That script also sets
+`html.js` pre-paint, which is the gate for the scroll reveal below.
+
+## Scroll reveal
+
+Elements marked `.reveal` fade up as they come into view. `src/lib/reveal.ts`
+runs it, called from `+page.svelte` on mount; the animation is `rise` in
+`src/app.css`.
+
+**The hidden state is gated on `html.js`**, set pre-paint in `app.html`, so
+content is never hidden without the JS that reveals it — with JS off, or under
+`prefers-reduced-motion`, everything is visible and static.
+
+It is a **scroll-driven check, not an `IntersectionObserver`**, and that is
+load-bearing. An observer only fires when an element's intersection ratio
+changes; jumping to a nav anchor moves an element from below the viewport to
+above it with the ratio pinned at 0 the whole way, so the callback never runs
+and the element stays invisible for good. The check instead reveals an element
+once it enters from below **or** has been scrolled past, which survives a jump.
+It listens on `document` with `capture: true` because `scroll` does not bubble
+and the faces are the scroll containers, not the window.
+
+Every section animates; the per-list `animation-delay` stagger is set inline on
+the elements themselves. If you add a section, mark its blocks `.reveal` or it
+will arrive without the rest of the page.
 
 ## The mark
 
@@ -198,6 +238,103 @@ If a fully self-hosted basemap is ever wanted, `pmtiles extract` cuts a small
 global or regional archive — a world z0–5 extract is ~15 MB, which removes the
 external dependency entirely. Not done yet because it adds a build step.
 
+### Loading order and the reveal
+
+The base layer is the slow part, so it starts on **page open**, not on scroll.
+The country outlines and the journey line are the fast part, and they wait until
+the map is scrolled into view, so the reader sees the reveal rather than finding
+it already finished when they arrive.
+
+The split is in `JourneyMap.svelte`: `map.on('style.load')` sets `styleLoaded`,
+and `maybeReveal()` runs the reveal once both `styleLoaded` and the map's own
+`getBoundingClientRect()` says it is in view. It runs on style load, on `scroll`
+(captured, so it catches the `.face` scroll container) and on `resize`.
+`journeyRevealed` makes it idempotent.
+
+**It is gated on the style, not on `map.on('load')`.** `load` also waits for the
+first base tiles to *render*, and the outlines need no tile at all — gating on it
+put the outlines behind the slowest thing on the page. That single change took
+the "scrolled to the map immediately" case from ~3.3 s to ~0.4 s.
+
+The outlines are also **prefetched** on `requestIdleCallback` (falling back to a
+timer where that is unsupported), so the network round trip is already spent by
+the time the reader scrolls down.
+
+The reveal is choreographed in three beats, because the order carries the story:
+**Italy, then the route drawing west to east, then Australia.** The timings are
+`ITALY_HOLD_MS`, `LINE_DRAW_MS` and `LINE_SEGMENTS` at the top of the component.
+
+The route is **one layer**, not one per segment. It used to be ~100 layers with
+an inline source each, faking a gradient; that was ~800 ms of paint — twice the
+cost of everything else in the reveal — and it never actually animated, because
+every `addLayer` in the loop landed in the same frame, so the "movement" was a
+single pop. It is now a single `line` layer with `line-gradient` over
+`line-progress`, and the animation grows the source's coordinates one step per
+frame. Truncating the geometry (rather than using `line-trim-offset`, which this
+MapLibre does not have) keeps `line-progress` relative to what is drawn, so the
+gradient stretches smoothly and lands exactly on the final ramp.
+
+Measured on a local threaded server, from scroll to fully drawn:
+
+| Scrolled to the map | Outlines complete |
+|---|---|
+| immediately | ~1.6 s |
+| ~0.4 s in | ~1.1 s |
+| after the map settles | ~0.7 s |
+
+The remaining floor is the basemap's own tile loading, which is a separate
+dependency.
+
+### The country fill is hover-only
+
+Hovering the country *name* in the prose fills that country on the map; leaving
+clears it. The fill is a hover affordance, not a selection state — clicking a
+name flies the map there and deliberately does **not** fill, or the country
+stayed painted after the pointer left.
+
+The handlers are on `pointerenter` / `pointerleave`, not `mouseenter` /
+`mouseleave`, and they bail unless `pointerType === 'mouse'`. Touch fires an
+emulated `mouseenter` on tap and no `mouseleave` until something else is tapped,
+so on a phone the fill used to stick until you tapped elsewhere. A real mouse is
+the only input with a meaningful "still hovering" state, so it is the only one
+allowed to set the fill.
+
+### The country outlines are vendored
+
+`static/geo/italy-australia.geojson` holds exactly the two outlines the map
+draws — **~329 KB of JSON, ~102 KB gzipped**. It is generated by
+`npm run outlines` (`scripts/build-country-outlines.mjs`) from
+`datasets/geo-countries`, coordinates rounded to 4dp, and committed. Regenerate
+it only if the source or the country list changes; it is not a build step.
+
+This replaced fetching the upstream world dataset at runtime. Worth recording
+why, because the numbers are easy to get wrong:
+
+| | Transferred |
+|---|---|
+| Upstream world dataset, gzipped | **4.4 MB** |
+| Same file, as parsed JSON | 14.6 MB |
+| Vendored two-country extract, gzipped | **102 KB** |
+
+**The 14.6 MB figure is the decompressed size; 4.4 MB is what crossed the wire.**
+Quoting the parse size as a download overstates the problem by 3×, and it is the
+number that was in this file for a while. Measure with `content-encoding` in
+hand before sizing a payload.
+
+Two further costs that made the fetch worse than its byte count: the response
+carried `cache-control: max-age=300`, so a returning reader paid again after
+five minutes, and drawing two outlines meant parsing all 258 countries. The
+vendored file is served from our own origin, so it is cacheable indefinitely and
+cannot rot — the same reasoning that keeps the papers in `static/papers/`.
+
+`getCountryBoundary(name)` now takes a plain name; the multi-spelling lookup
+went away with the upstream dataset, whose `ADMIN` / `NAME` fields could
+disagree (`Italy` / `Italian Republic`). The extract uses the `name` field,
+which is stable.
+
+The tileset cannot supply these outlines for free: its `earth` layer is one
+unnamed landmass per tile, so there is nothing to select a country by.
+
 ## Phase 2 scratch — the mark
 
 The **settled** geometry is in the repo: `brand/mark.mjs`, with the assets in
@@ -243,8 +380,11 @@ this is the short version:
 
 1. **Tokens** — extract to `brand/tokens.json` / `brand/tokens.css` (Phase 1). ✅ done
 2. **The mark** — settle the logo and favicon (Phase 2). ✅ done
-3. **Voice and copy** — fix what the page says (Phase 3). ← next. The voice
-   guide is done (`docs/VOICE-NOTES.md`); the copy pass itself is not.
+3. **Voice and copy** — fix what the page says (Phase 3). ✅ done. The voice
+   guide is `docs/VOICE-NOTES.md`; both faces have had their pass. barbuz's
+   landed in PR #9 (`74a1da7`) and Leo's on `leo-copy-pass`, including the old
+   "Featured Projects", rebuilt as **Experience** with new **Community** and
+   **Publications** sections. Neither face has open copy work.
 4. **Then** apply to `match-the-gatherer`, `byom`, `digitofono`, `the stylus`.
 
 The governing rule is **content before layout**: settle the words first, then
@@ -255,12 +395,53 @@ build the layout around them. Do not finalise a layout against placeholder text.
 - The persona is resolved from the URL query (`?leo`), not the route. `/leo` was
   considered risky and rejected.
 - Cross-face links are `?leo` / `?barbuz` with `preventDefault` and
-  `setPersona(...)`, so they flip without a reload.
+  `setPersona(...)`, so they flip without a reload. **They carry no `↗`** — a
+  flip stays on the site, and the arrow means leaving it. Both faces put their
+  cross-face link **at the foot of the page**, so the pair is symmetric by
+  position: barbuz's closes its About (its last section), Leo's sits in a
+  headless `.section--aside` above Contact. Matching the *slot* (About) was the
+  old rule; matching the *place* is what reads as symmetric.
+- **A flip drops the URL hash.** `setPersona` writes `/?leo` / `/` with no
+  `#anchor`: a flip is not a jump to a section, and the anchor belongs to the
+  face being left, so it must not survive the turn.
+- The two footers share one shape: name · `github.com/barbuz` · year.
 - State lives in `src/lib/persona.svelte.ts` (`$state` runes), shared by the
   toggle and the flip shell.
 - `JourneyMap.svelte` is imported in the browser only — MapLibre touches
   `window` at import time.
 - Text and logos are still draft; Phase 2 and Phase 3 settle them.
+
+## The Leo portrait
+
+`static/leo-ghignone.{webp,jpg}` is the portrait in the About section — the only
+photograph on the site, and only on the Leo face. A photo belongs to the warm
+face: barbuz's identity is the **mark**, and a portrait there would compete with
+it. Leo's identity is a person, and the face was missing the human.
+
+It sits **beside the prose, on the right**, uncropped (0.96 aspect). The other
+options — square, circular, full-width band, photo-left — were rendered and
+rejected: a square crop killed the background's strongest horizontal line but
+lost the as-is framing, and the circle was the one layout that could have been
+any team page anywhere.
+
+The source was 898×934 / 217 KB, which is 3× what a 320px slot needs. It is
+downsampled to 704px (2× display) and served through `<picture>` — WebP at 69 KB,
+JPEG fallback at 92 KB. Framing is untouched; only the resolution changed.
+
+`loading="eager"` is deliberate: it is above the fold, so lazy would hurt LCP.
+Explicit `width`/`height` come from the **resized** file (704×732), not the
+original, or the aspect-ratio hint would be wrong.
+
+The photo column is `clamp(14rem, 24vw, 20rem)`, not a fixed 20rem. A fixed
+column squeezed the prose to ~45 characters just above the 60rem breakpoint;
+clamping lets the photo yield first, so the text holds ~71ch at 960px while
+desktop still gets the full 320px.
+
+Below 60rem the two stack, photo **under** the prose, so the words lead.
+
+The 0.0186 CLS on the page is **pre-existing** and unrelated: it comes from
+`div.leo-right` in the nav at ~340ms, before the photo loads. Verified identical
+with the photo changes stashed.
 
 ## The barbuz cards
 
@@ -286,15 +467,28 @@ lowercase labels per `docs/VOICE-NOTES.md`.
 
 ## The persona switcher
 
-`PersonaToggle.svelte` is **icon only** — a moon and a sun on a sliding thumb,
-with no words. It is meant to read as an Easter egg: the glyphs hint that the
-site has two faces without explaining the trick. `press F to flip` (the `.hint`)
-is the discoverable path.
+`PersonaToggle.svelte` starts **icon only** — a moon and a sun on a sliding
+thumb, with no words. It is meant to read as an Easter egg: the glyphs hint that
+the site has two faces without explaining the trick. `press F to flip` (the
+`.hint`) is the discoverable path.
 
-The visible words are gone but the **accessible** ones are not: the `<button>`
-keeps `role="switch"`, `aria-checked`, and a live `aria-label`
-(`Switch to Leo` / `Switch to barbuz`). Do not add a `title` or visible text
-back — that undoes the intent. Styling for it is in `src/app.css` under
+**After the first flip the words come in.** `persona.hasFlipped` puts a
+`.flipped` class on the toggle, and the `barbuz` / `Leo` labels expand beside
+the glyphs (`max-width` 0 → 6rem, so the width eases open). A visitor who has
+crossed over can then see which face they are on and which one they came from —
+the Easter egg is spent, and finding the way back matters more than the trick.
+The labels are `aria-hidden`; the accessible name is unchanged.
+
+The switch widens from ~95px to ~212px when the labels appear, and the Leo bar
+carries four links plus the name, so on a middling screen they no longer fit on
+one row. `.leo-right` therefore wraps: the links drop to a second line rather
+than overflowing (measured clean from 320px to 1440px). The links keep their
+place in the reading order, so no markup changes with it.
+
+The **accessible** words were never gone: the `<button>` keeps `role="switch"`,
+`aria-checked`, and a live `aria-label` (`Switch to Leo` / `Switch to barbuz`).
+Do not add a `title` — the visible labels are the discoverable path now, and a
+tooltip would only repeat them. Styling for it is in `src/app.css` under
 `.switch*`.
 
 It lives **inside each face's nav**, not in fixed chrome over the page. That is
@@ -316,12 +510,31 @@ colours for the whole rotation, so it stays a still picture of its face.
 
 The barbuz switch is also **mirrored** (`.face--barbuz .switch`,
 `transform: scaleX(-1)`), so a flip turns it over rather than showing the same
-arrangement twice — moon and sun trade sides. The glyphs are counter-mirrored
-so they stay upright.
+arrangement twice — moon and sun trade sides. The glyphs and the labels are
+counter-mirrored so they stay upright.
 
 After this, the only `html[data-persona]` rule in `src/app.css` is the
 `.flipper` rotation itself. Keep it that way: nothing the switch draws should
 depend on the global persona.
+
+## The Leo nav carries four links, not seven
+
+The Leo bar is the tight one: a name on the left and, on the right, the switch
+plus the links. It carries **About · Experience · Publications · Contact** —
+four landmarks, not one link per section. A nav that mirrors every `h2` is a
+table of contents, and a label must not restate its own heading (the rule that
+reverted "Tools / special tools for special needs"). The dropped sections
+(Core Expertise, Community, Journey) sit beside a kept one, so they are cheap to
+reach.
+
+Four links is also what fits. With the switch's labels showing (§ the persona
+switcher) seven links overflow the bar below ~1010px; four fit, and `.leo-right`
+wraps the links to a second line in the ~565–740px band rather than overflowing.
+Keep the links in the markup's reading order if you edit them — the wrap is CSS
+only, so the order is what the wrap follows.
+
+Rationale and the rejected alternative (moving Community above Publications):
+`docs/COPY-NOTES-LEO.md` § 10e.
 
 ## Section heads: one eyebrow each
 
@@ -338,6 +551,48 @@ the eyebrow.
 `.section__head` is `space-between` with baseline alignment, so the eyebrow sits
 opposite the `h2`. A longer eyebrow wraps under itself at phone widths and that
 is fine — it stays left-aligned under the heading with the rule below.
+
+## The Leo CV sections: Experience, Publications, Community
+
+The Leo face's old "Featured Projects" is gone. It was three cards for work from
+previous employment with **no public link to give**, and a card with a hover glow
+promises a click the page cannot honour. In its place are three CV-style sections,
+all built from `cv_ghignone.tex` in the repo root (the author's real CV).
+
+**Order: About · Core Expertise · Experience · Publications · Community ·
+Journey · Contact.** The sections were accreted rather than designed, and read
+as a sequence they did not hold up, so they were reordered to claim → evidence →
+person → invitation. Core Expertise elaborates the hero's claim; the three
+`cv-list` sections then run contiguously; Journey closes the narrative. The nav
+mirrors this. Rationale in `docs/COPY-NOTES-LEO.md` § 10d.
+
+- **Experience** — `#experience`, after Core Expertise. Three roles. Because there is no
+  link, the words carry the credibility: each entry names the domain and one
+  concrete thing. The CV holds the full history.
+- **Publications** — `#publications`, after Experience. Newest first. All
+  four full texts are **self-hosted** under `static/papers/` (served at
+  `/papers/…`), not linked to the publisher — publisher PDF URLs rot, as the
+  Protomaps tileset taught us. The author is an author on all four. **Licences
+  differ:** three are CC BY 4.0, and the 2023 conference paper is the author's
+  own version (IEEE copyright, not CC BY), flagged by *"· author's version"* on
+  that entry's meta line. Never host a publisher's typeset PDF that is not open
+  access. The section head links to the author's Google Scholar profile.
+- **Community** — `#community`, after Publications. FOSS4G organising (2024, 2025, both
+  linked) and ON Prime / CSIRO (the ForeSight project, linked). ForeSight lives
+  here, not in Experience.
+
+Each publication title carries a **`PDF` tag**, not the `↗` external-link
+suffix: the files are ours, served from `/papers/`, so `↗` would say "you are
+leaving the site" when you are not. The tag names the file instead. See
+`docs/VOICE-NOTES.md` → Mechanics.
+
+Experience and Community share the `cv-list` / `cv-item` / `cv-when` / `cv-body`
+classes and a 6rem year rail; Publications reuses the same shape via `pub-list`.
+The rail collapses to one column under 640px. **No `↗` on an entry that is not a
+link** — the only `↗` in these sections are on the real external links.
+
+The thesis link used to sit on the Reinforcement Learning card; it now lives in
+Publications, and the card carries only its claim.
 
 ## Spelling is Australian English
 

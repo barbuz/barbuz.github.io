@@ -10,6 +10,7 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"tokens": "node brand/generate.mjs",
 		"icons": "node brand/generate-icons.mjs",
+		"outlines": "node scripts/build-country-outlines.mjs",
 		"tokens:check": "node brand/generate.mjs --check",
 		"icons:check": "node brand/generate-icons.mjs --check",
 		"elements:check": "node brand/check-elements.mjs",

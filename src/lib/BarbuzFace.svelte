@@ -126,7 +126,7 @@
     <div class="section__head">
       <h2>About</h2>
     </div>
-    <div class="prose" style="max-width: 58ch">
+    <div class="prose reveal" style="max-width: 58ch">
       <p>
         barbuz is where I put the things I build for the love of building them — offline-first web
         apps, a musical instrument, a daily game. Same person behind

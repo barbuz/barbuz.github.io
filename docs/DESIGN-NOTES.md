@@ -142,6 +142,104 @@ held below the 3:1 non-text threshold on purpose.
 Mono is shared deliberately — it is the thread that makes the two faces read as
 one site.
 
+### Why this pairing
+
+*This section reconstructs a decision that was made but never written down. The
+fonts arrived with the two-face page (`909388c`) and the palette notes were
+recorded at the time; the type was not. The evidence below is measured from the
+shipped files, but the reasoning is inference from the other brand decisions, not
+a quote from a recorded one. Treat the measurements as fact and the intent as the
+best available reading of it.*
+
+The type carries more of the split than the palette does. The palette is held to
+one accent hue at two lightnesses and two temperatures, so it cannot make the
+faces feel very different on its own. The letterforms do the rest.
+
+**Night is a grotesque, day is a serif.** barbuz is Bricolage Grotesque at 800:
+tight, geometric, cool, the same temperature as the night face. Leo is a serif —
+the oldest signal of a human hand in typography — over a sans body, which is the
+typographic form of the Leo register in `VOICE-NOTES.md`: a competent colleague
+explaining their work, warm rather than formal. An 800 grotesque reads like a
+sign; a serif at 400 reads like a person writing.
+
+**Instrument Serif and Instrument Sans are a designed pair, not two fonts that
+happen to sit together.** Measured from the shipped files:
+
+| | Instrument Serif | Instrument Sans |
+|---|---|---|
+| x-height | 0.510em | 0.510em |
+| cap-height | 0.720em | 0.720em |
+| weight | 400 | 400 |
+
+The vertical metrics are identical. That is what lets a serif display face and a
+sans body face be mixed at the same nominal size without one looking larger than
+the other — the proportions match even where the letterforms do not.
+
+**Instrument Serif has exactly one weight, and that is load-bearing.** It ships
+400 roman and 400 italic, no bold, no variable axis — hence
+`--font-display-weight: 400` on Leo against `800` on barbuz. The constraint is
+accepted deliberately: the serif can only ever be a display face, never body
+copy, and it is used that way (`--font-body` is Instrument Sans). It also gives
+the hero its one flourish: `Turning hard data into <em>useful things</em>` is set
+in the serif's **true italic**, which has calligraphic contrast. A grotesque's
+oblique at that size just looks slanted.
+
+### The cost: font swap and CLS
+
+The fonts are loaded from Google Fonts with `display=swap` (`src/app.html`), so
+text paints immediately in a fallback and swaps when the real font arrives. That
+is the right default — no invisible text — but the swap reflows text, and
+**every layout shift on the site comes from that swap.** Blocking the font
+request takes CLS to exactly 0 at both widths.
+
+Both faces reflow, for the same reason: the fallback is wider than the real font,
+so a paragraph that needs three lines in the real face needs four before it
+arrives.
+
+| Face | What reflows | Fallback → real |
+|---|---|---|
+| Leo | hero `h1` | 3 lines → 2 (−90px at 1440px, −44px at 390px) |
+| barbuz | hero `p` | 4 lines → 3 (−31px at 1440px) |
+
+The h1 is the bigger of the two because Instrument Serif is narrow — its `n`
+advance is 0.470em against Instrument Sans's 0.599em — and the headline sits at
+`clamp(2.8rem, 8vw, 5.6rem)`, so a line break there is expensive.
+
+**Both faces are always laid out.** `.face` is `position: absolute; inset: 0`,
+and the inactive one is turned away by `rotateY` and made `inert` — but it is
+still in the layout tree, so **the hidden face's reflow contributes to the
+visible page's CLS.** Decomposed by hiding one face at a time:
+
+| Page | Both faces | Leo face only | barbuz face only |
+|---|---|---|---|
+| @ 1440px | 0.0186 | 0.0186 | 0.0061 |
+| @ 390px | 0.0222 | 0.0202 | 0.0129 |
+
+At 1440px the shift is entirely the Leo face, even on the barbuz page. At 390px
+both contribute. So a fix aimed only at the visible face would not reach zero —
+and conversely, quietening the Leo headline fixes most of the score for both
+faces at once. That is a genuinely useful thing to know before spending effort
+here.
+
+**This is accepted, not fixed.** 0.0186 is 19% of the 0.10 "good" threshold —
+comfortable, with 5.4× headroom. The fixes all cost more than the problem: a
+metric-matched fallback (`size-adjust` / `ascent-override` on the `@font-face`)
+would shrink both reflows, and self-hosting the four families would remove the
+third-party hop entirely, but neither is worth it for a score that already
+passes. If the Google Fonts dependency is ever removed for its own reasons —
+privacy, resilience — the CLS goes with it as a side effect.
+
+One measurement note for whoever revisits this. Two traps here, both of which
+cost an investigation an hour:
+
+- `PerformanceObserver` attributes the shift to a *sibling* of the node that
+  changed size — it reported the `<section>` below the hero, which reads as a
+  nav bug. Measure the line count of the headline instead.
+- Because both faces are in the layout tree, a selector like `h1` matches
+  whichever face comes first in the DOM, not the one you are looking at. Scope
+  every measurement to `.face--leo` or `.face--barbuz`, or you will measure the
+  wrong page.
+
 ## Where these values live
 
 The palette is no longer defined in `src/app.css`. The source of truth is

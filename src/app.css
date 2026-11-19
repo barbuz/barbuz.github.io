@@ -120,6 +120,28 @@ html[data-persona='leo'] .flipper {
   justify-content: center;
 }
 
+/* The words are held back until the first flip: before that the switch is the
+   icon-only Easter egg. Collapsed rather than `display: none` so the width can
+   ease open. The switch's two columns are `1fr 1fr`, so the two options stay
+   the same width and the thumb still lands under the lit one. */
+.switch__label {
+  max-width: 0;
+  margin-left: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    max-width var(--dur) var(--ease),
+    margin-left var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+}
+
+.flipped .switch__label {
+  max-width: 6rem;
+  margin-left: 0.45rem;
+  opacity: 1;
+}
+
 .face--barbuz .switch__opt[data-opt='barbuz'],
 .face--leo .switch__opt[data-opt='leo'] {
   opacity: 1;
@@ -156,7 +178,8 @@ html[data-persona='leo'] .flipper {
   transform: scaleX(-1);
 }
 
-.face--barbuz .switch__opt svg {
+.face--barbuz .switch__opt svg,
+.face--barbuz .switch__label {
   transform: scaleX(-1);
 }
 
@@ -198,9 +221,15 @@ html[data-persona='leo'] .flipper {
   color: var(--muted);
 }
 
-.reveal {
+/* Scroll-triggered reveal. The hidden state is gated on `html.js`, which
+   app.html sets pre-paint, so content is never hidden without the JS that
+   reveals it. The class change is applied by initReveal() in reveal.ts. */
+.js .reveal {
   opacity: 0;
   transform: translateY(14px);
+}
+
+.reveal--in {
   animation: rise 0.8s var(--ease) forwards;
 }
 
@@ -329,6 +358,13 @@ html[data-persona='leo'] .flipper {
 
 .section {
   padding: 4.5rem 0;
+}
+
+/* The barbuz aside: a single line with no head, sitting between the map and
+   Contact. Pulled up so it reads as a footnote between the two rather than a
+   stop of its own. */
+.section--aside {
+  padding: 0 0 4.5rem;
 }
 
 .section__head {
@@ -520,11 +556,17 @@ html[data-persona='leo'] .flipper {
 }
 
 /* Mirror of the barbuz bar: the name leads here and trails there, the switch
-   trails here and leads there, so a flip swaps the two ends. */
+   trails here and leads there, so a flip swaps the two ends. It wraps because
+   the switch gains its words after the first flip, and on a middling screen the
+   four links and the wider switch no longer fit beside the name; the links drop
+   to a second line instead of overflowing. */
 .leo-right {
   display: flex;
   align-items: center;
   gap: 1.8rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 0.6rem;
 }
 
 .leo-name {
@@ -608,6 +650,46 @@ html[data-persona='leo'] .flipper {
   color: var(--text);
 }
 
+/* About: portrait beside the prose on wide screens, stacked under it on narrow
+   ones. The image is uncropped (704x732), so the column is sized from its own
+   aspect ratio rather than forced square. */
+.about {
+  display: grid;
+  gap: 2.4rem;
+  align-items: start;
+}
+
+.portrait {
+  margin: 0;
+  max-width: 22rem;
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1.1rem;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+@media (min-width: 60rem) {
+  .about {
+    /* The photo column narrows before the prose measure does, so the text keeps
+       its 60ch target down to the breakpoint instead of being squeezed to ~45ch
+       just above it. */
+    grid-template-columns: minmax(0, 1fr) clamp(14rem, 24vw, 20rem);
+    gap: 3.4rem;
+  }
+
+  .portrait {
+    max-width: none;
+    /* Nudge down so the photo's top edge sits on the first line of prose
+       rather than above it, which reads as a caption-less float. */
+    margin-top: 0.35rem;
+  }
+}
+
 .prose p + p {
   margin-top: 1rem;
 }
@@ -631,19 +713,11 @@ html[data-persona='leo'] .flipper {
   box-shadow: var(--shadow);
 }
 
-.leo-card__k {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
 .leo-card h3 {
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 400;
-  margin: 0.6rem 0 0.5rem;
+  margin: 0 0 0.5rem;
 }
 
 .leo-card p {
@@ -651,6 +725,109 @@ html[data-persona='leo'] .flipper {
   color: var(--muted);
   line-height: 1.6;
   font-size: 0.96rem;
+}
+
+/* CV-style lists (Experience, Community) and the Publications list share one
+   left rail so the years line up down the page. */
+.cv-list,
+.pub-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cv-item,
+.pub-item {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 1.5rem;
+  align-items: baseline;
+}
+
+.cv-item + .cv-item,
+.pub-item + .pub-item {
+  border-top: 1px solid var(--line);
+  margin-top: 1.6rem;
+  padding-top: 1.6rem;
+}
+
+.cv-when,
+.pub-year {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.cv-body h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin: 0 0 0.4rem;
+}
+
+.cv-org {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.cv-body p {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 0.98rem;
+}
+
+.cv-body a,
+.pub-body a {
+  color: var(--accent);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.cv-body a:hover,
+.pub-body a:hover {
+  text-decoration: underline;
+}
+
+.pub-title {
+  display: inline-block;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.pub-file {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pub-meta {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.section__link {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section__link:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 640px) {
+  .cv-item,
+  .pub-item {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
 }
 
 .journey {
@@ -747,11 +924,16 @@ html[data-persona='leo'] .flipper {
   .flipper {
     transition: none !important;
   }
-  .reveal,
-  .journey__line::after {
-    animation: none !important;
+  .switch__label {
+    transition: none !important;
+  }
+  .js .reveal {
     opacity: 1;
     transform: none;
+  }
+  .reveal--in,
+  .journey__line::after {
+    animation: none !important;
   }
 }
 

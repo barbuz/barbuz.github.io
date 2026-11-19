@@ -162,12 +162,13 @@ palette swap.
 | 1 | npm package vs vendored `tokens.css` for the apps | Phase 4 |
 | 2 | ~~logo direction~~ — **settled**: the mark is the `b`, and the wordmark is built from the same strokes | done |
 | 3 | does any app need a dark mode of its own, or is barbuz-night the only dark? | Phase 4 |
-| 4 | the draft's three fake "Featured Projects" — delete, replace with the four real apps, or reword into a "Professional work" list. **A Leo-face question only**: barbuz already shows the four real apps. Still open. | Phase 3 (Leo) |
+| 4 | the draft's three fake "Featured Projects" — **resolved**: replaced on the Leo face by an **Experience** list built from the author's CV, plus new **Community** and **Publications** sections. See `COPY-NOTES-LEO.md` § 10a–10c. | Phase 3 (Leo) — done |
 
 ## Order of work
 
 Tokens, then the mark, then the copy pass — all on the page. Only then the apps.
 
-Phase 1 is done, and **Phase 2 is done** — the mark is settled and its assets
-generated. The next step is **Phase 3, voice and copy**. That is the remaining
-creative work on the page.
+Phase 1 is done, **Phase 2 is done** — the mark is settled and its assets
+generated — and **Phase 3 is done** on both faces: barbuz in PR #9 (`74a1da7`),
+Leo on `leo-copy-pass`. The remaining work is **Phase 4**, applying the identity
+to the apps.
