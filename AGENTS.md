@@ -56,6 +56,22 @@ The palette is generated from `brand/tokens.json` into `brand/tokens.css`
 the generated files, and run `npm run tokens`. CI runs `npm run tokens:check`
 and fails on drift. Details: `brand/README.md`.
 
+**Type does the split the palette cannot.** barbuz is Bricolage Grotesque at 800;
+Leo is Instrument Serif over Instrument Sans, with `--font-display-weight: 400`
+because that serif ships one weight only. JetBrains Mono is shared across both
+faces and is what makes them read as one site. Do not add a second serif or a
+bold Leo display — the single weight is the constraint that keeps the serif a
+display face only. Reasoning and measurements: `docs/DESIGN-NOTES.md` →
+"Why this pairing".
+
+The fonts load from Google Fonts with `display=swap`, so the fallback→real swap
+reflows the heroes and **that reflow is the entire CLS** (0.0186 desktop,
+0.0222 mobile). It passes comfortably; it is recorded, not fixed. One trap if you
+ever measure it: both faces stay in the layout tree (`.face` is
+`position: absolute; inset: 0`), so the hidden face's reflow counts toward the
+visible page — scope measurements to `.face--leo` / `.face--barbuz` and hide one
+face to attribute a shift. Details: `docs/DESIGN-NOTES.md` → "The cost".
+
 The active persona is the `data-persona` attribute on `<html>`, set before first
 paint by the script in `src/app.html` so there is no flash. That script also sets
 `html.js` pre-paint, which is the gate for the scroll reveal below.
