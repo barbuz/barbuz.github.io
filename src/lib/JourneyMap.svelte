@@ -97,30 +97,26 @@
 	const italyCoords: [number, number] = [12.5674, 41.8719]; // Center of Italy
 	const australiaCoords: [number, number] = [134.4911, -25.2744]; // Center of Australia
 
-	// Function to get a country boundary from the world dataset. The dataset is
-	// ~15 MB, so it is fetched once and shared; `names` lists the spellings to try.
-	async function getCountryBoundary(names: string[]) {
+	// The two country outlines, vendored in static/geo/. Only Italy and Australia
+	// are needed, so fetching the 4.4 MB world dataset to draw them is waste; this
+	// file is ~102 KB gzipped, is served from our origin, and cannot rot. Source:
+	// datasets/geo-countries (Natural Earth), rounded to 4dp. Regenerate with
+	// `npm run outlines`.
+	const COUNTRIES_URL = '/geo/italy-australia.geojson';
+
+	// Fetched once and shared by both lookups.
+	async function getCountryBoundary(name: string) {
 		try {
-			countriesPromise ??= fetch(
-				'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
-			).then((response) => response.json());
+			countriesPromise ??= fetch(COUNTRIES_URL).then((response) => response.json());
 			const geoJsonData = await countriesPromise;
-
-			// Find the country by name
-			const countryFeature = geoJsonData.features.find((feature: { properties: { ADMIN: string; NAME: string; name: string; }; }) =>
-				names.includes(feature.properties.ADMIN) ||
-				names.includes(feature.properties.NAME) ||
-				names.includes(feature.properties.name)
+			const countryFeature = geoJsonData.features.find(
+				(feature: { properties: { name: string } }) => feature.properties.name === name
 			);
-
-			if (countryFeature) {
-				return countryFeature;
-			}
-
-			console.warn(`Country ${names[0]} not found in Natural Earth data`);
+			if (countryFeature) return countryFeature;
+			console.warn(`Country ${name} not found in ${COUNTRIES_URL}`);
 			return null;
 		} catch (error) {
-			console.warn(`Could not fetch boundary for ${names[0]}:`, error);
+			console.warn(`Could not load boundary for ${name}:`, error);
 			return null;
 		}
 	}
@@ -264,8 +260,8 @@
 		if (journeyRevealed || destroyed || !map) return;
 		journeyRevealed = true;
 
-		const italyBoundary = await getCountryBoundary(['Italy', 'Italian Republic']);
-		const australiaBoundary = await getCountryBoundary(['Australia', 'Commonwealth of Australia']);
+		const italyBoundary = await getCountryBoundary('Italy');
+		const australiaBoundary = await getCountryBoundary('Australia');
 
 		if (destroyed) return;
 
