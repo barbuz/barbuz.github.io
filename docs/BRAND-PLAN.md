@@ -168,6 +168,7 @@ palette swap.
 
 Tokens, then the mark, then the copy pass — all on the page. Only then the apps.
 
-Phase 1 is done, and **Phase 2 is done** — the mark is settled and its assets
-generated. The next step is **Phase 3, voice and copy**. That is the remaining
-creative work on the page.
+Phase 1 is done, **Phase 2 is done** — the mark is settled and its assets
+generated — and **Phase 3 is done** on both faces: barbuz in PR #9 (`74a1da7`),
+Leo on `leo-copy-pass`. The remaining work is **Phase 4**, applying the identity
+to the apps.

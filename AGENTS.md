@@ -364,11 +364,11 @@ this is the short version:
 
 1. **Tokens** — extract to `brand/tokens.json` / `brand/tokens.css` (Phase 1). ✅ done
 2. **The mark** — settle the logo and favicon (Phase 2). ✅ done
-3. **Voice and copy** — fix what the page says (Phase 3). The voice guide is
-   done (`docs/VOICE-NOTES.md`), and the **Leo face's copy pass is now complete**
-   — including the old "Featured Projects", rebuilt as **Experience** with new
-   **Community** and **Publications** sections. barbuz's copy pass is the
-   remaining piece.
+3. **Voice and copy** — fix what the page says (Phase 3). ✅ done. The voice
+   guide is `docs/VOICE-NOTES.md`; both faces have had their pass. barbuz's
+   landed in PR #9 (`74a1da7`) and Leo's on `leo-copy-pass`, including the old
+   "Featured Projects", rebuilt as **Experience** with new **Community** and
+   **Publications** sections. Neither face has open copy work.
 4. **Then** apply to `match-the-gatherer`, `byom`, `digitofono`, `the stylus`.
 
 The governing rule is **content before layout**: settle the words first, then
