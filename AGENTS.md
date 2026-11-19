@@ -437,11 +437,18 @@ column squeezed the prose to ~45 characters just above the 60rem breakpoint;
 clamping lets the photo yield first, so the text holds ~71ch at 960px while
 desktop still gets the full 320px.
 
-Below 60rem the two stack, photo **under** the prose, so the words lead.
+Below 60rem the two stack and the photo **leads**, so the face introduces the
+section before the words do. `order: -1` does it, reset to `0` inside the
+two-column query — without the reset the photo would take column 1 on desktop and
+swap sides. The reveal delays follow the same order: the photo is at `0s` and the
+prose at `0.08s`, so the photo animates first when stacked. On desktop both sit
+side by side, where the stagger is barely visible either way.
 
-The 0.0186 CLS on the page is **pre-existing** and unrelated: it comes from
-`div.leo-right` in the nav at ~340ms, before the photo loads. Verified identical
-with the photo changes stashed.
+The 0.0186 CLS is **not** from this photo and **not** from the nav. It is the
+Google Fonts fallback→real swap reflowing the hero text; blocking the font
+request takes it to 0. Both faces stay in the layout tree, so the hidden Leo
+face's reflow is most of the score even on the barbuz page. See
+`docs/DESIGN-NOTES.md` → "The cost: font swap and CLS".
 
 ## The barbuz cards
 
