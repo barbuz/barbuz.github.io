@@ -662,6 +662,11 @@ html[data-persona='leo'] .flipper {
 .portrait {
   margin: 0;
   max-width: 22rem;
+  /* Stacked, the photo leads: on a phone the face is the introduction, and a
+     paragraph of prose before it delays the one thing a visitor can recognise.
+     Reset in the two-column query below, where `order` would otherwise place it
+     in the prose column. */
+  order: -1;
 }
 
 .portrait img {
@@ -684,6 +689,9 @@ html[data-persona='leo'] .flipper {
 
   .portrait {
     max-width: none;
+    /* Undo the stacked order: the grid puts the prose in column 1 and the photo
+       in column 2 by source order, so the photo must stay second here. */
+    order: 0;
     /* Nudge down so the photo's top edge sits on the first line of prose
        rather than above it, which reads as a caption-less float. */
     margin-top: 0.35rem;
