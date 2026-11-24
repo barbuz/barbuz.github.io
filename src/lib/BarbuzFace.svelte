@@ -138,6 +138,12 @@
           }}>the engineering side</a
         >, different hat.
       </p>
+      <p>
+        Everything here is free. No ads, no tracking, no accounts. If one of them earned it, you
+        can <a href="https://donate.stripe.com/9B6eVd1madcF8Dt8yp1gs00" target="_blank" rel="noopener"
+          >leave a tip ↗</a
+        >.
+      </p>
     </div>
   </section>
 

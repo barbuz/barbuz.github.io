@@ -629,3 +629,82 @@ anyway — a mark with the device, however small, over one without it.
 **The tile is for app icons, not for tabs.** The mark is tall and narrow (60×102),
 so a square tile shrinks it to a few pixels at 16px. The favicon is therefore
 the bare mark; the rounded tile is used at 180px and up, where it has room.
+
+## The confirmation page (`/thanks`)
+
+Stripe's payment link can end in one of two ways: a plain-text message on
+Stripe's own confirmation page, or a redirect to a URL of ours. It redirects.
+
+The argument is the funnel, not the styling. Someone who has just tipped from
+`match-the-gatherer` arrives at the one moment in the whole relationship where
+they are standing still, paying attention, and feeling good about the work. On
+Stripe's page the only onward links are Stripe's; on ours they can be told the
+other apps exist. A custom message throws that away for the sake of not writing
+one page.
+
+**The page cannot know whether a payment happened.** Verifying a Checkout
+Session needs a secret key, and this is a static site, so anyone can type
+`/thanks` into the address bar. That constrains the copy:
+
+- It never says "your payment was received" — that is false for a direct visit,
+  and being caught in a small lie is worse than being vague.
+- `thanks` is true either way; `payment successful` is not.
+- It names the cold case out loud and offers the tip jar, so a direct visitor
+  gets a door rather than a dead end.
+
+It also cannot show the amount or a receipt. Stripe emails the receipt
+independently, which is why the page does not try.
+
+**`face--barbuz` is the token scope, not the layout.** The palette is declared on
+`.face--barbuz`, so the route opts into that class to inherit the colours and
+atmosphere instead of restating twelve variables. The page is outside the flip
+shell — `+layout.svelte` renders `{@render children()}` and nothing else — so it
+has no `.face`, no toggle, and no `?leo` behaviour.
+
+**The route is directory-style.** `+page.ts` sets `trailingSlash: 'always'` so
+the adapter writes `build/thanks/index.html` rather than `build/thanks.html`.
+GitHub Pages resolves the directory form without a rewrite, and the redirect
+target is `barbuz.github.io/thanks` either way.
+
+**One title, and the pre-paint script had to learn it.** `app.html` used to
+carry a static `<title>barbuz</title>`, which sat *before* the `svelte:head`
+title every route bakes in. Two `<title>` elements in one document and the
+browser takes the first, so `/thanks` was titled `barbuz`. The static element is
+gone, and the persona script now only sets the title on the landing page, since
+it runs pre-paint and would otherwise overwrite any route's own title.
+
+The link underline uses the solid `--accent` (5.03:1 on night), not `--line`
+(1.38:1) or `--accent-soft`: it is the link's only affordance, so it carries
+meaning and has to clear 3:1. Body copy is `--muted` at 6.34:1.
+
+### The barbuz tip jar
+
+The second paragraph of About, as plain prose:
+
+> Everything here is free. No ads, no tracking, no accounts. If one of them
+> earned it, you can [leave a tip ↗].
+
+**It is a paragraph, not a section.** It started as a `.section--aside` between
+Tools and About, which worked but gave a funding ask the same structural weight
+as Apps or Tools. A tip jar is a closing thought, not a stop on the page, and
+About is where the page stops being a catalogue and becomes a person. The ask
+lands better as the last thing he says than as its own band.
+
+**It cannot go below About.** About is the last section and carries the
+cross-face link, so it has to close the page for the pair to stay symmetric with
+Leo. Appending a section after it demotes About to a middle section and breaks
+that. Inside About satisfies both.
+
+**It leads with what is not being asked.** "Everything here is free" before any
+mention of money — the page is not a funnel and the paragraph should not open
+like one. The three negatives (`no ads, no tracking, no accounts`) are the
+specific claim; "free" alone would not have been. `If one of them earned it` is
+the condition, and it does the persuading without a superlative.
+
+**The link is the only `↗`.** It leaves the site for Stripe, so it earns the
+suffix; the surrounding sentence is prose and carries none. The destination is a
+Stripe Payment Link, which means Adaptive Pricing shows each visitor the price in
+their own currency — the reason the page names no amount anywhere.
+
+`/thanks` is that link's `after_completion` redirect. The two are one system: the
+tip jar sends them out, the confirmation page catches them.
