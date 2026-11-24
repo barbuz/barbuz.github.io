@@ -360,9 +360,8 @@ html[data-persona='leo'] .flipper {
   padding: 4.5rem 0;
 }
 
-/* A single line with no head, used on both faces: Leo's cross-face link
-   between the map and Contact, barbuz's tip jar between Tools and About.
-   Pulled up so it reads as a footnote between two sections rather than a
+/* The Leo aside: a single line with no head, sitting between the map and
+   Contact. Pulled up so it reads as a footnote between the two rather than a
    stop of its own. */
 .section--aside {
   padding: 0 0 4.5rem;

@@ -400,10 +400,9 @@ build the layout around them. Do not finalise a layout against placeholder text.
   cross-face link **at the foot of the page**, so the pair is symmetric by
   position: barbuz's closes its About (its last section), Leo's sits in a
   headless `.section--aside` above Contact. Matching the *slot* (About) was the
-  old rule; matching the *place* is what reads as symmetric. barbuz's tip jar
-  is a `.section--aside` too, but it sits **between Tools and About**, not at the
-  foot: About must stay the last section, or it stops closing the page and the
-  symmetry with Leo breaks. The tip belongs beside the work it refers to anyway.
+  old rule; matching the *place* is what reads as symmetric. The tip jar is the
+  **second paragraph of About**, not a section of its own: About has to stay the
+  last section so the cross-face link keeps closing the page.
 - **A flip drops the URL hash.** `setPersona` writes `/?leo` / `/` with no
   `#anchor`: a flip is not a jump to a section, and the anchor belongs to the
   face being left, so it must not survive the turn.

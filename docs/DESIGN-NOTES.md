@@ -679,26 +679,27 @@ meaning and has to clear 3:1. Body copy is `--muted` at 6.34:1.
 
 ### The barbuz tip jar
 
-One line, between Tools and About, in the shared `.section--aside` shape Leo
-already uses for its cross-face link:
+The second paragraph of About, as plain prose:
 
 > Everything here is free. No ads, no tracking, no accounts. If one of them
 > earned it, you can [leave a tip ↗].
 
-Three decisions worth keeping.
+**It is a paragraph, not a section.** It started as a `.section--aside` between
+Tools and About, which worked but gave a funding ask the same structural weight
+as Apps or Tools. A tip jar is a closing thought, not a stop on the page, and
+About is where the page stops being a catalogue and becomes a person. The ask
+lands better as the last thing he says than as its own band.
 
-**It sits between Tools and About, not at the foot.** The obvious place for a
-tip jar is the bottom of the page, and that is where it first went. It broke
-something: About is barbuz's last section and the one that carries the
+**It cannot go below About.** About is the last section and carries the
 cross-face link, so it has to close the page for the pair to stay symmetric with
-Leo. Putting the tip below it demoted About to a middle section. The invitation
-also reads better next to the work it refers to than after the sign-off.
+Leo. Appending a section after it demotes About to a middle section and breaks
+that. Inside About satisfies both.
 
 **It leads with what is not being asked.** "Everything here is free" before any
-mention of money — the page is not a funnel and the aside should not open like
-one. The three negatives (`no ads, no tracking, no accounts`) are the specific
-claim; "free" alone would not have been. `If one of them earned it` is the
-condition, and it does the persuading without a superlative.
+mention of money — the page is not a funnel and the paragraph should not open
+like one. The three negatives (`no ads, no tracking, no accounts`) are the
+specific claim; "free" alone would not have been. `If one of them earned it` is
+the condition, and it does the persuading without a superlative.
 
 **The link is the only `↗`.** It leaves the site for Stripe, so it earns the
 suffix; the surrounding sentence is prose and carries none. The destination is a
