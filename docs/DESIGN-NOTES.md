@@ -620,6 +620,7 @@ raising if the mark were ever rendered very large.
 | `static/icon-192.png`, `icon-512.png` | manifest, tile form |
 | `static/icon-maskable-512.png` | manifest, padded for Android masks |
 | `static/og.png` | 1200×630 social card, the lockup (mark + `arbuz`) |
+| `static/logo-checkout.png` | 512², the lockup on night, for the Stripe payment page |
 
 All of them carry the node device, at every size. The device is legible from
 ~32px up; at 16px it is texture rather than a readable ring, and it is kept

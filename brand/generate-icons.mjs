@@ -14,6 +14,7 @@
  *   icon-512.png             manifest
  *   icon-maskable-512.png    manifest, safe-zone padded for Android masks
  *   og.png                   1200x630 social card, mark + wordmark
+ *   logo-checkout.png        lockup on night, for the Stripe payment page
  *
  * There is no SVG rasterizer in the toolchain, and adding one would mean a
  * native dependency. The mark is deliberately pure geometry — stroked lines
@@ -356,6 +357,19 @@ function ogCard(w = 1200, h = 630) {
   const tx = (w - lk.box.w * scale) / 2 - lk.box.x * scale;
   const ty = (h - lk.box.h * scale) / 2 - lk.box.y * scale;
 
+  return rasterize(w, h, [
+    { type: 'roundRect', size: w, radius: 0, color: hex(NIGHT) },
+    ...lockupLayers(lk, [tx, ty, scale])
+  ]);
+}
+
+/**
+ * The lockup's layers at a given transform: the mark, the word, and both node
+ * devices. Shared by the social card and the checkout logo so the two cannot
+ * drift apart.
+ */
+function lockupLayers(lk, transform) {
+  const [tx, ty, scale] = transform;
   const layer = (part, ink) => ({
     type: 'strokes',
     polylines: part.strokes.map((s) => segPoints(s, 48)),
@@ -369,18 +383,39 @@ function ogCard(w = 1200, h = 630) {
   // the accent first, so the letter's ink paints over it.
   const word = splitAccent(lk.word.strokes);
 
-  return rasterize(w, h, [
-    { type: 'roundRect', size: w, radius: 0, color: hex(NIGHT) },
+  return [
     layer(lk.mark, ACCENT),
     layer({ strokes: word.accent, stroke: lk.word.stroke }, ACCENT),
     layer({ strokes: word.ink, stroke: lk.word.stroke }, INK),
-    ...nodeLayers(lk.mark.strokes, lk.mark.stroke, ACCENT, [tx, ty, scale], NIGHT),
-    ...nodeLayers(lk.word.strokes, lk.word.stroke, INK, [tx, ty, scale], NIGHT)
+    ...nodeLayers(lk.mark.strokes, lk.mark.stroke, ACCENT, transform, NIGHT),
+    ...nodeLayers(lk.word.strokes, lk.word.stroke, INK, transform, NIGHT)
+  ];
+}
+
+/**
+ * The lockup on night, square, for the Stripe payment page.
+ *
+ * Stripe wants a logo rather than the bare mark: on a checkout page reached
+ * from an app, the reader has never seen the `b` and the word is the whole
+ * identification. Night ground, not transparency — the word's ink is near
+ * white, so it would vanish on Stripe's light page.
+ *
+ * The lockup is ~3.2:1, so in a square it is centred with wide margins; the
+ * width is what has to fit, and the square is what Stripe's slot wants.
+ */
+function checkoutLogo(size = 512, pad = 0.88) {
+  const lk = lockup('barbuz');
+  const scale = (size * pad) / lk.box.w;
+  const tx = (size - lk.box.w * scale) / 2 - lk.box.x * scale;
+  const ty = (size - lk.box.h * scale) / 2 - lk.box.y * scale;
+
+  return rasterize(size, size, [
+    { type: 'roundRect', size, radius: 0, color: hex(NIGHT) },
+    ...lockupLayers(lk, [tx, ty, scale])
   ]);
 }
 
 /* ==================================================================== main */
-
 const outputs = [];
 
 // favicon.svg — the mark alone, vector, in the accent. A tab has no persona,
@@ -418,6 +453,9 @@ outputs.push(['icon-maskable-512.png', encodePng(512, 512, iconTile(512, { radiu
 
 // og.png — 1200x630 social card
 outputs.push(['og.png', encodePng(1200, 630, ogCard())]);
+
+// logo-checkout.png — the lockup on night, square, for the Stripe payment page
+outputs.push(['logo-checkout.png', encodePng(512, 512, checkoutLogo())]);
 
 /* write or check */
 mkdirSync(STATIC, { recursive: true });
