@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0A0E17" />
-    <title>barbuz</title>
     <meta
       name="description"
       content="barbuz — small, sharp tools. Apps by barbuz, and the engineer behind them."
@@ -37,7 +36,12 @@
         document.documentElement.classList.add('js');
         var meta = document.querySelector('meta[name="theme-color"]');
         if (meta) meta.setAttribute('content', persona === 'leo' ? '#FAF8F3' : '#0A0E17');
-        document.title = persona === 'leo' ? 'Leo Ghignone' : 'barbuz';
+        // Only the landing page is titled by the persona. Other routes set
+        // their own title in `<svelte:head>`, and this script runs first, so it
+        // must not overwrite them.
+        if (location.pathname === '/' || location.pathname === '/index.html') {
+          document.title = persona === 'leo' ? 'Leo Ghignone' : 'barbuz';
+        }
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
