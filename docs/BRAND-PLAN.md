@@ -68,8 +68,9 @@ can use it.
 **Output:** the tokens are shareable. `docs/DESIGN-NOTES.md` records the
 reasoning; `brand/README.md` records how to consume them.
 
-**Still open (deliberately):** how the *apps* consume the tokens — npm package
-vs vendored file. That is a Phase 4 question. See open decision 1.
+**Settled in Phase 4:** the apps consume vendored copies for now, each with a
+header naming the source. Revisit only if drift becomes a problem. See open
+decision 1.
 
 ## Phase 2 — the mark *(page)* ✅ done
 
@@ -115,33 +116,54 @@ what most visitors read.
 *Everything below touches other repos. Nothing here starts until the page is
 settled.*
 
-## Phase 4 — apply it to the apps
+## Phase 4 — apply it to the apps ✅ done
 
-Order is deliberate: start with the app that is closest to the page, so the
-first port proves the system rather than fighting it.
+Order was deliberate: start with the app closest to the page, so the first port
+proves the system rather than fighting it.
 
-1. **`match-the-gatherer`** — Svelte + Vite, already a PWA. Closest in stack and
-   the most-used app. Adopt the palette, the type stack, and the mono thread.
-   This is the proof.
-2. **`byom`** — the map app. Same accent pair as the journey map, so the two
-   blue tones should already feel native.
-3. **`digitofono`** — an instrument; likely the most expressive. Adopt the
-   tokens, but let it keep its own feel. Do not force the layout conventions.
-4. **`the stylus`** — niche, low traffic, possibly a single file. Lowest
-   priority; a palette swap may be the whole job.
+1. **`match-the-gatherer`** — Svelte + Vite, already a PWA. The proof.
+2. **`byom`** — the map app. Same accent pair as the journey map.
+3. **`digitofono`** — an instrument, kept expressive.
+4. **`the stylus`** — deliberately light-touch; see the note below.
 
-Decide the consumption method first (open decision 1). Per app, the checklist is
-the same:
+Per app, the checklist was:
 
-- [ ] palette tokens from the shared source, both light and dark if it supports both
-- [ ] type stack: display / body / mono
-- [ ] favicon and app icon from the shared mark — reuse `brand/mark.mjs`, do not redraw
-- [ ] footer credit linking back to `barbuz.github.io`
-- [ ] voice: copy written in the app's register, not pasted from the page
-- [ ] contrast re-checked against that app's actual backgrounds
+- [x] palette tokens from the shared source, both light and dark — match, byom
+      and digitofono; the stylus kept its own
+- [x] type stack: display / body / mono — match, byom and digitofono; the stylus
+      kept its system font
+- [x] favicon and app icon from the shared mark — **changed in practice**: each
+      app has its own mark; the shared `b` is the hub identity, not an app mark
+- [x] footer credit linking back to `barbuz.github.io`
+- [x] voice: copy written in the app's register, not pasted from the page
+- [x] contrast re-checked against that app's actual backgrounds
 
 **Do not** copy the page's layout. The brand is colour, type, voice and motion —
 not section order.
+
+**Outcome.** All four brand passes merged: `match-the-gatherer` #51, `byom` #62,
+`digitofono` #5, and `the stylus` #29. The stylus merged into **staging**;
+production promotion remains its normal separate release flow, so the stylus is
+done from the brand side. The app marks are app-specific (match's card, byom's
+map, digitofono's glowing dot, the stylus's stylus); the shared `b` was not
+forced onto them.
+
+**The stylus was deliberately scaled back.** It kept its own sky-blue palette
+and system font; the pass was voice, the barbuz credit and the footer links. It
+did not adopt `brand/tokens.css` or the shared mark.
+
+### Day/night follow-up
+
+Night and day are now part of every app. `match-the-gatherer` and `the stylus`
+already had a toggle; `byom` and `digitofono` now use the shared
+`face--barbuz` / `face--leo` palettes with their own type locked, so the theme
+changes colour rather than the app's voice. Both resolve from a stored choice or
+the OS preference before first paint, and persist a manual choice.
+
+`byom` and `digitofono` are implemented and previewed in PRs
+[barbuz/byom#64](https://github.com/barbuz/byom/pull/64) and
+[barbuz/digitofono#6](https://github.com/barbuz/digitofono/pull/6). Merge is the
+remaining step.
 
 ## Phase 5 — join the apps up
 
@@ -159,16 +181,15 @@ palette swap.
 
 | # | Decision | Blocks |
 |---|---|---|
-| 1 | npm package vs vendored `tokens.css` for the apps | Phase 4 |
+| 1 | ~~npm package vs vendored `tokens.css` for the apps~~ — **settled for now**: manual vendored copies, with a header naming the source; revisit only if drift becomes a problem | done |
 | 2 | ~~logo direction~~ — **settled**: the mark is the `b`, and the wordmark is built from the same strokes | done |
-| 3 | does any app need a dark mode of its own, or is barbuz-night the only dark? | Phase 4 |
+| 3 | ~~does any app need a dark mode of its own, or is barbuz-night the only dark?~~ — **settled**: yes. All four apps have day/night; byom and digitofono use the shared faces with their own type locked | done |
 | 4 | the draft's three fake "Featured Projects" — **resolved**: replaced on the Leo face by an **Experience** list built from the author's CV, plus new **Community** and **Publications** sections. See `COPY-NOTES-LEO.md` § 10a–10c. | Phase 3 (Leo) — done |
 
 ## Order of work
 
 Tokens, then the mark, then the copy pass — all on the page. Only then the apps.
 
-Phase 1 is done, **Phase 2 is done** — the mark is settled and its assets
-generated — and **Phase 3 is done** on both faces: barbuz in PR #9 (`74a1da7`),
-Leo on `leo-copy-pass`. The remaining work is **Phase 4**, applying the identity
-to the apps.
+Phases 1–4 are done. Phase 5 is next: joining the apps up. The stylus production
+promotion is a separate release flow, and the byom/digitofono day/night PRs are
+the only open Phase 4 follow-up.

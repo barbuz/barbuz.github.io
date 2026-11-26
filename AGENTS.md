@@ -385,7 +385,11 @@ this is the short version:
    landed in PR #9 (`74a1da7`) and Leo's on `leo-copy-pass`, including the old
    "Featured Projects", rebuilt as **Experience** with new **Community** and
    **Publications** sections. Neither face has open copy work.
-4. **Then** apply to `match-the-gatherer`, `byom`, `digitofono`, `the stylus`.
+4. **Phase 4** — apply to `match-the-gatherer`, `byom`, `digitofono`, `the
+   stylus`. ✅ done. All four brand PRs merged; the stylus is in staging, with
+   production promotion separate. Tokens are manual vendored copies with source
+   headers. Day/night exists in every app; byom and digitofono are in PRs #64
+   and #6. **Phase 5** — joining the apps up — is next.
 
 The governing rule is **content before layout**: settle the words first, then
 build the layout around them. Do not finalise a layout against placeholder text.
