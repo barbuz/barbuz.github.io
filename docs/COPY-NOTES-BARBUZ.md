@@ -348,6 +348,36 @@ persona, which is the point: the switch is part of the page it sits on.
 
 ---
 
+## 11. Tool — data tracker
+
+`firefox-data-tracker` joins the Tools cards. It extends the tag and repo tables
+in §10a and §10b, which record that pass rather than the current list.
+
+| Field | Value |
+|---|---|
+| tag | `per-site data use` |
+| name | `data tracker` |
+| href | `addons.mozilla.org/en-US/firefox/addon/data-tracker/` |
+| repo | `github.com/barbuz/firefox-data-tracker` |
+| body | "A Firefox extension that logs how much data each site downloads. Nothing leaves your machine. A dashboard sorts the totals by site and date." |
+
+It is a **tool**, not an app: one narrow job, and an add-on rather than a site
+you visit. The body's three sentences are short, and the second one is the
+claim that matters — local-only is what makes it different from a devtools
+network panel.
+
+The tag names what the card shows, not the platform. `firefox add-on` would say
+what the body's first two words already say; `per-site data use` names the job,
+as `real world maps` does.
+
+This is the first card whose "open" target is **not our own origin**. The two
+destinations still hold (§10b): the GitHub button goes to the source, and
+`open ↗` goes to the Mozilla Add-ons listing, because that is where the thing is
+installed from. The `↗` is earned here — unlike the cross-face links, this one
+really does leave the site.
+
+---
+
 ## What was checked and found clean
 
 - **No exclamation marks**, no "passionate", no superlatives — the register's

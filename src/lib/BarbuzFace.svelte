@@ -43,6 +43,13 @@
       href: 'https://barbuz.github.io/the-stylus/',
       repo: 'https://github.com/barbuz/the-stylus',
       body: 'A browser tool for editing 3 Card Blind MTG result sheets. Small, specific, and sharp at its one job.'
+    },
+    {
+      tag: 'per-site data use',
+      name: 'data tracker',
+      href: 'https://addons.mozilla.org/en-US/firefox/addon/data-tracker/',
+      repo: 'https://github.com/barbuz/firefox-data-tracker',
+      body: 'A Firefox extension that logs how much data each site downloads. Nothing leaves your machine. A dashboard sorts the totals by site and date.'
     }
   ];
 </script>
